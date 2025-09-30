@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -61,6 +62,13 @@ public class FTCericdrivecode extends LinearOpMode {
     private DcMotor leftBack;
     private DcMotor rightBack;
 
+    private DcMotor intakeMotor;
+
+    private DcMotor fly1Motor;
+    private DcMotor fly2Motor;
+
+    private CRServo transferServo;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -73,6 +81,10 @@ public class FTCericdrivecode extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        fly1Motor = hardwareMap.get(DcMotor.class, "fly1Motor");
+        fly2Motor = hardwareMap.get(DcMotor.class, "fly2Motor");
+        transferServo = hardwareMap.get(CRServo.class, "transferServo");
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -85,31 +97,42 @@ public class FTCericdrivecode extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+            double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+            leftFront.setPower(y + x + rx);
+            leftBack.setPower(y - x + rx);
+            rightFront.setPower(y - x - rx);
+            rightBack.setPower(y + x - rx);
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            if (gamepad1.a){
+                fly1Motor.setPower(1);
+                fly2Motor.setPower(1);
+            }
+            if (gamepad1.b){
+                fly1Motor.setPower(0);
+                fly2Motor.setPower(0);
+            }
+            if (gamepad1.right_trigger > 0.1){
 
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
+                intakeMotor.setPower(1);
+            }
+            if (gamepad1.left_trigger > 0.1){
 
-            // Send calculated power to wheels
-        
+                intakeMotor.setPower(0);
+            }
+            if (gamepad1.left_bumper){
+
+                transferServo.setPower(0);
+            }
+            if (gamepad1.right_bumper){
+
+                transferServo.setPower(1);
+            }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
