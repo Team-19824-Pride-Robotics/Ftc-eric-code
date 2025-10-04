@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp(name="FTCericdrivecode")
-
+@Configurable
 
 public class FTCericdrivecode extends LinearOpMode {
 
@@ -32,6 +33,10 @@ public class FTCericdrivecode extends LinearOpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
 
+    public static double launch_speed = 0.6;
+    double fly1Speed = 0;
+    double fly2Speed = 0;
+
 
     @Override
     public void runOpMode() {
@@ -41,22 +46,22 @@ public class FTCericdrivecode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        BL = hardwareMap.get(DcMotor.class, "leftBack");
-        BR = hardwareMap.get(DcMotor.class, "rightBack");
-        FL = hardwareMap.get(DcMotor.class, "leftFront");
-        FR = hardwareMap.get(DcMotor.class, "rightFront");
-        intake = hardwareMap.get(DcMotor.class, "intakeMotor");
-        fly1 = hardwareMap.get(DcMotorEx.class, "fly1Motor");
-        fly2 = hardwareMap.get(DcMotorEx.class, "fly2Motor");
+        BL = hardwareMap.get(DcMotor.class, "BL");
+        BR = hardwareMap.get(DcMotor.class, "BR");
+        FL = hardwareMap.get(DcMotor.class, "FL");
+        FR = hardwareMap.get(DcMotor.class, "FR");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
+        fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
-        double fly1Speed = 0;
 
-        double fly2Speed = 0;
+
+
 
 
         FL.setDirection(DcMotor.Direction.REVERSE);
@@ -90,23 +95,25 @@ public class FTCericdrivecode extends LinearOpMode {
             FR.setPower(rightFrontPower);
             BR.setPower(rightBackPower);
 
-            if (gamepad1.a) {
-                fly1Speed = 1;
-                fly2Speed = 1;
-            } else if (gamepad1.b) {
+            if (gamepad2.a) {
+                fly1Speed = launch_speed;
+                fly2Speed = launch_speed;
+            }
+
+            else if (gamepad2.b) {
                 // This makes 'b' the button to stop the flywheels
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
-            if (gamepad1.right_trigger > 0.1) {
+            if (gamepad2.right_trigger > 0.1) {
 
                 intake.setPower(1);
             }
-            if (gamepad1.left_trigger > 0.1) {
+            if (gamepad2.left_trigger > 0.1) {
 
                 intake.setPower(0);
             }
-            if (gamepad1.left_bumper) {
+            if (gamepad2.left_bumper) {
                 fly1.setPower(-0.1);
                 fly2.setPower(-0.1);
 
