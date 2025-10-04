@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -53,6 +54,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear OpMode")
 
+
 public class FTCericdrivecode extends LinearOpMode {
 
     // Declare OpMode members.
@@ -64,10 +66,9 @@ public class FTCericdrivecode extends LinearOpMode {
 
     private DcMotor intakeMotor;
 
-    private DcMotor fly1Motor;
-    private DcMotor fly2Motor;
+    private DcMotorEx fly1Motor;
+    private DcMotorEx fly2Motor;
 
-    private CRServo transferServo;
 
     @Override
     public void runOpMode() {
@@ -77,18 +78,29 @@ public class FTCericdrivecode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         fly1Motor = hardwareMap.get(DcMotor.class, "fly1Motor");
         fly2Motor = hardwareMap.get(DcMotor.class, "fly2Motor");
-        transferServo = hardwareMap.get(CRServo.class, "transferServo");
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        fly1Motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fly1Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        fly2Motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fly2Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+
+        double fly1Speed = 0;
+
+        double fly2Speed = 0;
+
+
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+
+
+// Wait for the game to start (driver presses START)
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -97,43 +109,57 @@ public class FTCericdrivecode extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-            double x = gamepad1.left_stick_x;
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
-            leftFront.setPower(y + x + rx);
-            leftBack.setPower(y - x + rx);
-            rightFront.setPower(y - x - rx);
-            rightBack.setPower(y + x - rx);
+// Denominator is the largest motor power (absolute value) or 1
+// This ensures all the powers maintain proportionality while staying <= 1
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double leftFrontPower = (y + x + rx) / denominator;
+            double leftBackPower = (y - x + rx) / denominator;
+            double rightFrontPower = (y - x - rx) / denominator; // Corrected formula
+            double rightBackPower = (y + x - rx) / denominator; // Corrected formula
 
-            if (gamepad1.a){
-                fly1Motor.setPower(1);
-                fly2Motor.setPower(1);
+            leftFront.setPower(leftFrontPower);
+            leftBack.setPower(leftBackPower);
+            rightFront.setPower(rightFrontPower);
+            rightBack.setPower(rightBackPower);
+
+            if (gamepad1.a) {
+                fly1Speed = 1;
+                fly2Speed = 1;
+            } else if (gamepad1.b) {
+                // This makes 'b' the button to stop the flywheels
+                fly1Speed = 0;
+                fly2Speed = 0;
             }
-            if (gamepad1.b){
-                fly1Motor.setPower(0);
-                fly2Motor.setPower(0);
-            }
-            if (gamepad1.right_trigger > 0.1){
+            if (gamepad1.right_trigger > 0.1) {
 
                 intakeMotor.setPower(1);
             }
-            if (gamepad1.left_trigger > 0.1){
+            if (gamepad1.left_trigger > 0.1) {
 
                 intakeMotor.setPower(0);
             }
-            if (gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
+                fly1Motor.setPower(-0.1);
+                fly2Motor.setPower(-0.1);
 
-                transferServo.setPower(0);
             }
-            if (gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
 
-                transferServo.setPower(1);
+                intakeMotor.setPower(-0.1);
             }
+
+
+            fly1Motor.setPower(fly1Speed);
+            fly2Motor.setPower(fly2Speed);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
-    }
+    }  
 }
