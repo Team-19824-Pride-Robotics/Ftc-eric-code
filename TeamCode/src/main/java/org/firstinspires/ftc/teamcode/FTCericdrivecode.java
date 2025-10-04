@@ -29,14 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /*
@@ -59,15 +56,15 @@ public class FTCericdrivecode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront;
-    private DcMotor rightFront;
-    private DcMotor leftBack;
-    private DcMotor rightBack;
+    private DcMotor FL;
+    private DcMotor FR;
+    private DcMotor BL;
+    private DcMotor BR;
 
-    private DcMotor intakeMotor;
+    private DcMotor intake;
 
-    private DcMotorEx fly1Motor;
-    private DcMotorEx fly2Motor;
+    private DcMotorEx fly1;
+    private DcMotorEx fly2;
 
 
     @Override
@@ -78,17 +75,17 @@ public class FTCericdrivecode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        fly1Motor = hardwareMap.get(DcMotorEx.class, "fly1Motor");
-        fly2Motor = hardwareMap.get(DcMotorEx.class, "fly2Motor");
-        fly1Motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        fly1Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        fly2Motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        fly2Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        BL = hardwareMap.get(DcMotor.class, "leftBack");
+        BR = hardwareMap.get(DcMotor.class, "rightBack");
+        FL = hardwareMap.get(DcMotor.class, "leftFront");
+        FR = hardwareMap.get(DcMotor.class, "rightFront");
+        intake = hardwareMap.get(DcMotor.class, "intakeMotor");
+        fly1 = hardwareMap.get(DcMotorEx.class, "fly1Motor");
+        fly2 = hardwareMap.get(DcMotorEx.class, "fly2Motor");
+        fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
         double fly1Speed = 0;
@@ -96,8 +93,8 @@ public class FTCericdrivecode extends LinearOpMode {
         double fly2Speed = 0;
 
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        FL.setDirection(DcMotor.Direction.REVERSE);
+        BL.setDirection(DcMotor.Direction.REVERSE);
 
 
 // Wait for the game to start (driver presses START)
@@ -122,10 +119,10 @@ public class FTCericdrivecode extends LinearOpMode {
             double rightFrontPower = (y - x - rx) / denominator; // Corrected formula
             double rightBackPower = (y + x - rx) / denominator; // Corrected formula
 
-            leftFront.setPower(leftFrontPower);
-            leftBack.setPower(leftBackPower);
-            rightFront.setPower(rightFrontPower);
-            rightBack.setPower(rightBackPower);
+            FL.setPower(leftFrontPower);
+            BL.setPower(leftBackPower);
+            FR.setPower(rightFrontPower);
+            BR.setPower(rightBackPower);
 
             if (gamepad1.a) {
                 fly1Speed = 1;
@@ -137,28 +134,31 @@ public class FTCericdrivecode extends LinearOpMode {
             }
             if (gamepad1.right_trigger > 0.1) {
 
-                intakeMotor.setPower(1);
+                intake.setPower(1);
             }
             if (gamepad1.left_trigger > 0.1) {
 
-                intakeMotor.setPower(0);
+                intake.setPower(0);
             }
             if (gamepad1.left_bumper) {
-                fly1Motor.setPower(-0.1);
-                fly2Motor.setPower(-0.1);
+                fly1.setPower(-0.1);
+                fly2.setPower(-0.1);
 
             }
             if (gamepad1.right_bumper) {
 
-                intakeMotor.setPower(-0.1);
+                intake.setPower(-0.1);
             }
 
 
-            fly1Motor.setPower(fly1Speed);
-            fly2Motor.setPower(fly2Speed);
+            fly1.setPower(fly1Speed);
+            fly2.setPower(fly2Speed);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Flywheel 1 Velocity (ticks/sec)", fly1.getVelocity());
+            telemetry.addData("Flywheel 2 Velocity (ticks/sec)", fly2.getVelocity());
+
             telemetry.update();
         }
     }  
