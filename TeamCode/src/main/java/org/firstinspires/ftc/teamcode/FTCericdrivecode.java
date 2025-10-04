@@ -83,8 +83,8 @@ public class FTCericdrivecode extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        fly1Motor = hardwareMap.get(DcMotor.class, "fly1Motor");
-        fly2Motor = hardwareMap.get(DcMotor.class, "fly2Motor");
+        fly1Motor = hardwareMap.get(DcMotorEx.class, "fly1Motor");
+        fly2Motor = hardwareMap.get(DcMotorEx.class, "fly2Motor");
         fly1Motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly1Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2Motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
