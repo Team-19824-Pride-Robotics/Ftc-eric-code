@@ -29,13 +29,15 @@ public class FTCericdrivecode extends LinearOpMode {
     //hello
 
     private DcMotor intake;
-
     private DcMotorEx fly1;
     private DcMotorEx fly2;
 
+    public static double backOffSpeed = -0.1;
     public static double launch_speed = 0.6;
+    public static double intakeOn = 1;
     double fly1Speed = 0;
     double fly2Speed = 0;
+    double intakeSpeed = 0;
 
 
     @Override
@@ -57,13 +59,6 @@ public class FTCericdrivecode extends LinearOpMode {
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-
-
-
-
-
-
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
 
@@ -95,38 +90,39 @@ public class FTCericdrivecode extends LinearOpMode {
             FR.setPower(rightFrontPower);
             BR.setPower(rightBackPower);
 
-            if (gamepad2.a) {
+
+
+
+
+            if (gamepad2.right_bumper) {
                 fly1Speed = launch_speed;
                 fly2Speed = launch_speed;
             }
+            else if (gamepad2.left_bumper) {
+                fly1Speed = backOffSpeed;
+                fly2Speed = backOffSpeed;
 
-            else if (gamepad2.b) {
-                // This makes 'b' the button to stop the flywheels
+            }else {
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
+
+
             if (gamepad2.right_trigger > 0.1) {
-
-                intake.setPower(1);
+                intakeSpeed = intakeOn;
             }
-            if (gamepad2.left_trigger > 0.1) {
+            else if(gamepad2.left_trigger > 0.1) {
 
-                intake.setPower(0);
+                intakeSpeed = backOffSpeed;
+            }else {
+
+                intakeSpeed = 0;
             }
-            if (gamepad2.left_bumper) {
-                fly1.setPower(-0.1);
-                fly2.setPower(-0.1);
-
-            }
-            if (gamepad1.right_bumper) {
-
-                intake.setPower(-0.1);
-            }
-
+            
 
             fly1.setPower(fly1Speed);
             fly2.setPower(fly2Speed);
-
+            intake.setPower(intakeSpeed);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Flywheel 1 Velocity (ticks/sec)", fly1.getVelocity());
