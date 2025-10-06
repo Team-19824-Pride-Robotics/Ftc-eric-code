@@ -7,16 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-
-
 @TeleOp(name="FTCEricdrivecode")
 @Configurable
 
 public class FTCEricDriveCode extends LinearOpMode {
-
-
-
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -73,6 +67,9 @@ public class FTCEricDriveCode extends LinearOpMode {
         while (opModeIsActive()) {
 
 
+///////////////////DRIVE CONTROLS///////////////////////////////////
+
+
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
@@ -82,8 +79,8 @@ public class FTCEricDriveCode extends LinearOpMode {
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double leftFrontPower = (y + x + rx) / denominator;
             double leftBackPower = (y - x + rx) / denominator;
-            double rightFrontPower = (y - x - rx) / denominator; // Corrected formula
-            double rightBackPower = (y + x - rx) / denominator; // Corrected formula
+            double rightFrontPower = (y - x - rx) / denominator;
+            double rightBackPower = (y + x - rx) / denominator;
 
             FL.setPower(leftFrontPower);
             BL.setPower(leftBackPower);
@@ -91,8 +88,7 @@ public class FTCEricDriveCode extends LinearOpMode {
             BR.setPower(rightBackPower);
 
 
-
-
+///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
             if (gamepad2.right_bumper) {
                 fly1Speed = launch_speed;
@@ -107,22 +103,28 @@ public class FTCEricDriveCode extends LinearOpMode {
                 fly2Speed = 0;
             }
 
+///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.right_trigger > 0.1) {
+
                 intakeSpeed = intakeOn;
             }
             else if(gamepad2.left_trigger > 0.1) {
 
                 intakeSpeed = backOffSpeed;
-            }else {
+            }
+            else {
 
                 intakeSpeed = 0;
             }
-            
+
+///////////////////MOTOR CONTROLS///////////////////////////////////
 
             fly1.setPower(fly1Speed);
             fly2.setPower(fly2Speed);
             intake.setPower(intakeSpeed);
+
+            
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Flywheel 1 Velocity (ticks/sec)", fly1.getVelocity());
