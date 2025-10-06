@@ -26,8 +26,8 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
 
-    public static double backOffSpeed = -0.1;
-    public static double launch_speed = 0.6;
+    public static double backOffSpeed = -600;
+    public static double launch_speed = 1200;
     public static double intakeOn = 1;
     double fly1Speed = 0;
     double fly2Speed = 0;
@@ -74,8 +74,6 @@ public class FTCEricDriveCode extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
-// Denominator is the largest motor power (absolute value) or 1
-// This ensures all the powers maintain proportionality while staying <= 1
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double leftFrontPower = (y + x + rx) / denominator;
             double leftBackPower = (y - x + rx) / denominator;
@@ -98,7 +96,8 @@ public class FTCEricDriveCode extends LinearOpMode {
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
 
-            }else {
+            }
+            else {
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
@@ -120,17 +119,16 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 ///////////////////MOTOR CONTROLS///////////////////////////////////
 
-            fly1.setPower(fly1Speed);
-            fly2.setPower(fly2Speed);
+            fly1.setVelocity(fly1Speed);
+            fly2.setVelocity(fly2Speed);
             intake.setPower(intakeSpeed);
 
-            
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Flywheel 1 Velocity (ticks/sec)", fly1.getVelocity());
-            telemetry.addData("Flywheel 2 Velocity (ticks/sec)", fly2.getVelocity());
 
+            telemetry.addData("Target Velocity", launch_speed);
+            telemetry.addData("Current Velocity", fly1.getVelocity());
+            telemetry.addData("Current Velocity", fly2.getVelocity());
             telemetry.update();
+            
         }
     }  
 }
