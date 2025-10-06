@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 
-@TeleOp(name="FTCericdrivecode")
+@TeleOp(name="FTCEricdrivecode")
 @Configurable
 
 public class FTCEricDriveCode extends LinearOpMode {
