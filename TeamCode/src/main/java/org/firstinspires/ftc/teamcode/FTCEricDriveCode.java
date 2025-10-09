@@ -27,7 +27,7 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotorEx fly2;
 
     public static double backOffSpeed = -600;
-    public static double launch_speed = 1200;
+    public static double launch_speed = 2400;
     public static double intakeOn = 1;
     double fly1Speed = 0;
     double fly2Speed = 0;
