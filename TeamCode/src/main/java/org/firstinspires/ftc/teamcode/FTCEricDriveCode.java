@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="FTCEricdrivecode")
+
+
+@TeleOp(name = "FTCEricdrivecode")
 @Configurable
 
 public class FTCEricDriveCode extends LinearOpMode {
@@ -26,12 +30,16 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
 
+    private Limelight3A Limelight
+
     public static double backOffSpeed = -600;
     public static double launch_speed = 2400;
     public static double intakeOn = 1;
     double fly1Speed = 0;
     double fly2Speed = 0;
     double intakeSpeed = 0;
+    final double TURN_GAIN = 0.01;
+    final double MAX_AUTO_TURN = 0.3;
 
 
     @Override
@@ -55,6 +63,11 @@ public class FTCEricDriveCode extends LinearOpMode {
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
+        Limelight=hardwareMap.get(Limelight3A.class, "Limelight");
+
+
+
+
 
 
 // Wait for the game to start (driver presses START)
@@ -73,6 +86,7 @@ public class FTCEricDriveCode extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
+
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double leftFrontPower = (y + x + rx) / denominator;
