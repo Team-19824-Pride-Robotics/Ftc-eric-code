@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -23,15 +25,14 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotor BL;
     private DcMotor BR;
     private DcMotor transfer;
-
-
-    //hello
-
     private DcMotor intake;
     private DcMotorEx fly1;
     private DcMotorEx fly2;
+    private Limelight3A limelight;
+    private IMU imu;
 
 
+    //Declare variables
 
     public static double backOffSpeed = -600;
     public static double transferback = -.1;
@@ -48,39 +49,42 @@ public class FTCEricDriveCode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
+        // Initialize the hardware variables.
+
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
+        FL.setDirection(DcMotor.Direction.REVERSE);
+        BL.setDirection(DcMotor.Direction.REVERSE);
+
         intake = hardwareMap.get(DcMotor.class, "intake");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
+
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        FL.setDirection(DcMotor.Direction.REVERSE);
-        BL.setDirection(DcMotor.Direction.REVERSE);
-        transfer = hardwareMap.get(DcMotor.class, "transfer");
 
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(8); //this is the april tag
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
+        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
 
-
-
-
-
-// Wait for the game to start (driver presses START)
-
-        // Wait for the game to start (driver presses START)
+       // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
+        limelight.start();
 
-        // run until the end of the match (driver presses STOP)
+
+ //////////////This is the start of the loop///////////////////////////
+
         while (opModeIsActive()) {
 
 
