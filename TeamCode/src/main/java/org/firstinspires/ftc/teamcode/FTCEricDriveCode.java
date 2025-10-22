@@ -25,14 +25,13 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotor BL;
     private DcMotor BR;
     private DcMotor transfer;
-<<<<<<< HEAD
+
     
 
 
     //hello
 
-=======
->>>>>>> 314f045b8a75873e8bfc59543ef01d45a6bddb38
+
     private DcMotor intake;
     private DcMotorEx fly1;
     private DcMotorEx fly2;
@@ -64,7 +63,6 @@ public class FTCEricDriveCode extends LinearOpMode {
         BR = hardwareMap.get(DcMotor.class, "BR");
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
-        FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
 
         intake = hardwareMap.get(DcMotor.class, "intake");
