@@ -35,7 +35,7 @@ public class FTCEricDriveCode extends LinearOpMode {
     //Declare variables
 
     public static double backOffSpeed = -600;
-    public static double transferback = -.1;
+    public static double transferback = -1;
     public static double launch_speed = 2400;
     public static double intakeOn = 1;
     public static double transferOn = 1;
@@ -56,8 +56,8 @@ public class FTCEricDriveCode extends LinearOpMode {
         BR = hardwareMap.get(DcMotor.class, "BR");
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
-        FL.setDirection(DcMotor.Direction.REVERSE);
-        BL.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.REVERSE);
+
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "transfer");
@@ -69,8 +69,8 @@ public class FTCEricDriveCode extends LinearOpMode {
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(8); //this is the april tag
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight.pipelineSwitch(8); //this is the april tag
         imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
@@ -80,7 +80,7 @@ public class FTCEricDriveCode extends LinearOpMode {
        // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
-        limelight.start();
+       //limelight.start();
 
 
  //////////////This is the start of the loop///////////////////////////
