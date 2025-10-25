@@ -132,10 +132,15 @@ public class FTCEricDriveCode extends LinearOpMode {
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
             if(gamepad2.y){
                 // Change the motor postion by 15 units
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transferPosition = transfer.getCurrentPosition() - 300;
-                transfer.setTargetPosition(transferPosition );
-                sleep(1000);
+                runtime.reset();
+                if(runtime < 1) {
+                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transferPosition = transfer.getCurrentPosition() - 300;
+                    transfer.setTargetPosition(transferPosition);
+                }else{
+                    transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    transferSpeed = 0;
+                }
 
 
             }
