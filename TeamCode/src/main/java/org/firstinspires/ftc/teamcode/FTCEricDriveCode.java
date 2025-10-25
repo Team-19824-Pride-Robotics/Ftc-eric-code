@@ -138,14 +138,10 @@ public class FTCEricDriveCode extends LinearOpMode {
                     transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     transferPosition = transfer.getCurrentPosition() - 300;
                     transfer.setTargetPosition(transferPosition);
-                }else{
-                    transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    transferSpeed = 0;
                 }
 
 
-            }
-          else  if (gamepad2.left_bumper) {
+            } else  if (gamepad2.left_bumper) {
                 transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
               transferSpeed = transferOn;
                 transfer.setPower(transferSpeed);
