@@ -135,7 +135,7 @@ public class FTCEricDriveCode extends LinearOpMode {
                 transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 transferPosition = transfer.getCurrentPosition() - 300;
                 transfer.setTargetPosition(transferPosition );
-
+                sleep(1000);
 
 
             }
