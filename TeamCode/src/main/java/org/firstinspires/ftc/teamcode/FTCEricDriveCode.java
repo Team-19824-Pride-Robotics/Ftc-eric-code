@@ -44,6 +44,7 @@ public class FTCEricDriveCode extends LinearOpMode {
     double fly2Speed = 0;
     double intakeSpeed = 0;
     double transferSpeed = 0;
+    double transferRuntime = 3;
     int transferPosition;
     final double TURN_GAIN = 0.01;
     final double MAX_AUTO_TURN = 0.3;
@@ -133,7 +134,7 @@ public class FTCEricDriveCode extends LinearOpMode {
             if(gamepad2.y){
                 // Change the motor postion by x units
                 runtime.reset();
-                if(getRuntime() < 1) {
+                if(getRuntime() < transferRuntime) {
                     transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     transferPosition = transfer.getCurrentPosition() - 300;
                     transfer.setTargetPosition(transferPosition);
