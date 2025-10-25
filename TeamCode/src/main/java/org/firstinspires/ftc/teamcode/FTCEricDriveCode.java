@@ -95,8 +95,8 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            double rx = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double x = gamepad1.right_stick_x;
 
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -121,7 +121,7 @@ public class FTCEricDriveCode extends LinearOpMode {
                 fly1Speed = long_launch_speed;
                 fly2Speed = long_launch_speed;
 
-            }else if (gamepad2.right_bumper){
+            }else if (gamepad2.x){
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
             } else {
@@ -130,36 +130,40 @@ public class FTCEricDriveCode extends LinearOpMode {
             }
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
+            if(gamepad2.y){
+                // Change the motor postion by 15 units
+                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                transferPosition = transfer.getCurrentPosition() - 300;
+                transfer.setTargetPosition(transferPosition );
 
-            if (gamepad2.x) {
 
-                transferSpeed = transferOn;
+
             }
-            else if(gamepad2.y ) {
+          else  if (gamepad2.left_bumper) {
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+              transferSpeed = transferOn;
+                transfer.setPower(transferSpeed);
 
+            }
+            else if(gamepad2.right_bumper ) {
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 transferSpeed = transferback;
+                transfer.setPower(transferSpeed);
             }
             else {
-
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 transferSpeed = 0;
+                transfer.setPower(transferSpeed);
             }
-            if(gamepad2.left_bumper){
-               // Change the motor postion by 15 units
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transferPosition = transfer.getCurrentPosition();
-                transfer.setTargetPosition(transferPosition - 15);
 
-
-
-            }
 
             ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-            if (gamepad2.a) {
+            if (gamepad2.a || gamepad1.a) {
 
                 intakeSpeed = intakeOn;
             }
-            else if(gamepad2.b ) {
+            else if(gamepad2.b || gamepad1.b) {
 
                 intakeSpeed = backOffSpeed;
             }
@@ -174,8 +178,8 @@ public class FTCEricDriveCode extends LinearOpMode {
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
             intake.setPower(intakeSpeed);
-            transfer.setPower(transferSpeed);
 
+            telemetry.addData("Transfer Position", transferPosition);
             telemetry.addData("Short Target Velocity", close_launch_speed);
             telemetry.addData("Long Target Velocity", long_launch_speed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
