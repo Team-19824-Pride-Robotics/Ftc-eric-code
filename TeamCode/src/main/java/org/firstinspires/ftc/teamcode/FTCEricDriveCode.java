@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class FTCEricDriveCode extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private ElapseTime runtime = new ElapsedTime();
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -127,6 +127,8 @@ public class FTCEricDriveCode extends LinearOpMode {
             telemetry.addData("Target Velocity", launch_speed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
+            telemetry.addData("flywheel1 power", fly1.getPower());
+            telemetry.addData("flywheel2 power", fly2.getPower());
             telemetry.update();
             
         }
