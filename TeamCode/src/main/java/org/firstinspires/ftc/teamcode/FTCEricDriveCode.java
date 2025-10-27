@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="FTCEricdrivecode")
+
+
+@TeleOp(name = "FTCEricdrivecode")
 @Configurable
 
 public class FTCEricDriveCode extends LinearOpMode {
@@ -18,52 +24,71 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotor FR;
     private DcMotor BL;
     private DcMotor BR;
-
-
-    //hello
-
+    private DcMotor transfer;
     private DcMotor intake;
     private DcMotorEx fly1;
     private DcMotorEx fly2;
+    private Limelight3A limelight;
+    private IMU imu;
+
+
+    //Declare variables
 
     public static double backOffSpeed = -600;
-    public static double launch_speed = 2400;
+    public static double transferback = -1;
+    public static double long_launch_speed = 2110;
+    public static double close_launch_speed = 1650;
     public static double intakeOn = 1;
+    public static double transferOn = 1;
     double fly1Speed = 0;
     double fly2Speed = 0;
     double intakeSpeed = 0;
+    double transferSpeed = 0;
+    double transferRuntime = 3;
+    int transferPosition;
+    final double TURN_GAIN = 0.01;
+    final double MAX_AUTO_TURN = 0.3;
 
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
+        // Initialize the hardware variables.
+
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
+
+        BR.setDirection(DcMotor.Direction.REVERSE);
+
+        
         intake = hardwareMap.get(DcMotor.class, "intake");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
+
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        FL.setDirection(DcMotor.Direction.REVERSE);
-        BL.setDirection(DcMotor.Direction.REVERSE);
 
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight.pipelineSwitch(8); //this is the april tag
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
+        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
 
-// Wait for the game to start (driver presses START)
-
-        // Wait for the game to start (driver presses START)
+       // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
+       //limelight.start();
 
-        // run until the end of the match (driver presses STOP)
+
+ //////////////This is the start of the loop///////////////////////////
+
         while (opModeIsActive()) {
 
 
@@ -71,8 +96,9 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            double rx = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double x = gamepad1.right_stick_x;
+
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double leftFrontPower = (y + x + rx) / denominator;
@@ -88,27 +114,58 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
-            if (gamepad2.right_bumper) {
-                fly1Speed = launch_speed;
-                fly2Speed = launch_speed;
+            if (gamepad2.right_trigger > .1) {
+                fly1Speed = close_launch_speed;
+                fly2Speed = close_launch_speed;
             }
-            else if (gamepad2.left_bumper) {
+            else if (gamepad2.left_trigger > .1) {
+                fly1Speed = long_launch_speed;
+                fly2Speed = long_launch_speed;
+
+            }else if (gamepad2.x){
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
-
-            }
-            else {
+            } else {
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
 
-///////////////////INTAKE CONTROLS///////////////////////////////////
+///////////////////TRANSFER CONTROLS///////////////////////////////////
+            if(gamepad2.y){
+                // Change the motor postion by x units
+                runtime.reset();
+                if(getRuntime() < transferRuntime) {
+                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transferPosition = transfer.getCurrentPosition() - 300;
+                    transfer.setTargetPosition(transferPosition);
+                }
 
-            if (gamepad2.right_trigger > 0.1) {
+
+            } else  if (gamepad2.left_bumper) {
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+              transferSpeed = transferOn;
+                transfer.setPower(transferSpeed);
+
+            }
+            else if(gamepad2.right_bumper ) {
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                transferSpeed = transferback;
+                transfer.setPower(transferSpeed);
+            }
+            else {
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                transferSpeed = 0;
+                transfer.setPower(transferSpeed);
+            }
+
+
+            ///////////////////INTAKE CONTROLS///////////////////////////////////
+
+            if (gamepad2.a || gamepad1.a) {
 
                 intakeSpeed = intakeOn;
             }
-            else if(gamepad2.left_trigger > 0.1) {
+            else if(gamepad2.b || gamepad1.b) {
 
                 intakeSpeed = backOffSpeed;
             }
@@ -117,14 +174,16 @@ public class FTCEricDriveCode extends LinearOpMode {
                 intakeSpeed = 0;
             }
 
+
 ///////////////////MOTOR CONTROLS///////////////////////////////////
 
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
             intake.setPower(intakeSpeed);
 
-
-            telemetry.addData("Target Velocity", launch_speed);
+            telemetry.addData("Transfer Position", transferPosition);
+            telemetry.addData("Short Target Velocity", close_launch_speed);
+            telemetry.addData("Long Target Velocity", long_launch_speed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
             telemetry.addData("flywheel1 power", fly1.getPower());
