@@ -42,10 +42,12 @@ public class FTCEricDriveCode extends LinearOpMode {
     public static double transferOn = 1;
     double fly1Speed = 0;
     double fly2Speed = 0;
-    double intakeSpeed = 0;
+    int intakePosition = 0;
     double transferSpeed = 0;
     double transferRuntime = 3;
     int transferPosition;
+
+    int indexPosition;
     final double TURN_GAIN = 0.01;
     final double MAX_AUTO_TURN = 0.3;
 
@@ -144,16 +146,18 @@ public class FTCEricDriveCode extends LinearOpMode {
             ///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.a || gamepad1.a) {
+                intakePosition = intake.getCurrentPosition() + 30;
 
-                intakeSpeed = intakeOn;
+
             }
             else if(gamepad2.b || gamepad1.b) {
+                intakePosition = intake.getCurrentPosition() + 30;
 
-                intakeSpeed = backOffSpeed;
+
             }
             else {
 
-                intakeSpeed = 0;
+                intakePosition = intake.getCurrentPosition();
             }
 
 
@@ -161,7 +165,8 @@ public class FTCEricDriveCode extends LinearOpMode {
 
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
-            intake.setPower(intakeSpeed);
+            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intake.setTargetPosition(intakePosition);
             transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             transfer.setTargetPosition(transferPosition);
             telemetry.addData("Transfer Position", transferPosition);
