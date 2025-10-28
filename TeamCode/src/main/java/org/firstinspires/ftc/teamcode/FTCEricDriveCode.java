@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class FTCEricDriveCode extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapseTime runtime = new ElapsedTime();
+
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -83,7 +83,7 @@ public class FTCEricDriveCode extends LinearOpMode {
 
        // Wait for the game to start (driver presses START)
         waitForStart();
-        runtime.reset();
+
        //limelight.start();
 
 
@@ -132,30 +132,12 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
             if(gamepad2.y){
-                // Change the motor postion by x units
-                runtime.reset();
-                if(getRuntime() < transferRuntime) {
-                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    transferPosition = transfer.getCurrentPosition() - 300;
-                    transfer.setTargetPosition(transferPosition);
-                }
+                    transferPosition = transfer.getCurrentPosition() + 30;
 
-
-            } else  if (gamepad2.left_bumper) {
-                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-              transferSpeed = transferOn;
-                transfer.setPower(transferSpeed);
-
-            }
-            else if(gamepad2.right_bumper ) {
-                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                transferSpeed = transferback;
-                transfer.setPower(transferSpeed);
-            }
-            else {
-                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                transferSpeed = 0;
-                transfer.setPower(transferSpeed);
+            }else if(gamepad2.x){
+                transferPosition = transfer.getCurrentPosition() - 30;
+            }else{
+                transferPosition = transfer.getCurrentPosition();
             }
 
 
@@ -180,7 +162,8 @@ public class FTCEricDriveCode extends LinearOpMode {
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
             intake.setPower(intakeSpeed);
-
+            transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            transfer.setTargetPosition(transferPosition);
             telemetry.addData("Transfer Position", transferPosition);
             telemetry.addData("Short Target Velocity", close_launch_speed);
             telemetry.addData("Long Target Velocity", long_launch_speed);
