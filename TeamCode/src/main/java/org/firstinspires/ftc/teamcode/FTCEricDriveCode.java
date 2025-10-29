@@ -21,7 +21,7 @@ public class FTCEricDriveCode extends LinearOpMode {
 
     // Declare OpMode members.
 
-   private Servo LegServo
+   private Servo LegServo;
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -47,6 +47,7 @@ public class FTCEricDriveCode extends LinearOpMode {
     int intakePosition = 0;
     double transferSpeed = 0;
     double transferRuntime = 3;
+    double Balldown = 0.6;
     int transferPosition;
 
     int indexPosition;
@@ -134,6 +135,7 @@ public class FTCEricDriveCode extends LinearOpMode {
                 fly2Speed = 0;
             }
 
+
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
             if(gamepad2.y){
                     transferPosition = transfer.getCurrentPosition() + 30;
@@ -143,6 +145,15 @@ public class FTCEricDriveCode extends LinearOpMode {
             }else{
                 transferPosition = transfer.getCurrentPosition();
             }
+            if (gamepad2.start){
+
+                LegServo.setPosition(Balldown);
+            }
+            else {
+
+                LegServo.setPosition(0);
+            }
+            //ARUA
 
 
             ///////////////////INTAKE CONTROLS///////////////////////////////////
