@@ -10,16 +10,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 
-@TeleOp(name = "FTCEricdrivecode")
-@Configurable
+
+
 
 public class FTCEricDriveCode extends LinearOpMode {
 
     // Declare OpMode members.
 
+   private Servo LegServo
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
