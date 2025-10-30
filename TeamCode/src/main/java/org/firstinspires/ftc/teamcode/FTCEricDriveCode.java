@@ -159,18 +159,33 @@ public class FTCEricDriveCode extends LinearOpMode {
             ///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.a || gamepad1.a) {
-                intakePosition = intake.getCurrentPosition() + 30;
+                intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                int intakeForward = intake.getCurrentPosition() + 30;
+                intakePosition = intakeForward;
+                intake.setTargetPosition(intakePosition);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             }
             else if(gamepad2.b || gamepad1.b) {
-                intakePosition = intake.getCurrentPosition() + 30;
+                intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                int intakeBack = intake.getCurrentPosition() - 30;
+                intakePosition = intakeBack;
+                intake.setTargetPosition(intakePosition);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             }
             else {
+                intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                int intakeStay = intake.getCurrentPosition();
+                intakePosition = intakeStay;
+                intake.setTargetPosition(intakePosition);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                intakePosition = intake.getCurrentPosition();
             }
 
 
@@ -178,10 +193,7 @@ public class FTCEricDriveCode extends LinearOpMode {
 
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
-            intake.setTargetPosition(intakePosition);
-            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            transfer.setTargetPosition(transferPosition);
-            transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             telemetry.addData("Transfer Position", transferPosition);
             telemetry.addData("Short Target Velocity", close_launch_speed);
             telemetry.addData("Long Target Velocity", long_launch_speed);
