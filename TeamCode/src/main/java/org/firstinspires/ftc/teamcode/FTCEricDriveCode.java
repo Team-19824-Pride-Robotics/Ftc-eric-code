@@ -165,7 +165,7 @@ public class FTCEricDriveCode extends LinearOpMode {
                 intakePosition = intakeForward;
                 intake.setTargetPosition(intakePosition);
                 intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+                //WE use a encoder so the motor can go to a specific position. Since the Encoder can tell you the extact position of the motor. So tell it to go to that data and BOOM [this is for eric]
 
             }
             else if(gamepad2.b || gamepad1.b) {
