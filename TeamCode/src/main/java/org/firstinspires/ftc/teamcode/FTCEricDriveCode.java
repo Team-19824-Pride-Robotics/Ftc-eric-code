@@ -178,10 +178,10 @@ public class FTCEricDriveCode extends LinearOpMode {
 
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
-            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             intake.setTargetPosition(intakePosition);
-            transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             transfer.setTargetPosition(transferPosition);
+            transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             telemetry.addData("Transfer Position", transferPosition);
             telemetry.addData("Short Target Velocity", close_launch_speed);
             telemetry.addData("Long Target Velocity", long_launch_speed);
