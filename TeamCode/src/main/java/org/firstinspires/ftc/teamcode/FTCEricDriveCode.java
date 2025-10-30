@@ -13,13 +13,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-
+@TeleOp(name="FTCEricdrivecode")
+@Configurable
 
 
 
 public class FTCEricDriveCode extends LinearOpMode {
 
     // Declare OpMode members.
+    int test = 0;
+    int intakeBack;
 
    private Servo LegServo;
     private DcMotor FL;
@@ -70,13 +73,15 @@ public class FTCEricDriveCode extends LinearOpMode {
         
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "transfer");
-
+        LegServo = hardwareMap.get(Servo.class, "LegServo");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 //        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 //        limelight.pipelineSwitch(8); //this is the april tag
@@ -159,34 +164,24 @@ public class FTCEricDriveCode extends LinearOpMode {
             ///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.a || gamepad1.a) {
-                intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                int intakeForward = intake.getCurrentPosition() + 30;
+
+                int intakeForward = intake.getCurrentPosition() + 200;
                 intakePosition = intakeForward;
-                intake.setTargetPosition(intakePosition);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //WE use a encoder so the motor can go to a specific position. Since the Encoder can tell you the extact position of the motor. So tell it to go to that data and BOOM [this is for eric]
+                intake.setPower(.4);
 
             }
             else if(gamepad2.b || gamepad1.b) {
-                intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                int intakeBack = intake.getCurrentPosition() - 30;
+
+                intakeBack = intake.getCurrentPosition() - 200;
                 intakePosition = intakeBack;
-                intake.setTargetPosition(intakePosition);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                test = test +1;
+                intake.setPower(.4);
 
 
             }
-            else {
-                intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                int intakeStay = intake.getCurrentPosition();
-                intakePosition = intakeStay;
-                intake.setTargetPosition(intakePosition);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            }
+            intake.setTargetPosition(intakePosition);
+            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
 ///////////////////MOTOR CONTROLS///////////////////////////////////
@@ -201,6 +196,12 @@ public class FTCEricDriveCode extends LinearOpMode {
             telemetry.addData("Current Velocity", fly2.getVelocity());
             telemetry.addData("flywheel1 power", fly1.getPower());
             telemetry.addData("flywheel2 power", fly2.getPower());
+            telemetry.addData("test", test);
+            telemetry.addData("intake back", intakeBack);
+            telemetry.addData("intake position", intakePosition);
+            telemetry.addData("actual intake pos", intake.getCurrentPosition());
+            telemetry.addData("actual target pos", intake.getTargetPosition());
+            telemetry.addData("intake power", intake.getPower());
             telemetry.update();
             
         }
