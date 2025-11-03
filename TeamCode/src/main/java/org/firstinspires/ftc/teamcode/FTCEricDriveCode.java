@@ -34,7 +34,7 @@ public class FTCEricDriveCode extends LinearOpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
     private Limelight3A limelight;
-    private IMU imu;
+//    private IMU imu;
 
 
     //Declare variables
@@ -85,11 +85,11 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 //        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 //        limelight.pipelineSwitch(8); //this is the april tag
-        imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
-        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
+//        imu = hardwareMap.get(IMU.class, "imu");
+//        RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
+//        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
 
        // Wait for the game to start (driver presses START)
         waitForStart();
