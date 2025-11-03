@@ -68,7 +68,7 @@ public class FTCEricDriveCode extends LinearOpMode {
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
 
-        BR.setDirection(DcMotor.Direction.REVERSE);
+        BL.setDirection(DcMotor.Direction.REVERSE);
 
         
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -142,46 +142,57 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
-            if(gamepad2.y){
+            if(gamepad2.y) {
                     transferPosition = transfer.getCurrentPosition() + 30;
 
-            }else if(gamepad2.x){
-                transferPosition = transfer.getCurrentPosition() - 30;
-            }else{
-                transferPosition = transfer.getCurrentPosition();
-            }
-            if (gamepad2.start){
+                    transfer.setPower(transferOn);
 
+            }
+
+            else if(gamepad2.x) {
+                transferPosition = transfer.getCurrentPosition() - 30;
+                transfer.setPower(transferback);
+            }
+
+            else {
+                transfer.setPower(0);
+            }
+
+
+            if (gamepad2.start){
                 LegServo.setPosition(Balldown);
             }
             else {
-
                 LegServo.setPosition(0);
             }
-            //ARUA
+
 
 
             ///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.a || gamepad1.a) {
 
-                int intakeForward = intake.getCurrentPosition() + 200;
-                intakePosition = intakeForward;
+//                int intakeForward = intake.getCurrentPosition() + 200;
+//                intakePosition = intakeForward;
                 //WE use a encoder so the motor can go to a specific position. Since the Encoder can tell you the extact position of the motor. So tell it to go to that data and BOOM [this is for eric]
-                intake.setPower(.4);
+                intake.setPower(intakeOn);
 
             }
             else if(gamepad2.b || gamepad1.b) {
 
-                intakeBack = intake.getCurrentPosition() - 200;
-                intakePosition = intakeBack;
-                test = test +1;
-                intake.setPower(.4);
+//                intakeBack = intake.getCurrentPosition() - 200;
+//                intakePosition = intakeBack;
+//                test = test +1;
+                intake.setPower(-.4);
 
 
             }
-            intake.setTargetPosition(intakePosition);
-            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            else {
+                intake.setPower(0);
+            }
+//            intake.setTargetPosition(intakePosition);
+//            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
 ///////////////////MOTOR CONTROLS///////////////////////////////////
