@@ -106,8 +106,8 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-            double rx = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double x = gamepad1.right_stick_x;
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
 
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -142,16 +142,18 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
-            if(gamepad2.y) {
-                    transferPosition = transfer.getCurrentPosition() + 30;
-
-                    transfer.setPower(transferOn);
+            if(gamepad2.left_bumper) {
+//                    transferPosition = transfer.getCurrentPosition() + 30;
+//
+//                    transfer.setPower(transferOn);
+                transfer.setPower(1);
 
             }
 
-            else if(gamepad2.x) {
-                transferPosition = transfer.getCurrentPosition() - 30;
-                transfer.setPower(transferback);
+            else if(gamepad2.right_bumper) {
+//                transferPosition = transfer.getCurrentPosition() - 30;
+//                transfer.setPower(transferback);
+                transfer.setPower(-1);
             }
 
             else {
@@ -193,6 +195,21 @@ public class FTCEricDriveCode extends LinearOpMode {
             }
 //            intake.setTargetPosition(intakePosition);
 //            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            if (gamepad2.dpad_left || gamepad1.dpad_left) {
+
+                FL.setPower(-.1);
+                FR.setPower(.1);
+                BL.setPower(-.1);
+                BR.setPower(.1);
+            }
+            if (gamepad2.dpad_right || gamepad1.dpad_right) {
+
+                FL.setPower(.1);
+                FR.setPower(-.1);
+                BL.setPower(.1);
+                BR.setPower(-.1);
+            }
 
 
 ///////////////////MOTOR CONTROLS///////////////////////////////////
