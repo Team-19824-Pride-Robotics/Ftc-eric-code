@@ -198,17 +198,17 @@ public class FTCEricDriveCode extends LinearOpMode {
 
             if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
-                FL.setPower(-.1);
-                FR.setPower(.1);
-                BL.setPower(-.1);
-                BR.setPower(.1);
+                FL.setPower(-.3);
+                FR.setPower(.3);
+                BL.setPower(-.3);
+                BR.setPower(.3);
             }
             if (gamepad2.dpad_right || gamepad1.dpad_right) {
 
-                FL.setPower(.1);
-                FR.setPower(-.1);
-                BL.setPower(.1);
-                BR.setPower(-.1);
+                FL.setPower(.3);
+                FR.setPower(-.3);
+                BL.setPower(.3);
+                BR.setPower(-.3);
             }
 
 
