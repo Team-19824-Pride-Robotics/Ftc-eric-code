@@ -127,15 +127,19 @@ public class FTCEricDriveCode extends LinearOpMode {
             if (gamepad2.right_trigger > .1) {
                 fly1Speed = close_launch_speed;
                 fly2Speed = close_launch_speed;
+                LegServo.setPosition(0);
             }
             else if (gamepad2.left_trigger > .1) {
+                LegServo.setPosition(0);
                 fly1Speed = long_launch_speed;
                 fly2Speed = long_launch_speed;
 
             }else if (gamepad2.x){
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
+                LegServo.setPosition(0);
             } else {
+                LegServo.setPosition(.3);
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
@@ -161,12 +165,7 @@ public class FTCEricDriveCode extends LinearOpMode {
             }
 
 
-            if (gamepad2.start){
-                LegServo.setPosition(Balldown);
-            }
-            else {
-                LegServo.setPosition(0);
-            }
+
 
 
 
@@ -198,18 +197,33 @@ public class FTCEricDriveCode extends LinearOpMode {
 
             if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
-                FL.setPower(-.3);
-                FR.setPower(.3);
-                BL.setPower(-.3);
-                BR.setPower(.3);
+                FL.setPower(-.2);
+                FR.setPower(.2);
+                BL.setPower(-.2);
+                BR.setPower(.2);
             }
             if (gamepad2.dpad_right || gamepad1.dpad_right) {
 
-                FL.setPower(.3);
-                FR.setPower(-.3);
-                BL.setPower(.3);
-                BR.setPower(-.3);
+                FL.setPower(.2);
+                FR.setPower(-.2);
+                BL.setPower(.2);
+                BR.setPower(-.2);
             }
+            if (gamepad2.dpad_up || gamepad1.dpad_up) {
+
+                FL.setPower(.2);
+                FR.setPower(.2);
+                BL.setPower(.2);
+                BR.setPower(.2);
+            }
+            if (gamepad2.dpad_down || gamepad1.dpad_down) {
+
+                FL.setPower(-.2);
+                FR.setPower(-.2);
+                BL.setPower(-.2);
+                BR.setPower(-.2);
+            }
+
 
 
 ///////////////////MOTOR CONTROLS///////////////////////////////////
