@@ -12,11 +12,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
 @TeleOp(name="FTCEricdrivecode")
 @Configurable
-
-
 
 public class FTCEricDriveCode extends LinearOpMode {
 
