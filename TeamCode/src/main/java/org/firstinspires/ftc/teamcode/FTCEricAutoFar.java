@@ -2,20 +2,17 @@ package org.firstinspires.ftc.teamcode;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 @Configurable
 public class FTCEricAutoFar extends LinearOpMode {
     double seconds = 0;
-    private static double driveTime = 3;
+    private static double driveTime = 1;
     private static double power = 0.5;
     @Override
     public void runOpMode() throws InterruptedException {
-
 
         // Initialize the hardware variables.
 
@@ -24,9 +21,6 @@ public class FTCEricAutoFar extends LinearOpMode {
         DcMotor FL = hardwareMap.get(DcMotor.class, "FL");
         DcMotor FR = hardwareMap.get(DcMotor.class, "FR");
 
-        BL.setDirection(DcMotor.Direction.REVERSE);
-
-
         waitForStart();
 
         if (isStopRequested()) return;
@@ -34,8 +28,8 @@ public class FTCEricAutoFar extends LinearOpMode {
         timer.reset();
         timer.startTime();
 
-        while (seconds < driveTime) {
-            seconds = timer.seconds();
+        while (timer.seconds() < driveTime) {
+
             BL.setPower(power);
             BR.setPower(power);
             FL.setPower(power);
