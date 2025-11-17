@@ -131,11 +131,13 @@ public class FTCEricDriveCode extends LinearOpMode {
                 fly1Speed = long_launch_speed;
                 fly2Speed = long_launch_speed;
 
-            }else if (gamepad2.x){
+            }
+            else if (gamepad2.x){
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
-                LegServo.setPosition(0);
-            } else {
+                LegServo.setPosition(0.3);
+            }
+            else {
                 LegServo.setPosition(.3);
                 fly1Speed = 0;
                 fly2Speed = 0;
