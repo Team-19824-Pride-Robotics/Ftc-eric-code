@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous
 @Configurable
 public class launchAuto extends LinearOpMode {
-    double seconds = 0;
     private static double driveTime = 0.75;
     private static double power = 0.5;
     private DcMotor transfer;
@@ -18,6 +17,8 @@ public class launchAuto extends LinearOpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
     private Servo LegServo;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 

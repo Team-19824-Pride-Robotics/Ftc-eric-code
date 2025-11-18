@@ -42,6 +42,7 @@ public class FTCEricDriveCode extends LinearOpMode {
     public static double close_launch_speed = 1650;
     public static double intakeOn = 1;
     public static double transferOn = 1;
+    public static double transferTime = 0.25;
     double fly1Speed = 0;
     double fly2Speed = 0;
     int intakePosition = 0;
@@ -88,6 +89,10 @@ public class FTCEricDriveCode extends LinearOpMode {
 //                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
 //        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
 
+        //declare our timer for use in transfer mechanism
+        ElapsedTime timer = new ElapsedTime();
+
+
        // Wait for the game to start (driver presses START)
         waitForStart();
 
@@ -122,9 +127,10 @@ public class FTCEricDriveCode extends LinearOpMode {
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
             if (gamepad2.right_trigger > .1) {
+                LegServo.setPosition(0);
                 fly1Speed = close_launch_speed;
                 fly2Speed = close_launch_speed;
-                LegServo.setPosition(0);
+
             }
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(0);
@@ -138,7 +144,7 @@ public class FTCEricDriveCode extends LinearOpMode {
                 LegServo.setPosition(0.3);
             }
             else {
-                LegServo.setPosition(.3);
+                LegServo.setPosition(0.3);
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
@@ -146,16 +152,20 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
             if(gamepad2.left_bumper) {
-//                    transferPosition = transfer.getCurrentPosition() + 30;
-//
-//                    transfer.setPower(transferOn);
-                transfer.setPower(1);
+                timer.reset();
+
+                //run the transfer for a short burst!
+                if(timer.seconds() < transferTime) {
+                    transfer.setPower(1);
+                }
+                else {
+                    transfer.setPower(0);
+                }
 
             }
 
             else if(gamepad2.right_bumper) {
-//                transferPosition = transfer.getCurrentPosition() - 30;
-//                transfer.setPower(transferback);
+
                 transfer.setPower(-1);
             }
 
