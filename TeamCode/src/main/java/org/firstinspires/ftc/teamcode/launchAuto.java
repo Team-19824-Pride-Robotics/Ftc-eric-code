@@ -18,6 +18,8 @@ public class launchAuto extends LinearOpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
     private Servo LegServo;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -45,21 +47,15 @@ public class launchAuto extends LinearOpMode {
         timer.reset();
         timer.startTime();
         while (timer.seconds() >0 && timer.seconds()<2) {
-//
-//            BL.setPower(-power);
-//            BR.setPower(power);
-//            FL.setPower(power);
-//            FR.setPower(power);
             fly1.setVelocity(2800);
             fly2.setVelocity(2800);
             LegServo.setPosition(.3);
         }
-
-        while (timer.seconds() >2 && timer.seconds()<2.10) {
+        while (timer.seconds() >2 && timer.seconds()<2.25) {
 
             transfer.setPower(1);
         }
-        while (timer.seconds() >2.10 && timer.seconds()<3.25) {
+        while (timer.seconds() >2.25 && timer.seconds()<3.25) {
 
             transfer.setPower(0);
         }
@@ -69,11 +65,11 @@ public class launchAuto extends LinearOpMode {
             intake.setPower(1);
         }
         ///////////////// Second Reapeat //////////////////////
-        while (timer.seconds() >3.50 && timer.seconds()<3.75) {
+        while (timer.seconds() >2.25 && timer.seconds()<3.25) {
 
             transfer.setPower(0);
         }
-        while (timer.seconds() >3.75 && timer.seconds()<4.00) {
+        while (timer.seconds() >3.25 && timer.seconds()<3.50) {
 
             transfer.setPower(1);
             LegServo.setPosition(0);
@@ -82,7 +78,7 @@ public class launchAuto extends LinearOpMode {
 
         }
 
-        while (timer.seconds() >4.00 && timer.seconds()<4.75) {
+        while (timer.seconds() >3.50 && timer.seconds()<4.25) {
 
             BL.setPower(-power);
             BR.setPower(power);
