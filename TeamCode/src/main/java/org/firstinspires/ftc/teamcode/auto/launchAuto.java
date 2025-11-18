@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous
 @Configurable
 public class launchAuto extends LinearOpMode {
-    private static double driveTime = 0.75;
     private static double power = 0.5;
-    private DcMotor transfer;
+    private DcMotorEx transfer;
     private DcMotor intake;
     private DcMotorEx fly1;
     private DcMotorEx fly2;
@@ -29,7 +28,7 @@ public class launchAuto extends LinearOpMode {
         DcMotor FL = hardwareMap.get(DcMotor.class, "FL");
         DcMotor FR = hardwareMap.get(DcMotor.class, "FR");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        transfer = hardwareMap.get(DcMotor.class, "transfer");
+        transfer = hardwareMap.get(DcMotorEx.class, "transfer");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         LegServo = hardwareMap.get(Servo.class, "LegServo");
@@ -71,7 +70,7 @@ public class launchAuto extends LinearOpMode {
             transfer.setPower(1);
             intake.setPower(1);
         }
-        ///////////////// Second Reapeat //////////////////////
+        ///////////////// Second Repeat //////////////////////
         while (timer.seconds() >4.25 && timer.seconds()<5.25) {
 
             transfer.setPower(0);

@@ -17,11 +17,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class FTCEricDriveCode extends LinearOpMode {
 
-    // Declare OpMode members.
-    int test = 0;
-    int intakeBack;
 
-   private Servo LegServo;
+
+    private Servo LegServo;
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -37,7 +35,6 @@ public class FTCEricDriveCode extends LinearOpMode {
     //Declare variables
 
     public static double backOffSpeed = -600;
-    public static double transferback = -1;
     public static double long_launch_speed = 2110;
     public static double close_launch_speed = 1650;
     public static double intakeOn = 0.5;
@@ -46,9 +43,6 @@ public class FTCEricDriveCode extends LinearOpMode {
     double fly2Speed = 0;
     int transferPosition = 0;
 
-    int indexPosition;
-    final double TURN_GAIN = 0.01;
-    final double MAX_AUTO_TURN = 0.3;
 
 
     @Override
@@ -159,20 +153,14 @@ public class FTCEricDriveCode extends LinearOpMode {
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.a || gamepad1.a) {
-
                 intake.setPower(intakeOn);
-
             }
             else if(gamepad2.b || gamepad1.b) {
-
-                intake.setPower(-.4);
-
+                intake.setPower(-0.4);
             }
-
             else {
                 intake.setPower(0);
             }
-
 
             if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
