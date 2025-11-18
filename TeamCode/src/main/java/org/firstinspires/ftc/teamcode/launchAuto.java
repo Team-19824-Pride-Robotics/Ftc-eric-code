@@ -45,30 +45,38 @@ public class launchAuto extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
         timer.startTime();
-        while (timer.seconds() >0 && timer.seconds()<2) {
+
+        while (timer.seconds() >0 && timer.seconds()<0.75) {
+
+            BL.setPower(-power);
+            BR.setPower(power);
+            FL.setPower(power);
+            FR.setPower(power);
+        }
+        while (timer.seconds() >0.75 && timer.seconds()<2.75) {
             fly1.setVelocity(2800);
             fly2.setVelocity(2800);
             LegServo.setPosition(.3);
         }
-        while (timer.seconds() >2 && timer.seconds()<2.25) {
+        while (timer.seconds() >2.75 && timer.seconds()<3.00) {
 
             transfer.setPower(1);
         }
-        while (timer.seconds() >2.25 && timer.seconds()<3.25) {
+        while (timer.seconds() >3.00 && timer.seconds()<4.00) {
 
             transfer.setPower(0);
         }
-        while (timer.seconds() >3.25 && timer.seconds()<3.50) {
+        while (timer.seconds() >4.00 && timer.seconds()<4.25) {
 
             transfer.setPower(1);
             intake.setPower(1);
         }
         ///////////////// Second Reapeat //////////////////////
-        while (timer.seconds() >2.25 && timer.seconds()<3.25) {
+        while (timer.seconds() >4.25 && timer.seconds()<5.25) {
 
             transfer.setPower(0);
         }
-        while (timer.seconds() >3.25 && timer.seconds()<3.50) {
+        while (timer.seconds() >5.25 && timer.seconds()<5.50) {
 
             transfer.setPower(1);
             LegServo.setPosition(0);
