@@ -40,16 +40,11 @@ public class FTCEricDriveCode extends LinearOpMode {
     public static double transferback = -1;
     public static double long_launch_speed = 2110;
     public static double close_launch_speed = 1650;
-    public static double intakeOn = 1;
-    public static double transferOn = 1;
-    public static double transferTime = 0.25;
+    public static double intakeOn = 0.5;
+    public static int transferBump = 250;
     double fly1Speed = 0;
     double fly2Speed = 0;
-    int intakePosition = 0;
-    double transferSpeed = 0;
-    double transferRuntime = 3;
-    double Balldown = 0.6;
-    int transferPosition;
+    int transferPosition = 0;
 
     int indexPosition;
     final double TURN_GAIN = 0.01;
@@ -78,8 +73,8 @@ public class FTCEricDriveCode extends LinearOpMode {
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        intake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        transfer.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        transfer.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 //        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 //        limelight.pipelineSwitch(8); //this is the april tag
@@ -89,8 +84,7 @@ public class FTCEricDriveCode extends LinearOpMode {
 //                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
 //        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
 
-        //declare our timer for use in transfer mechanism
-        ElapsedTime timer = new ElapsedTime();
+
 
 
        // Wait for the game to start (driver presses START)
@@ -152,57 +146,33 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
             if(gamepad2.left_bumper) {
-                timer.reset();
-
-                //run the transfer for a short burst!
-                if(timer.seconds() < transferTime) {
-                    transfer.setPower(1);
-                }
-                else {
-                    transfer.setPower(0);
-                }
-
+                transferPosition += transferBump;
+                runTransfer(transferPosition);
             }
 
             else if(gamepad2.right_bumper) {
-
-                transfer.setPower(-1);
-            }
-
-            else {
-                transfer.setPower(0);
+                transferPosition -= transferBump;
+                runTransfer(transferPosition);
             }
 
 
-
-
-
-
-            ///////////////////INTAKE CONTROLS///////////////////////////////////
+///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad2.a || gamepad1.a) {
 
-//                int intakeForward = intake.getCurrentPosition() + 200;
-//                intakePosition = intakeForward;
-                //WE use a encoder so the motor can go to a specific position. Since the Encoder can tell you the extact position of the motor. So tell it to go to that data and BOOM [this is for eric]
                 intake.setPower(intakeOn);
 
             }
             else if(gamepad2.b || gamepad1.b) {
 
-//                intakeBack = intake.getCurrentPosition() - 200;
-//                intakePosition = intakeBack;
-//                test = test +1;
                 intake.setPower(-.4);
-
 
             }
 
             else {
                 intake.setPower(0);
             }
-//            intake.setTargetPosition(intakePosition);
-//            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
             if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
@@ -240,6 +210,8 @@ public class FTCEricDriveCode extends LinearOpMode {
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
 
+
+
             telemetry.addData("Transfer Position", transferPosition);
             telemetry.addData("Short Target Velocity", close_launch_speed);
             telemetry.addData("Long Target Velocity", long_launch_speed);
@@ -247,14 +219,19 @@ public class FTCEricDriveCode extends LinearOpMode {
             telemetry.addData("Current Velocity", fly2.getVelocity());
             telemetry.addData("flywheel1 power", fly1.getPower());
             telemetry.addData("flywheel2 power", fly2.getPower());
-            telemetry.addData("test", test);
-            telemetry.addData("intake back", intakeBack);
-            telemetry.addData("intake position", intakePosition);
-            telemetry.addData("actual intake pos", intake.getCurrentPosition());
-            telemetry.addData("actual target pos", intake.getTargetPosition());
-            telemetry.addData("intake power", intake.getPower());
             telemetry.update();
             
         }
-    }  
+    }
+
+    public void runTransfer(int newTransferPosition) {
+        transfer.setTargetPosition(newTransferPosition);
+        transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        transfer.setPower(1);
+        while (transfer.isBusy()) {
+            //wait for the motor to reach its target position
+        }
+        transfer.setPower(0);
+        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 }
