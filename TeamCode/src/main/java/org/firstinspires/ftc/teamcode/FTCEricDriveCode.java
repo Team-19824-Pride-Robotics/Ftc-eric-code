@@ -140,13 +140,18 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
             if(gamepad2.left_bumper) {
-                transferPosition += transferBump;
-                runTransfer(transferPosition);
+//                transferPosition += transferBump;
+//                runTransfer(transferPosition);
+                  transfer.setPower(1);
             }
 
             else if(gamepad2.right_bumper) {
-                transferPosition -= transferBump;
-                runTransfer(transferPosition);
+//                transferPosition -= transferBump;
+//                runTransfer(transferPosition);
+                  transfer.setPower(-1);
+            }
+            else {
+                transfer.setPower(0);
             }
 
 
