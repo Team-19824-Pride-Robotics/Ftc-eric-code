@@ -24,7 +24,7 @@ public class auto_TEMPLATE extends OpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
 
-    public static double flySpeed = 2000;
+    public static double flySpeed = 1700;
     public static double launchTime = 5;
     public static double spinUpTime = 2;
     private Follower follower;
