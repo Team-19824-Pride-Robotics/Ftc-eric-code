@@ -33,11 +33,11 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
     //Declare variables
-
+    public static double speedReducer = 0.75;
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 2110;
     public static double close_launch_speed = 1650;
-    public static double intakeOn = 0.5;
+    public static double intakeOn = 0.75;
     public static int transferBump = 250;
     double fly1Speed = 0;
     double fly2Speed = 0;
@@ -56,6 +56,10 @@ public class FTCEricDriveCode extends LinearOpMode {
         FR = hardwareMap.get(DcMotor.class, "FR");
 
         BL.setDirection(DcMotor.Direction.REVERSE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -101,15 +105,15 @@ public class FTCEricDriveCode extends LinearOpMode {
 
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double leftFrontPower = (y + x + rx) / denominator;
-            double leftBackPower = (y - x + rx) / denominator;
-            double rightFrontPower = (y - x - rx) / denominator;
-            double rightBackPower = (y + x - rx) / denominator;
+            double leftFrontPower = ((y + x + rx) / denominator);
+            double leftBackPower = ((y - x + rx) / denominator);
+            double rightFrontPower = ((y - x - rx) / denominator);
+            double rightBackPower = ((y + x - rx) / denominator);
 
-            FL.setPower(leftFrontPower);
-            BL.setPower(leftBackPower);
-            FR.setPower(rightFrontPower);
-            BR.setPower(rightBackPower);
+            FL.setPower(leftFrontPower * speedReducer);
+            BL.setPower(leftBackPower * speedReducer);
+            FR.setPower(rightFrontPower * speedReducer);
+            BR.setPower(rightBackPower * speedReducer);
 
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////

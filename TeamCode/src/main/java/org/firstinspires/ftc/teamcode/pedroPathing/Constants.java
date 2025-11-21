@@ -32,13 +32,12 @@ public class Constants {
                 0.01,
                 0))
         .drivePIDFCoefficients(new FilteredPIDFCoefficients(
-                1,
+                0.6,
                 0,
-                0,
-                0,
-                0.0))
-        .centripetalScaling(0.005);
-
+                0.01,
+                0.6,
+                0.07))
+        .centripetalScaling(0.001);
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -54,7 +53,11 @@ public class Constants {
             .xVelocity(78.7)
             .yVelocity(60.5);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.99,
+            100,
+            3.9,
+            1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
