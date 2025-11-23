@@ -132,8 +132,17 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 //use math to find the distance from the April Tag
                 distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
 
-                //get the x offset from the AprilTag, how far to the left or right is the center of the camera?
-                turnCorrection = llResult.getTx() * p_turn;  //tune p_turn so that the correction doesn't overdo it
+                //if pressing right bumper, get the x offset from the AprilTag, how far to the left or right is the center of the camera?
+
+                if (gamepad1.right_bumper) {
+
+                    turnCorrection = llResult.getTx() * p_turn;  //tune p_turn so that the correction doesn't overdo it
+
+                }
+
+                else {
+                    turnCorrection = 0;
+                }
             }
             else {
                 distance = 140;

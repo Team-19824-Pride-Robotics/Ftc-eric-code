@@ -111,8 +111,17 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
                 Pose3D botPose = llResult.getBotpose();
                 telemetry.addData("X_offset", llResult.getTx());
 
-           //get the x offset from the AprilTag, how far to the left or right is the center of the camera?
-                turnCorrection = llResult.getTx() * p_turn;  //tune p_turn so that the correction doesn't overdo it
+           //if pressing right bumper, get the x offset from the AprilTag, how far to the left or right is the center of the camera?
+
+                if (gamepad1.right_bumper) {
+
+                    turnCorrection = llResult.getTx() * p_turn;  //tune p_turn so that the correction doesn't overdo it
+
+                }
+
+                else {
+                    turnCorrection = 0;
+                }
             }
             else {
                 turnCorrection = 0;
@@ -143,7 +152,7 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
 
             }
 
-        //if the x offset is small,
+        //if the x offset is small, drive normally
             else {
 
                 leftFrontPower = ((y + x + rx) / denominator);
@@ -182,6 +191,9 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
+
+            fly1.setVelocity(fly1Speed);
+            fly2.setVelocity(fly2Speed);
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
@@ -244,20 +256,11 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
 
 
 
-///////////////////MOTOR CONTROLS///////////////////////////////////
-
-            fly1.setVelocity(fly1Speed);
-            fly2.setVelocity(fly2Speed);
 
 
-
-            telemetry.addData("Transfer Position", transferPosition);
-            telemetry.addData("Short Target Velocity", close_launch_speed);
-            telemetry.addData("Long Target Velocity", long_launch_speed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
-            telemetry.addData("flywheel1 power", fly1.getPower());
-            telemetry.addData("flywheel2 power", fly2.getPower());
+
             telemetry.update();
             
         }
