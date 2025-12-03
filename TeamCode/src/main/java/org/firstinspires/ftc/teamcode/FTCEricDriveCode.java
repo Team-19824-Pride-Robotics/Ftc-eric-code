@@ -35,8 +35,8 @@ public class FTCEricDriveCode extends LinearOpMode {
     //Declare variables
     public static double speedReducer = 0.75;
     public static double backOffSpeed = -600;
-    public static double long_launch_speed = 2110;
-    public static double close_launch_speed = 1650;
+    public static double long_launch_speed = 1810;
+    public static double close_launch_speed = 1350;
     public static double intakeOn = 0.75;
     public static int transferBump = 250;
     double fly1Speed = 0;

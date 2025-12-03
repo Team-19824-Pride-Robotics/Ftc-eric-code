@@ -48,46 +48,39 @@ public class auto_BLUESIDE extends OpMode {
     public void buildPaths() {
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
         scorePreload = new Path(new BezierLine(startPose, scorePose));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+        scorePreload.setConstantHeadingInterpolation(startPose.getHeading());
 
     /* Here is an example for Constant Interpolation
-    scorePreload.setConstantInterpolation(startPose.getHeading()); */
+    scorePreload.setConstantHeadingInterpolation(startPose.getHeading()); */
 
-        /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        /* This is our grabPickup1 PathChain.*/
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, lineup1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), lineup1Pose.getHeading())
+                .addPath(new BezierLine(lineup1Pose, gobble1Pose))
+                .setConstantHeadingInterpolation(lineup1Pose.getHeading())
                 .build();
 
-        /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        /* This is our scorePickup1 PathChain.*/
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(lineup1Pose, scorePose))
-                .setLinearHeadingInterpolation(lineup1Pose.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(gobble1Pose, scorePose))
+                .setLinearHeadingInterpolation(gobble1Pose.getHeading(), scorePose.getHeading())
                 .build();
 
-        /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        /* This is our grabPickup2 PathChain.*/
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup2Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(scorePose, lineup2Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup2Pose.getHeading())
+                .addPath(new BezierLine(lineup2Pose, gobble2Pose))
+                .setConstantHeadingInterpolation(lineup2Pose.getHeading())
                 .build();
 
-        /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        /* This is our scorePickup2 PathChain.*/
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Pose, scorePose))
-                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(lineup2Pose, scorePose))
+                .setLinearHeadingInterpolation(lineup2Pose.getHeading(), scorePose.getHeading())
                 .build();
 
-        /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-        grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup3Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
-                .build();
-
-        /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-        scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup3Pose, scorePose))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
-                .build();
     }
 
 
@@ -108,9 +101,11 @@ public class auto_BLUESIDE extends OpMode {
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Score Preload */
+                    /* Score Preload
+                    * Do we need to use a separate timer here to make it wait until we're done scoring???
+                    * like reset pathTimer and then wait until enough time has passed before calling "followpath"?*/
                     launchArtifacts();
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the artifacts */
                     follower.followPath(grabPickup1,true);
                     setPathState(2);
                 }
@@ -118,7 +113,8 @@ public class auto_BLUESIDE extends OpMode {
             case 2:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
-                    /* Grab Sample */
+                    /* Turn on the intake */
+                    intakeArtifacts();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup1,true);
@@ -129,7 +125,7 @@ public class auto_BLUESIDE extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Sample */
-
+                    launchArtifacts();
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup2,true);
                     setPathState(4);
@@ -139,7 +135,7 @@ public class auto_BLUESIDE extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
-
+                    intakeArtifacts();
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup2,true);
                     setPathState(5);
@@ -149,10 +145,10 @@ public class auto_BLUESIDE extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Sample */
-
+                    launchArtifacts();
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup3,true);
-                    setPathState(6);
+                    setPathState(-1);
                 }
                 break;
             case 6:
