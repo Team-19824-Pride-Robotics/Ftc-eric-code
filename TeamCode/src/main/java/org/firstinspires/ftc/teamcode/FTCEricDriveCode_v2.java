@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name="FTCEricdrivecode")
+@TeleOp(name="FTCEricdrivecode_v2")
 @Configurable
 
 public class FTCEricDriveCode_v2 extends LinearOpMode {

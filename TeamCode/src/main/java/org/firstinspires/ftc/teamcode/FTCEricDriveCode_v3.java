@@ -13,7 +13,7 @@ import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-@TeleOp(name="FTCEricdrivecode")
+@TeleOp(name="FTCEricdrivecode_v3")
 @Configurable
 
 public class FTCEricDriveCode_v3 extends LinearOpMode {
