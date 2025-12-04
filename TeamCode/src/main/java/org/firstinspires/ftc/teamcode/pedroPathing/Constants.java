@@ -58,7 +58,7 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
             100,
-            0.1,
+            1.4,
             1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
