@@ -102,30 +102,26 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
 
 
 ///////////////////LIMELIGHT SETUP//////////////////////////////////
-//            YawPitchRollAngles heading = imu.getRobotYawPitchRollAngles();
-//            limelight.updateRobotOrientation(heading.getYaw());
+
             LLResult llResult = limelight.getLatestResult();
 
             if (llResult != null && llResult.isValid()) {
 
-                Pose3D botPose = llResult.getBotpose();
-                telemetry.addData("X_offset", llResult.getTx());
-
-           //if pressing right bumper, get the x offset from the AprilTag, how far to the left or right is the center of the camera?
-
-                if (gamepad1.right_bumper) {
-
-                    turnCorrection = llResult.getTx() * p_turn;  //tune p_turn so that the correction doesn't overdo it
-
+                if (llResult.getTx() < -2) {
+                    turnCorrection = -1;
                 }
 
+                else if (llResult.getTx() > 2) {
+                    turnCorrection = 1;
+                }
+
+                //stop turning if you're facing the target
                 else {
                     turnCorrection = 0;
                 }
+
             }
-            else {
-                turnCorrection = 0;
-            }
+
 
 ///////////////////DRIVE CONTROLS///////////////////////////////////
 
@@ -142,17 +138,17 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
             double rightFrontPower;
             double rightBackPower;
 
-        //if the x offset is a lot, turn the robot so that it faces the target
-            if (turnCorrection > scoreZone) {
+        //if pressing the right bumper, turn the robot towards the target
+            if (gamepad1.right_bumper) {
 
-                leftFrontPower = (((y + x + rx) - turnCorrection) / denominator) ;
-                leftBackPower = (((y - x + rx) - turnCorrection) / denominator);
-                rightFrontPower = (((y - x - rx) + turnCorrection) / denominator);
-                rightBackPower = (((y + x - rx) / + turnCorrection) / denominator);
+                leftFrontPower = turnCorrection;
+                leftBackPower = turnCorrection;
+                rightFrontPower = -turnCorrection;
+                rightBackPower = -turnCorrection;
 
             }
 
-        //if the x offset is small, drive normally
+        //otherwise drive normally
             else {
 
                 leftFrontPower = ((y + x + rx) / denominator);
@@ -257,7 +253,7 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
 
 
 
-
+            telemetry.addData("X_offset", llResult.getTx());
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
 
