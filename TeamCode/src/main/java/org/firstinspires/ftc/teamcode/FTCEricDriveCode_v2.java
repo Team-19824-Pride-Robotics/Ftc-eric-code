@@ -107,20 +107,24 @@ public class FTCEricDriveCode_v2 extends LinearOpMode {
 
             if (llResult != null && llResult.isValid()) {
 
-                if (llResult.getTx() < -2) {
-                    turnCorrection = -1;
+                if (llResult.getTx() < -4) {
+                    turnCorrection = -0.25;
                 }
 
-                else if (llResult.getTx() > 2) {
-                    turnCorrection = 1;
+                else if (llResult.getTx() > 4) {
+                    turnCorrection = 0.25;
                 }
 
-                //stop turning if you're facing the target
+                //stop turning if you're facing the target (whether or not you can see AprilTag)
                 else {
                     turnCorrection = 0;
                 }
-
             }
+            else {
+                turnCorrection = 0;
+            }
+
+
 
 
 ///////////////////DRIVE CONTROLS///////////////////////////////////
