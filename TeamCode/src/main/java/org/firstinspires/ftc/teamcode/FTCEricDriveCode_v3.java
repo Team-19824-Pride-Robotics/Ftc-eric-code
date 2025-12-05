@@ -119,33 +119,26 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 
 //////////////////////LIMELIGHT SETUP//////////////////////////////////
-//            YawPitchRollAngles heading = imu.getRobotYawPitchRollAngles();
-//            limelight.updateRobotOrientation(heading.getYaw());
             LLResult llResult = limelight.getLatestResult();
+
+            distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
 
             if (llResult != null && llResult.isValid()) {
 
-                Pose3D botPose = llResult.getBotpose();
-
-                telemetry.addData("X_offset", llResult.getTx());
-
-                //use math to find the distance from the April Tag
-                distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
-
-                //if pressing right bumper, get the x offset from the AprilTag, how far to the left or right is the center of the camera?
-
-                if (gamepad1.right_bumper) {
-
-                    turnCorrection = llResult.getTx() * p_turn;  //tune p_turn so that the correction doesn't overdo it
-
+                if (llResult.getTx() < -4) {
+                    turnCorrection = -0.25;
                 }
 
+                else if (llResult.getTx() > 4) {
+                    turnCorrection = 0.25;
+                }
+
+                //stop turning if you're facing the target (whether or not you can see AprilTag)
                 else {
                     turnCorrection = 0;
                 }
             }
             else {
-                distance = 140;
                 turnCorrection = 0;
             }
 
@@ -163,17 +156,17 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             double rightFrontPower;
             double rightBackPower;
 
-        //if the x offset is a lot, turn the robot so that it faces the target
-            if (turnCorrection > scoreZone) {
+            //if pressing the right bumper, turn the robot towards the target
+            if (gamepad1.right_bumper) {
 
-                leftFrontPower = (((y + x + rx) - turnCorrection) / denominator) ;
-                leftBackPower = (((y - x + rx) - turnCorrection) / denominator);
-                rightFrontPower = (((y - x - rx) + turnCorrection) / denominator);
-                rightBackPower = (((y + x - rx)  + turnCorrection) / denominator);
+                leftFrontPower = turnCorrection;
+                leftBackPower = turnCorrection;
+                rightFrontPower = -turnCorrection;
+                rightBackPower = -turnCorrection;
 
             }
 
-        //if the x offset is small, drive normally
+            //otherwise drive normally
             else {
 
                 leftFrontPower = ((y + x + rx) / denominator);
