@@ -11,18 +11,25 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.ftc.NextFTCOpMode;
 
 @Autonomous(name = "auto_BLUESIDE")
 @Configurable
 
-public class auto_BLUESIDE extends OpMode {
+public class auto_BLUESIDE extends NextFTCOpMode {
 
     private DcMotorEx transfer;
     private DcMotor intake;
     private DcMotorEx fly1;
     private DcMotorEx fly2;
+    private Servo LegServo;
 
     public static double flySpeed = 1700;
     public static double launchTime = 5;
@@ -34,10 +41,10 @@ public class auto_BLUESIDE extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(136)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(55, 100, Math.toRadians(136)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(44, 84, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gobble1Pose = new Pose(15, 84, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose lineup2Pose = new Pose(44, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose gobble2Pose = new Pose(15, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose lineup1Pose = new Pose(55, 89, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose gobble1Pose = new Pose(20, 89, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose lineup2Pose = new Pose(55, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose gobble2Pose = new Pose(20, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
 
 
 
@@ -107,6 +114,7 @@ public class auto_BLUESIDE extends OpMode {
                     launchArtifacts();
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the artifacts */
                     follower.followPath(grabPickup1,true);
+
                     setPathState(2);
                 }
                 break;
@@ -114,10 +122,19 @@ public class auto_BLUESIDE extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
                     /* Turn on the intake */
-                    intakeArtifacts();
+
+
+
+
+
+
+                                intakeArtifacts();
+                                    follower.followPath(scorePickup1,true);
+
+
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(scorePickup1,true);
+
                     setPathState(3);
                 }
                 break;
@@ -211,6 +228,8 @@ public class auto_BLUESIDE extends OpMode {
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        LegServo = hardwareMap.get(Servo.class, "LegServo");
+
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
@@ -247,6 +266,7 @@ public class auto_BLUESIDE extends OpMode {
     public void launchArtifacts() {
         //spin up the flywheel for long enough to launch three artifacts
         actionTimer.resetTimer();
+        LegServo.setPosition(0);
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
                 fly1.setVelocity(flySpeed);
@@ -283,6 +303,7 @@ public class auto_BLUESIDE extends OpMode {
         fly2.setPower(0);
         fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LegServo.setPosition(0.3);
 
     }
 

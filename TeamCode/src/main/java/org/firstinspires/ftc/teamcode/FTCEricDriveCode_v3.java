@@ -218,7 +218,6 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 LegServo.setPosition(0);
                 fly1Speed = lut.get(distance);
                 fly2Speed = lut.get(distance);
-
             }
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(0);
