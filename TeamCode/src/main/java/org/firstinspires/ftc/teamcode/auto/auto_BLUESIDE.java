@@ -21,9 +21,14 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.ftc.NextFTCOpMode;
 
 @Autonomous(name = "auto_BLUESIDE")
+
 @Configurable
 
-public class auto_BLUESIDE extends NextFTCOpMode {
+public class auto_BLUESIDE extends PedroOpMode {
+
+    public AutonomousProgram() {
+        super(intake.INSTANCE, transfer.INSTANCE);
+    }
 
     private DcMotorEx transfer;
     private DcMotor intake;

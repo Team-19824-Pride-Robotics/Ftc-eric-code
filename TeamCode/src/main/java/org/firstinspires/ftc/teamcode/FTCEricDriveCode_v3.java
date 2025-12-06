@@ -37,7 +37,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double speedReducer = 0.75;
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1810;
-    public static double close_launch_speed = 1350;
+    public static double close_launch_speed = 1550;
     public static double intakeOn = 0.75;
     public static int transferBump = 250;
     public static double scoreZone = 1;
