@@ -121,9 +121,15 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 //////////////////////LIMELIGHT SETUP//////////////////////////////////
             LLResult llResult = limelight.getLatestResult();
 
-            distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
+
 
             if (llResult != null && llResult.isValid()) {
+
+                distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
+
+                if (distance > 150) {
+                    distance = 60;
+                }
 
                 if (llResult.getTx() < -4) {
                     turnCorrection = -0.25;
