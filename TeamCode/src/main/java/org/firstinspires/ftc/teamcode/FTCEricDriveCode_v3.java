@@ -146,6 +146,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             }
             else {
                 turnCorrection = 0;
+                distance = 60;
             }
 
 /////////////////////////DRIVE CONTROLS///////////////////////////////////
