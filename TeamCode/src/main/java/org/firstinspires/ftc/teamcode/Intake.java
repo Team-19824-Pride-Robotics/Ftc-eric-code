@@ -18,16 +18,11 @@ public class Intake {
     }
 
 
-    public void intake_on() {
+    public void update(double power) {
 
-        intake.setPower(0.75);
-
-    }
-
-    public void intake_off() {
-
-        intake.setPower(0.75);
+        intake.setPower(power);
 
     }
+
 
 }
