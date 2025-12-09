@@ -38,6 +38,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1810;
     public static double close_launch_speed = 1550;
+    public static double servo_closed = 0.4;
     public static double intakeOn = 0.75;
     public static int transferBump = 250;
     public static double scoreZone = 1;
@@ -95,6 +96,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        intake.setDirection(DcMotor.Direction.REVERSE);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(8); //this is the april tag
@@ -233,12 +235,17 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             }
             else if (gamepad2.x){
-                LegServo.setPosition(0.3);
+                LegServo.setPosition(servo_closed);
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
             }
+            else if (gamepad2.y) {
+                LegServo.setPosition(servo_closed);
+                fly1Speed = close_launch_speed;
+                fly2Speed = close_launch_speed;
+            }
             else {
-                LegServo.setPosition(0.3);
+                LegServo.setPosition(servo_closed);
                 fly1Speed = 0;
                 fly2Speed = 0;
             }
