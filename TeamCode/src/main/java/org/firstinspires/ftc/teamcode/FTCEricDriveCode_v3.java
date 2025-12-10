@@ -96,7 +96,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        intake.setDirection(DcMotor.Direction.REVERSE);
+        
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(8); //this is the april tag

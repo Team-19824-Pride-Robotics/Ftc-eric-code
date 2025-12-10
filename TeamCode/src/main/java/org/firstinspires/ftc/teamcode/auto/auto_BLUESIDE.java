@@ -240,7 +240,6 @@ public class auto_BLUESIDE extends OpMode {
 
         transfer = hardwareMap.get(DcMotorEx.class, "transfer");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        intake.setDirection(DcMotor.Direction.REVERSE);
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
