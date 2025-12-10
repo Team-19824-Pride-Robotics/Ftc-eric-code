@@ -53,6 +53,8 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose gobble2Pose = new Pose(12, 64, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(55, 100, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(55, 100, Math.toRadians(scorePos3));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180)); // Middle (Second Set)
     private PathChain scorePreload, grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
 
@@ -100,6 +102,20 @@ public class auto_BLUESIDE extends OpMode {
                 .build();
 
 
+
+        grabPickup3 = follower.pathBuilder()
+
+                .addPath(new BezierLine(scorePose, lineup3Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup3Pose.getHeading())
+                .addPath(new BezierLine(lineup3Pose, gobble3Pose))
+                .setConstantHeadingInterpolation(lineup3Pose.getHeading())
+                .build();
+
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup3Pose, scorePose))
+                .setLinearHeadingInterpolation(lineup3Pose.getHeading(), scorePose3.getHeading())
+                .build();
+
     }
 
 
@@ -113,13 +129,13 @@ public class auto_BLUESIDE extends OpMode {
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
-
+//set the speed and back up
             case 0:
                 follower.setMaxPower(robotSpeed);  //slow down the path following if necessary
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
-
+//Launches artifacts, then sets the transfer and intake on and sets the robot to slow. Then it will run grab pickup 1
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
@@ -135,7 +151,7 @@ public class auto_BLUESIDE extends OpMode {
                     setPathState(2);
                 }
                 break;
-
+//picks up the balls, makes the robot fast again, and then gets into position to score
             case 2:
 
                 if(!follower.isBusy()) {
@@ -146,7 +162,7 @@ public class auto_BLUESIDE extends OpMode {
                     setPathState(3);
                 }
                 break;
-
+//launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
             case 3:
 
                 if(!follower.isBusy()) {
@@ -160,7 +176,7 @@ public class auto_BLUESIDE extends OpMode {
                     setPathState(4);
                 }
                 break;
-
+//gets into scoring position
             case 4:
 
                 if(!follower.isBusy()) {
@@ -172,14 +188,17 @@ public class auto_BLUESIDE extends OpMode {
                     setPathState(5);
                 }
                 break;
-
+//scores the balls after opening the servo and gets back in position to pick up the balls
             case 5:
                 follower.setMaxPower(robotSpeed);
                 LegServo.setPosition(0);
                 if(!follower.isBusy()) {
                     launchArtifacts();
-                    //follower.followPath(grabPickup3,true);
-                    setPathState(-1);
+                    intake_state = 0.75;
+                    transfer_state = 0.75;
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(grabPickup3,true);
+                    setPathState(6);
                 }
                 break;
 
@@ -188,8 +207,14 @@ public class auto_BLUESIDE extends OpMode {
                 if(!follower.isBusy()) {
                     /* Grab Sample */
 
+                        intake_state = 0.5;
+                        transfer_state = 0;
+                        follower.setMaxPower(robotSpeed);
+                        follower.followPath(scorePickup3,true);
+
+
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(scorePickup3, true);
+
                     setPathState(7);
                 }
                 break;
@@ -197,6 +222,11 @@ public class auto_BLUESIDE extends OpMode {
             case 7:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
+                    LegServo.setPosition(0);
+
+                        launchArtifacts();
+                        intake_state = 0.75;
+                        transfer_state = 0.75;
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(-1);
                 }
