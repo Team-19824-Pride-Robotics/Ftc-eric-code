@@ -40,6 +40,8 @@ public class auto_BLUESIDE extends OpMode {
     public static double scorePos = 136;
     public static double scorePos2 = 138;
     public static double scorePos3 = 138;
+    public static int tChange1 = 40;
+
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -50,7 +52,7 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose lineup1Pose = new Pose(55, 87, Math.toRadians(180)); // Highest (First Set)
     private final Pose gobble1Pose = new Pose(18, 87, Math.toRadians(180)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(55, 64, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(12, 64, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(9, 64, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(55, 100, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(55, 100, Math.toRadians(scorePos3));
     private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
@@ -155,8 +157,8 @@ public class auto_BLUESIDE extends OpMode {
             case 2:
 
                 if(!follower.isBusy()) {
-                    intake_state = 0.5;
-                    transfer_state = 0;
+                    intake_state = 1;
+                    transfer_state = 1;
                     follower.setMaxPower(robotSpeed);
                     follower.followPath(scorePickup1,true);
                     setPathState(3);
@@ -318,23 +320,30 @@ public class auto_BLUESIDE extends OpMode {
         //spin up the flywheel for long enough to launch three artifacts
         actionTimer.resetTimer();
         LegServo.setPosition(0);
+    int tPos;
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
                 fly1.setVelocity(flySpeed);
                 fly2.setVelocity(flySpeed);
 
          //  **score first ball**  -->  wait till the flywheel is up to speed, then turn on the transfer but only for 0.05 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {transfer.getCurrentPosition();
+                tPos = transfer.getCurrentPosition();
+                transfer.setTargetPosition(tPos+tChange1 );
+                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 transfer.setPower(1);
                 intake.setPower(1);
             }
         //  **wait time**  one second??
             while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.25 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.25) {
+
                 transfer.setPower(0);
                 intake.setPower(0);
             }
         //  **score second ball**  --> now turn on the intake and the transfer for 0.25 seconds
             while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.25 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.5) {
+                tPos = transfer.getCurrentPosition();
+                transfer.setTargetPosition(tPos+200 );
                 transfer.setPower(1);
                 intake.setPower(1);
             }
@@ -345,6 +354,8 @@ public class auto_BLUESIDE extends OpMode {
             }
      //  **score third ball**  --> now turn on the intake and the transfer for 0.25 seconds
             while(actionTimer.getElapsedTimeSeconds() > spinUpTime+2.5 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2.75) {
+                tPos = transfer.getCurrentPosition();
+                transfer.setTargetPosition(tPos+300 );
                 transfer.setPower(1);
                 intake.setPower(1);
             }

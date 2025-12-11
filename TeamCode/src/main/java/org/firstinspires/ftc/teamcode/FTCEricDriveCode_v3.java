@@ -56,18 +56,18 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public void runOpMode() {
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
-        lut.add(45, 950 + 600);
-        lut.add(48, 1000 + 600);
-        lut.add(56, 1100 + 600);
-        lut.add(60, 1120 + 600);
-        lut.add(70, 1140 + 600);
-        lut.add(80, 1160 + 600);
-        lut.add(90, 1180 + 600);
-        lut.add(100, 1200 + 600);
-        lut.add(110, 1260 + 600);
-        lut.add(120, 1280 + 600);
-        lut.add(130, 1340 + 600);
-        lut.add(140, 1360 + 600);
+        lut.add(45, 950 + 300);
+        lut.add(48, 1000 + 300);
+        lut.add(56, 1100 + 300);
+        lut.add(60, 1120 + 300);
+        lut.add(70, 1140 + 300);
+        lut.add(80, 1160 + 300);
+        lut.add(90, 1180 + 300);
+        lut.add(100, 1200 + 300);
+        lut.add(110, 1260 + 300);
+        lut.add(120, 1280 + 300);
+        lut.add(130, 1340 + 300);
+        lut.add(140, 1360 + 300);
 
         lut.createLUT();
 
