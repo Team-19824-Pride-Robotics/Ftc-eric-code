@@ -130,7 +130,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
 
                 if (distance > 150) {
-                    distance = 60;
+                    distance = 40;
                 }
 
                 if (llResult.getTx() < -4) {
