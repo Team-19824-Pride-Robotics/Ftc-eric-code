@@ -21,6 +21,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 
     private Servo LegServo;
+    private Servo kicker;
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -35,6 +36,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
     //Declare variables
     public static double speedReducer = 0.75;
+    public static double kicker_kick = 0.1;
+    public static double kicker_closed = 0;
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1810;
     public static double close_launch_speed = 1550;
@@ -56,6 +59,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public void runOpMode() {
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
+        lut.add(30, 950 );
         lut.add(45, 950 + 300);
         lut.add(48, 1000 + 300);
         lut.add(56, 1100 + 300);
@@ -88,6 +92,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "transfer");
         LegServo = hardwareMap.get(Servo.class, "LegServo");
+        kicker = hardwareMap.get(Servo.class, "kicker");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,14 +105,10 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(8); //this is the april tag
-//        imu = hardwareMap.get(IMU.class, "imu");
-//        RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
-//                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-//                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
-//        imu.initialize((new IMU.Parameters(revHubOrientationOnRobot)));
 
 
-
+        //set the initial position for the kicker servo
+        kicker.setPosition(0);
 
        // Wait for the game to start (driver presses START)
         waitForStart();
@@ -252,6 +253,13 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
+
+            if(gamepad2.start) {
+                kicker.setPosition(kicker_kick);
+            }
+            else {
+                kicker.setPosition(kicker_closed);
+            }
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////

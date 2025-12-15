@@ -26,21 +26,30 @@ public class auto_BLUESIDE extends OpMode {
     private DcMotorEx fly1;
     private DcMotorEx fly2;
     private Servo LegServo;
+    private Servo kicker;
+
+
+
+
 
     public static double flySpeed = 1400;
-    public static double transferTime = 0.05;
+    public static double flySpeed2 = 1300;
+    public static double transferTime = 0.3;
     public static double launchTime = 5;
-    public static double spinUpTime = 1.3;
+    public static double spinUpTime = 1.8;
     public static double intake_full = 1;
     public static double servo_closed = 0.4;
-    public static double robotSpeed = 0.8;
+    public static double robotSpeed = 0.7;
     public static double robotSlow = 0.6;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 136;
-    public static double scorePos2 = 138;
-    public static double scorePos3 = 138;
-    public static int tChange1 = 40;
+    public static double scorePos = 140;
+    public static double scorePos2 = 140;
+    public static double scorePos3 = 140;
+    public static int tChange1 = 100;
+    public static int tChange2 = 160;
+    public static int tChange3 = 300;
+
 
 
     private Follower follower;
@@ -271,6 +280,7 @@ public class auto_BLUESIDE extends OpMode {
 
 
         transfer = hardwareMap.get(DcMotorEx.class, "transfer");
+
         intake = hardwareMap.get(DcMotor.class, "intake");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
@@ -280,6 +290,7 @@ public class auto_BLUESIDE extends OpMode {
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         LegServo = hardwareMap.get(Servo.class, "LegServo");
+        kicker = hardwareMap.get(Servo.class, "kicker");
 
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
@@ -323,46 +334,71 @@ public class auto_BLUESIDE extends OpMode {
     int tPos;
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
-                fly1.setVelocity(flySpeed);
-                fly2.setVelocity(flySpeed);
+                fly1.setVelocity(flySpeed2);
+                fly2.setVelocity(flySpeed2);
 
          //  **score first ball**  -->  wait till the flywheel is up to speed, then turn on the transfer but only for 0.05 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {transfer.getCurrentPosition();
-                tPos = transfer.getCurrentPosition();
-                transfer.setTargetPosition(tPos+tChange1 );
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transfer.setPower(1);
-                intake.setPower(1);
-            }
-        //  **wait time**  one second??
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.25 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.25) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {
 
+
+                kicker.setPosition(0.15);
+            }
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.3 && actionTimer.getElapsedTimeSeconds() < spinUpTime+0.8) {
+
+                kicker.setPosition(0);
                 transfer.setPower(0);
                 intake.setPower(0);
+            }
+
+
+        //  **wait time**  one second??
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.8 && actionTimer.getElapsedTimeSeconds() < spinUpTime+0.9) {
+
+                transfer.setPower(1);
+                intake.setPower(1);
+
+            }
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.9 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.1) {
+
+                kicker.setPosition(0.15);
+
             }
         //  **score second ball**  --> now turn on the intake and the transfer for 0.25 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.25 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.5) {
-                tPos = transfer.getCurrentPosition();
-                transfer.setTargetPosition(tPos+200 );
-                transfer.setPower(1);
-                intake.setPower(1);
-            }
-        //  **wait time**  one second??
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.5 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2.5) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.1 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.6) {
+                kicker.setPosition(0);
                 transfer.setPower(0);
                 intake.setPower(0);
+
+
             }
-     //  **score third ball**  --> now turn on the intake and the transfer for 0.25 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+2.5 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2.75) {
-                tPos = transfer.getCurrentPosition();
-                transfer.setTargetPosition(tPos+300 );
+
+
+        //  **wait time**  one second??
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.6 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.7) {
+
                 transfer.setPower(1);
                 intake.setPower(1);
+
             }
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.7 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.9) {
+
+                kicker.setPosition(0.15);
+
+            }
+
+     //  **score third ball**  --> now turn on the intake and the transfer for 0.25 seconds
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.9 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2) {
+                transfer.setPower(0);
+                intake.setPower(0);
+                kicker.setPosition(0);
+
+            }
+
 
         }
     //once you're done scoring, shut it all down!
         intake.setPower(0);
+        kicker.setPosition(0);
         transfer.setPower(0);
         fly1.setPower(0);
         fly2.setPower(0);

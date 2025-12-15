@@ -25,7 +25,7 @@ public class auto_FAR_BLUESIDE extends OpMode {
     private DcMotorEx fly2;
     private Servo LegServo;
 
-    public static double flySpeed = 1400;
+    public static double flySpeed = 1650;
     public static double transferTime = 0.05;
     public static double launchTime = 5;
     public static double spinUpTime = 1.3;
@@ -35,9 +35,9 @@ public class auto_FAR_BLUESIDE extends OpMode {
     public static double robotSlow = 0.6;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 136;
-    public static double scorePos2 = 138;
-    public static double scorePos3 = 138;
+    public static double scorePos = 110;
+    public static double scorePos2 = 110;
+    public static double scorePos3 = 110;
     public static int tChange1 = 40;
 
 
@@ -45,43 +45,35 @@ public class auto_FAR_BLUESIDE extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private final Pose startPose = new Pose(56, 8, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose preloadPose = new Pose(56, 8, Math.toRadians(105));
-    private final Pose scorePose = new Pose(55, 100, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(55, 87, Math.toRadians(180)); // Highest (First Set)
-    private final Pose gobble1Pose = new Pose(18, 87, Math.toRadians(180)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(55, 64, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(9, 64, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose scorePose = new Pose(56, 12, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
+    private final Pose lineup3Pose = new Pose(45, 35, Math.toRadians(180)); // Highest (Third Set)
+    private final Pose gobble3Pose = new Pose(9, 35, Math.toRadians(180)); // Highest (Third Set)
+    private final Pose lineup2Pose = new Pose(45, 60, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(9, 60, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(55, 100, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(55, 100, Math.toRadians(scorePos3));
-    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180)); // Middle (Second Set)
-    private PathChain scorePreload, grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
+
+    private PathChain grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
 
     public void buildPaths() {
 
-        scorePreload = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, preloadPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), preloadPose.getHeading())
+          /* grabPickup3 PathChain --> lines up
+          for the third set of artifacts, then gobbles
+          them up in a line  */
+
+        grabPickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, lineup3Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup3Pose.getHeading())
+                .addPath(new BezierLine(lineup3Pose, gobble3Pose))
+                .setConstantHeadingInterpolation(lineup3Pose.getHeading())
                 .build();
 
-        /* grabPickup1 PathChain --> lines up for the first set of artifacts, then
-          turns on the intake and gobbles them up in a line  */
+        /* scorePickup3 PathChain --> moves back to the scoring position  */
 
-        grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(preloadPose, lineup1Pose))
-                .setLinearHeadingInterpolation(preloadPose.getHeading(), lineup1Pose.getHeading())
-                //.addTemporalCallback(1, intake_change(1))
-                .addPath(new BezierLine(lineup1Pose, gobble1Pose))
-                .setConstantHeadingInterpolation(lineup1Pose.getHeading())
-                .build();
-
-        /* scorePickup1 PathChain --> moves to the scoring position  */
-
-        scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(gobble1Pose, scorePose))
-                .setLinearHeadingInterpolation(gobble1Pose.getHeading(), scorePose2.getHeading())
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(gobble3Pose, scorePose))
+                .setLinearHeadingInterpolation(gobble3Pose.getHeading(), scorePose.getHeading())
                 .build();
 
         /* grabPickup2 PathChain --> lines up for the second set of artifacts, then
@@ -103,20 +95,6 @@ public class auto_FAR_BLUESIDE extends OpMode {
                 .build();
 
 
-
-        grabPickup3 = follower.pathBuilder()
-
-                .addPath(new BezierLine(scorePose, lineup3Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup3Pose.getHeading())
-                .addPath(new BezierLine(lineup3Pose, gobble3Pose))
-                .setConstantHeadingInterpolation(lineup3Pose.getHeading())
-                .build();
-
-        scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(lineup3Pose, scorePose))
-                .setLinearHeadingInterpolation(lineup3Pose.getHeading(), scorePose3.getHeading())
-                .build();
-
     }
 
 
@@ -130,38 +108,48 @@ public class auto_FAR_BLUESIDE extends OpMode {
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
-//launch the preloads, then go straight to set 1
+//launch the preloads, then set the transfer and intake on
+//then it will run grab pickup 3 to go get set 3 artifacts
+
             case 0:
                 launchArtifacts_FARZONE();
-                follower.setMaxPower(robotSpeed);  //slow down the path following if necessary
-                follower.followPath(grabPickup1);
-                setPathState(2);
+
+                intake_state = 0.75;
+                transfer_state = 0.75;
+
+                follower.setMaxPower(robotSlow);  //slow down the path following if necessary
+                follower.followPath(grabPickup3);
+
+                setPathState(1);
                 break;
-//Launches artifacts, then sets the transfer and intake on and sets the robot to slow. Then it will run grab pickup 1
+
+// once you're at the gobble point, run scorePickup3 to head back to the scorePose,
+// then launch artifacts, then sets the transfer and intake on and run grab pickup 2
             case 1:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+
                 if(!follower.isBusy()) {
 
+                   follower.followPath(scorePickup3,true);
 
+                    if(!follower.isBusy()) {
+                        launchArtifacts_FARZONE();
+                    }
+
+                    setPathState(-1);
+                }
+                break;
+//
+            case 2:
+
+                if(!follower.isBusy()) {
+
+                    launchArtifacts_FARZONE();
 
                     intake_state = 0.75;
                     transfer_state = 0.75;
-                    follower.setMaxPower(robotSlow);
-                    follower.followPath(grabPickup1,true);
 
-                    setPathState(2);
-                }
-                break;
-//picks up the balls, makes the robot fast again, and then gets into position to score
-            case 2:
-                /* score the preload artifacts by spinning the transfer */
-                launchArtifacts();
+                    follower.followPath(grabPickup3);
 
-                if(!follower.isBusy()) {
-                    intake_state = 1;
-                    transfer_state = 1;
-                    follower.setMaxPower(robotSpeed);
-                    follower.followPath(scorePickup1,true);
                     setPathState(3);
                 }
                 break;
@@ -169,14 +157,12 @@ public class auto_FAR_BLUESIDE extends OpMode {
             case 3:
 
                 if(!follower.isBusy()) {
-                    /* Score the pickup1 artifacts */
-                    launchArtifacts();
-                    intake_state = 0.75;
-                    transfer_state = 0.75;
-                    LegServo.setPosition(servo_closed);
-                    follower.setMaxPower(robotSlow);
-                    follower.followPath(grabPickup2,true);
-                    setPathState(4);
+
+                    follower.followPath(scorePickup3,true);
+
+                    launchArtifacts_FARZONE();
+
+                    setPathState(2);
                 }
                 break;
 //gets into scoring position
@@ -285,7 +271,7 @@ public class auto_FAR_BLUESIDE extends OpMode {
 
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(startPose);
+        follower.setStartingPose(scorePose);
 
     }
 
@@ -329,7 +315,7 @@ public class auto_FAR_BLUESIDE extends OpMode {
                 fly2.setVelocity(flySpeed);
 
          //  **score first ball**  -->  wait till the flywheel is up to speed, then turn on the transfer but only for 0.05 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {transfer.getCurrentPosition();
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {
                 tPos = transfer.getCurrentPosition();
                 transfer.setTargetPosition(tPos+tChange1 );
                 transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -377,15 +363,16 @@ public class auto_FAR_BLUESIDE extends OpMode {
     public void launchArtifacts_FARZONE() {
         //spin up the flywheel for long enough to launch three artifacts
         actionTimer.resetTimer();
+        transfer.setPower(0);
         LegServo.setPosition(0);
         int tPos;
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
-            fly1.setVelocity(1700);
-            fly2.setVelocity(1700);
+            fly1.setVelocity(flySpeed);
+            fly2.setVelocity(flySpeed);
 
             //  **score first ball**  -->  wait till the flywheel is up to speed, then turn on the transfer but only for 0.05 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {transfer.getCurrentPosition();
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime && actionTimer.getElapsedTimeSeconds() < spinUpTime+transferTime) {
                 tPos = transfer.getCurrentPosition();
                 transfer.setTargetPosition(tPos+tChange1 );
                 transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
