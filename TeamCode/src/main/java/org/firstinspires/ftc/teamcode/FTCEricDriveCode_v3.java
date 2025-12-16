@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.arcrobotics.ftclib.util.InterpLUT;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -38,6 +39,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double speedReducer = 0.75;
     public static double kicker_kick = 0.1;
     public static double kicker_closed = 0;
+    public static double kickTime = 0.25;
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1810;
     public static double close_launch_speed = 1550;
@@ -52,6 +54,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
+
+    private ElapsedTime runtime = new ElapsedTime();
 
 
 
@@ -109,6 +113,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
         //set the initial position for the kicker servo
         kicker.setPosition(0);
+
+        runtime.reset();
 
        // Wait for the game to start (driver presses START)
         waitForStart();
@@ -240,11 +246,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
             }
-            else if (gamepad2.y) {
-                LegServo.setPosition(servo_closed);
-                fly1Speed = close_launch_speed;
-                fly2Speed = close_launch_speed;
-            }
+
             else {
                 LegServo.setPosition(servo_closed);
                 fly1Speed = 0;
@@ -254,12 +256,15 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             fly1.setVelocity(fly1Speed);
             fly2.setVelocity(fly2Speed);
 
-            if(gamepad2.start) {
-                kicker.setPosition(kicker_kick);
+            kicker.setPosition(kicker_closed);
+
+            if(gamepad2.dpad_up) {
+                resetRuntime();
+                while (getRuntime() < kickTime) {
+                    kicker.setPosition(kicker_kick);
+                }
             }
-            else {
-                kicker.setPosition(kicker_closed);
-            }
+
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
