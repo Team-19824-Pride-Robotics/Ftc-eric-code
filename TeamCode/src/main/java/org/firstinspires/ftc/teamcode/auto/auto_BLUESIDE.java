@@ -33,7 +33,7 @@ public class auto_BLUESIDE extends OpMode {
 
 
     public static double flySpeed = 1400;
-    public static double flySpeed2 = 1300;
+    public static double flySpeed2 = 1400;
     public static double transferTime = 0.3;
     public static double launchTime = 5;
     public static double spinUpTime = 1.8;
@@ -166,8 +166,8 @@ public class auto_BLUESIDE extends OpMode {
             case 2:
 
                 if(!follower.isBusy()) {
-                    intake_state = 1;
-                    transfer_state = 1;
+                    intake_state = 0;
+                    transfer_state = 0;
                     follower.setMaxPower(robotSpeed);
                     follower.followPath(scorePickup1,true);
                     setPathState(3);
@@ -177,6 +177,9 @@ public class auto_BLUESIDE extends OpMode {
             case 3:
 
                 if(!follower.isBusy()) {
+
+                    intake_state = 0;
+                    transfer_state = 0;
                     /* Score the pickup1 artifacts */
                     launchArtifacts();
                     intake_state = 0.75;
@@ -343,7 +346,7 @@ public class auto_BLUESIDE extends OpMode {
 
                 kicker.setPosition(0.15);
             }
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.3 && actionTimer.getElapsedTimeSeconds() < spinUpTime+0.8) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.3 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1) {
 
                 kicker.setPosition(0);
                 transfer.setPower(0);
@@ -352,19 +355,19 @@ public class auto_BLUESIDE extends OpMode {
 
 
         //  **wait time**  one second??
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.8 && actionTimer.getElapsedTimeSeconds() < spinUpTime+0.9) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.1) {
 
                 transfer.setPower(1);
                 intake.setPower(1);
 
             }
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+0.9 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.1) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.1 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.3) {
 
                 kicker.setPosition(0.15);
 
             }
         //  **score second ball**  --> now turn on the intake and the transfer for 0.25 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.1 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.6) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.3 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2) {
                 kicker.setPosition(0);
                 transfer.setPower(0);
                 intake.setPower(0);
@@ -374,20 +377,20 @@ public class auto_BLUESIDE extends OpMode {
 
 
         //  **wait time**  one second??
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.6 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.7) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+2 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2.1) {
 
                 transfer.setPower(1);
                 intake.setPower(1);
 
             }
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.7 && actionTimer.getElapsedTimeSeconds() < spinUpTime+1.9) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+2.1 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2.3) {
 
                 kicker.setPosition(0.15);
 
             }
 
      //  **score third ball**  --> now turn on the intake and the transfer for 0.25 seconds
-            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+1.9 && actionTimer.getElapsedTimeSeconds() < spinUpTime+2) {
+            while(actionTimer.getElapsedTimeSeconds() > spinUpTime+2.3 && actionTimer.getElapsedTimeSeconds() < spinUpTime+3) {
                 transfer.setPower(0);
                 intake.setPower(0);
                 kicker.setPosition(0);

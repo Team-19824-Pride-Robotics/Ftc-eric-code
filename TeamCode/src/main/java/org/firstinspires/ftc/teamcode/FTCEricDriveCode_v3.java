@@ -37,14 +37,16 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
     //Declare variables
     public static double speedReducer = 0.75;
+
+   public static boolean intakeOnly = false;
     public static double kicker_kick = 0.1;
     public static double kicker_closed = 0;
     public static double kickTime = 0.25;
     public static double backOffSpeed = -600;
-    public static double long_launch_speed = 1810;
+    public static double long_launch_speed = 1700;
     public static double close_launch_speed = 1550;
     public static double servo_closed = 0.4;
-    public static double intakeOn = 0.75;
+    public static double intakeOn = 1;
     public static int transferBump = 250;
     public static double scoreZone = 1;
     public static double p_turn = 1;
@@ -198,33 +200,54 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
         //dPad can be used to make small corrections
 
-            if (gamepad2.dpad_left || gamepad1.dpad_left) {
+            if (gamepad1.dpad_left) {
 
                 FL.setPower(-.2);
                 FR.setPower(.2);
                 BL.setPower(-.2);
                 BR.setPower(.2);
             }
-            if (gamepad2.dpad_right || gamepad1.dpad_right) {
+            if (gamepad1.dpad_right) {
 
                 FL.setPower(.2);
                 FR.setPower(-.2);
                 BL.setPower(.2);
                 BR.setPower(-.2);
             }
-            if (gamepad2.dpad_up || gamepad1.dpad_up) {
+            if (gamepad1.dpad_up) {
 
                 FL.setPower(.2);
                 FR.setPower(.2);
                 BL.setPower(.2);
                 BR.setPower(.2);
             }
-            if (gamepad2.dpad_down || gamepad1.dpad_down) {
+            if (gamepad1.dpad_down) {
 
                 FL.setPower(-.2);
                 FR.setPower(-.2);
                 BL.setPower(-.2);
                 BR.setPower(-.2);
+            }
+            if (gamepad2.dpad_left) {
+
+               transfer.setPower(0.1);
+            }
+            if (gamepad2.dpad_right) {
+
+                transfer.setPower(-0.1);
+            }
+
+            if (gamepad2.dpad_down) {
+
+
+                    intakeOnly = true;
+
+            }
+            if(gamepad2.dpad_up){
+
+                    intakeOnly = false;
+
+
             }
 
 
@@ -232,13 +255,13 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             if (gamepad2.right_trigger > .1) {
                 LegServo.setPosition(0);
-                fly1Speed = lut.get(distance);
-                fly2Speed = lut.get(distance);
+                fly1Speed = close_launch_speed;
+                fly2Speed = close_launch_speed;
             }
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(0);
-                fly1Speed = close_launch_speed;
-                fly2Speed = close_launch_speed;
+                fly1Speed = long_launch_speed;
+                fly2Speed = long_launch_speed;
 
             }
             else if (gamepad2.x){
@@ -258,7 +281,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             kicker.setPosition(kicker_closed);
 
-            if(gamepad2.dpad_up) {
+            if(gamepad2.y) {
                 resetRuntime();
                 while (getRuntime() < kickTime) {
                     kicker.setPosition(kicker_kick);
@@ -286,11 +309,32 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-            if (gamepad2.a || gamepad1.a) {
+            if (gamepad1.a) {
                 intake.setPower(intakeOn);
+                transfer.setPower(1);
             }
-            else if(gamepad2.b || gamepad1.b) {
-                intake.setPower(-0.4);
+            else if(gamepad1.b) {
+                intake.setPower(-1);
+                transfer.setPower(-1);
+            }
+            else {
+                intake.setPower(0);
+            }
+
+            if (gamepad2.a&&intakeOnly == true) {
+
+                    intake.setPower(intakeOn);
+            }
+            else if(gamepad2.a&&intakeOnly==false) {
+                intake.setPower(intakeOn);
+                intake.setPower(1);
+            } else if (gamepad2.b&&intakeOnly == true) {
+
+                intake.setPower(-1);
+            }
+            else if(gamepad2.b&&intakeOnly==false) {
+                intake.setPower(-1);
+                intake.setPower(-1);
             }
             else {
                 intake.setPower(0);
@@ -300,11 +344,13 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             telemetry.addData("Distance", distance);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
+            telemetry.addData("intakeOnly", intakeOnly);
 
             telemetry.update();
             
         }
     }
+
 
     public void runTransfer(int newTransferPosition) {
         transfer.setTargetPosition(newTransferPosition);
