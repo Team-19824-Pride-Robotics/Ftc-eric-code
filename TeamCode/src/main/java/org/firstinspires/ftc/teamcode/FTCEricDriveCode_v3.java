@@ -313,7 +313,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 intake.setPower(intakeOn);
                 transfer.setPower(1);
             }
-            else if(gamepad1.b) {
+            else if (gamepad1.b) {
                 intake.setPower(-1);
                 transfer.setPower(-1);
             }
@@ -321,23 +321,25 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            if (gamepad2.a&&intakeOnly == true) {
+            if (gamepad2.a && intakeOnly == true) {
 
                     intake.setPower(intakeOn);
             }
-            else if(gamepad2.a&&intakeOnly==false) {
+            else if (gamepad2.a && intakeOnly == false) {
                 intake.setPower(intakeOn);
-                intake.setPower(1);
-            } else if (gamepad2.b&&intakeOnly == true) {
+                transfer.setPower(1);
+            }
+            else if (gamepad2.b && intakeOnly == true) {
 
                 intake.setPower(-1);
             }
-            else if(gamepad2.b&&intakeOnly==false) {
+            else if (gamepad2.b && intakeOnly == false) {
                 intake.setPower(-1);
-                intake.setPower(-1);
+                transfer.setPower(-1);
             }
             else {
                 intake.setPower(0);
+                transfer.setPower(0);
             }
 
 
