@@ -309,21 +309,21 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-            if (gamepad1.a) {
-                intake.setPower(intakeOn);
-                transfer.setPower(1);
-            }
-            else if (gamepad1.b) {
-                intake.setPower(-1);
-                transfer.setPower(-1);
-            }
-            else {
-                intake.setPower(0);
-            }
+//            if (gamepad1.a) {
+//                intake.setPower(intakeOn);
+//                transfer.setPower(1);
+//            }
+//            else if (gamepad1.b) {
+//                intake.setPower(-1);
+//                transfer.setPower(-1);
+//            }
+//            else {
+//                intake.setPower(0);
+//            }
 
             if (gamepad2.a && intakeOnly == true) {
 
-                    intake.setPower(intakeOn);
+                intake.setPower(intakeOn);
             }
             else if (gamepad2.a && intakeOnly == false) {
                 intake.setPower(intakeOn);
