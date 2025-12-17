@@ -23,6 +23,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
     private Servo LegServo;
     private Servo kicker;
+    private Servo helper;
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -46,6 +47,9 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double long_launch_speed = 1700;
     public static double close_launch_speed = 1550;
     public static double servo_closed = 0.4;
+    public static double helper_open = 0.75;
+    public static double helper_closed = 0.4;
+
     public static double intakeOn = 1;
     public static int transferBump = 250;
     public static double scoreZone = 1;
@@ -99,6 +103,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         transfer = hardwareMap.get(DcMotor.class, "transfer");
         LegServo = hardwareMap.get(Servo.class, "LegServo");
         kicker = hardwareMap.get(Servo.class, "kicker");
+        helper = hardwareMap.get(Servo.class, "helper");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -113,8 +118,9 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         limelight.pipelineSwitch(8); //this is the april tag
 
 
-        //set the initial position for the kicker servo
+        //set the initial position for the kicker and helper servos
         kicker.setPosition(0);
+        helper.setPosition(helper_open);
 
         runtime.reset();
 
@@ -228,27 +234,25 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 BL.setPower(-.2);
                 BR.setPower(-.2);
             }
-            if (gamepad2.dpad_left) {
+//            if (gamepad2.dpad_left) {
+//
+//               transfer.setPower(0.1);
+//            }
 
-               transfer.setPower(0.1);
-            }
-            if (gamepad2.dpad_right) {
+            helper.setPosition(helper_open);
 
-                transfer.setPower(-0.1);
-            }
-
-            if (gamepad2.dpad_down) {
-
-
-                    intakeOnly = true;
-
-            }
-            if(gamepad2.dpad_up){
-
-                    intakeOnly = false;
-
+            if (gamepad2.dpad_right || gamepad1.y) {
+                transfer.setPower(1);
+                resetRuntime();
+                while (getRuntime() < kickTime) {
+                    helper.setPosition(helper_closed);
+                }
 
             }
+            else{
+                transfer.setPower(0);
+            }
+
 
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
@@ -268,6 +272,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 LegServo.setPosition(servo_closed);
                 fly1Speed = backOffSpeed;
                 fly2Speed = backOffSpeed;
+                transfer.setPower(-1);
             }
 
             else {
@@ -309,38 +314,40 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-//            if (gamepad1.a) {
+            if (gamepad1.a || gamepad2.a) {
+                intake.setPower(intakeOn);
+                transfer.setPower(1);
+
+            }
+            else if (gamepad1.b || gamepad2.b) {
+                intake.setPower(-1);
+                transfer.setPower(-1);
+
+            }
+            else {
+                intake.setPower(0);
+            }
+
+//            if (gamepad2.a && intakeOnly == true) {
+//
+//                intake.setPower(intakeOn);
+//            }
+//            else if (gamepad2.a && intakeOnly == false) {
 //                intake.setPower(intakeOn);
 //                transfer.setPower(1);
 //            }
-//            else if (gamepad1.b) {
+//            else if (gamepad2.b && intakeOnly == true) {
+//
+//                intake.setPower(-1);
+//            }
+//            else if (gamepad2.b && intakeOnly == false) {
 //                intake.setPower(-1);
 //                transfer.setPower(-1);
 //            }
 //            else {
 //                intake.setPower(0);
+//                transfer.setPower(0);
 //            }
-
-            if (gamepad2.a && intakeOnly == true) {
-
-                intake.setPower(intakeOn);
-            }
-            else if (gamepad2.a && intakeOnly == false) {
-                intake.setPower(intakeOn);
-                transfer.setPower(1);
-            }
-            else if (gamepad2.b && intakeOnly == true) {
-
-                intake.setPower(-1);
-            }
-            else if (gamepad2.b && intakeOnly == false) {
-                intake.setPower(-1);
-                transfer.setPower(-1);
-            }
-            else {
-                intake.setPower(0);
-                transfer.setPower(0);
-            }
 
 
             telemetry.addData("Distance", distance);
