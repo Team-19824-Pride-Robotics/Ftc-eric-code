@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -19,7 +20,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class FTCEricDriveCode_v3 extends LinearOpMode {
 
-
+    private PIDController controller;
+    public static double p = 0.005, i = 0, d = 0;
+    public static double f = 0;
+    public static double target = 1550;
 
     private Servo LegServo;
     private Servo kicker;
@@ -40,8 +44,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double speedReducer = 0.75;
 
    public static boolean intakeOnly = false;
-    public static double kicker_kick = 0.1;
-    public static double kicker_closed = 0;
+    public static double kicker_kick = 0;
+    public static double kicker_closed = 0.185;
     public static double kickTime = 0.25;
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1700;
@@ -112,7 +116,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        
+
+        controller = new PIDController(p, i, d);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(8); //this is the april tag
@@ -259,30 +264,36 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             if (gamepad2.right_trigger > .1) {
                 LegServo.setPosition(0);
-                fly1Speed = close_launch_speed;
-                fly2Speed = close_launch_speed;
+                target = close_launch_speed;
+
             }
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(0);
-                fly1Speed = long_launch_speed;
-                fly2Speed = long_launch_speed;
+                target = long_launch_speed;
+
 
             }
             else if (gamepad2.x){
                 LegServo.setPosition(servo_closed);
-                fly1Speed = backOffSpeed;
-                fly2Speed = backOffSpeed;
+                target = backOffSpeed;
                 transfer.setPower(-1);
             }
 
             else {
                 LegServo.setPosition(servo_closed);
-                fly1Speed = 0;
-                fly2Speed = 0;
+                target = 0;
+
             }
 
-            fly1.setVelocity(fly1Speed);
-            fly2.setVelocity(fly2Speed);
+            controller.setPID(p, i, d);
+            double fly1Current = fly1.getVelocity();
+            double fly2Current = fly2.getVelocity();
+            double pid = controller.calculate(fly1Current, target);
+            double pid2 = controller.calculate(fly2Current, target);
+
+            fly1.setPower(pid);
+            fly2.setPower(pid2);
+
 
             kicker.setPosition(kicker_closed);
 
@@ -316,12 +327,10 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             if (gamepad1.a || gamepad2.a) {
                 intake.setPower(intakeOn);
-                transfer.setPower(1);
 
             }
             else if (gamepad1.b || gamepad2.b) {
                 intake.setPower(-1);
-                transfer.setPower(-1);
 
             }
             else {

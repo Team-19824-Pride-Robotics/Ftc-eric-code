@@ -4,7 +4,6 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.Intake;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -29,9 +27,6 @@ public class auto_BLUESIDE extends OpMode {
     private Servo kicker;
 
 
-
-
-
     public static double flySpeed = 1400;
     public static double flySpeed2 = 1400;
     public static double transferTime = 0.3;
@@ -39,7 +34,7 @@ public class auto_BLUESIDE extends OpMode {
     public static double spinUpTime = 1.8;
     public static double intake_full = 1;
     public static double servo_closed = 0.4;
-    public static double robotSpeed = 0.7;
+    public static double robotFast = 0.7;
     public static double robotSlow = 0.6;
     public double intake_state = 0;
     public double transfer_state = 0;
@@ -58,7 +53,8 @@ public class auto_BLUESIDE extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(136)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(55, 100, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(55, 87, Math.toRadians(180)); // Highest (First Set)
+    private final Pose lineup1Pose = new Pose(55, 87, Math.toRadians(180));
+    private final Pose lineup1_5Pose = new Pose(30, 87, Math.toRadians(180));// Highest (First Set)
     private final Pose gobble1Pose = new Pose(18, 87, Math.toRadians(180)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(55, 64, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble2Pose = new Pose(9, 64, Math.toRadians(180)); // Middle (Second Set)
@@ -66,7 +62,7 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose scorePose3 = new Pose(55, 100, Math.toRadians(scorePos3));
     private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180)); // Middle (Second Set)
-    private PathChain scorePreload, grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
+    private PathChain scorePreload, lineup1, getTwo1, getLast1, grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
 
     public void buildPaths() {
@@ -76,33 +72,23 @@ public class auto_BLUESIDE extends OpMode {
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
-        /* grabPickup1 PathChain --> lines up for the first set of artifacts, then
-          turns on the intake and gobbles them up in a line  */
 
-        grabPickup1 = follower.pathBuilder()
+        lineup1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, lineup1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), lineup1Pose.getHeading())
-                //.addTemporalCallback(1, intake_change(1))
-                .addPath(new BezierLine(lineup1Pose, gobble1Pose))
+                .build();
+
+
+        getTwo1 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup1Pose, lineup1_5Pose))
                 .setConstantHeadingInterpolation(lineup1Pose.getHeading())
                 .build();
 
-        /* scorePickup1 PathChain --> moves to the scoring position  */
 
-        scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(gobble1Pose, scorePose))
-                .setLinearHeadingInterpolation(gobble1Pose.getHeading(), scorePose2.getHeading())
-                .build();
+        getLast1 = follower.pathBuilder()
 
-        /* grabPickup2 PathChain --> lines up for the second set of artifacts, then
-           turns on the intake and gobbles them up in a line  */
-
-        grabPickup2 = follower.pathBuilder()
-
-                .addPath(new BezierLine(scorePose, lineup2Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup2Pose.getHeading())
-                .addPath(new BezierLine(lineup2Pose, gobble2Pose))
-                .setConstantHeadingInterpolation(lineup2Pose.getHeading())
+                .addPath(new BezierLine(lineup1_5Pose, gobble1Pose))
+                .setConstantHeadingInterpolation(gobble1Pose.getHeading())
                 .build();
 
         /* scorePickup2 PathChain --> moves from the gobble2Pose back to the scoring position  */
@@ -140,36 +126,34 @@ public class auto_BLUESIDE extends OpMode {
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
-//set the speed and back up
+
             case 0:
-                follower.setMaxPower(robotSpeed);  //slow down the path following if necessary
+                LegServo.setPosition(servo_closed);
+                follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
-//Launches artifacts, then sets the transfer and intake on and sets the robot to slow. Then it will run grab pickup 1
+
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
 
-                    /* score the preload artifacts by spinning the transfer */
                     launchArtifacts();
 
-                    intake_state = 0.75;
-                    transfer_state = 0.75;
                     follower.setMaxPower(robotSlow);
-                    follower.followPath(grabPickup1,true);
+                    follower.followPath(lineup1,true);
 
                     setPathState(2);
                 }
                 break;
-//picks up the balls, makes the robot fast again, and then gets into position to score
+
             case 2:
 
                 if(!follower.isBusy()) {
-                    intake_state = 0;
+                    intake_state = 0.75;
                     transfer_state = 0;
-                    follower.setMaxPower(robotSpeed);
-                    follower.followPath(scorePickup1,true);
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(getTwo1,true);
                     setPathState(3);
                 }
                 break;
@@ -178,16 +162,12 @@ public class auto_BLUESIDE extends OpMode {
 
                 if(!follower.isBusy()) {
 
-                    intake_state = 0;
-                    transfer_state = 0;
-                    /* Score the pickup1 artifacts */
-                    launchArtifacts();
                     intake_state = 0.75;
-                    transfer_state = 0.75;
-                    LegServo.setPosition(servo_closed);
+                    transfer_state = 1;
+
                     follower.setMaxPower(robotSlow);
-                    follower.followPath(grabPickup2,true);
-                    setPathState(4);
+                    follower.followPath(getLast1,true);
+                    setPathState(-1);
                 }
                 break;
 //gets into scoring position
@@ -204,7 +184,7 @@ public class auto_BLUESIDE extends OpMode {
                 break;
 //scores the balls after opening the servo and gets back in position to pick up the balls
             case 5:
-                follower.setMaxPower(robotSpeed);
+                follower.setMaxPower(robotFast);
                 LegServo.setPosition(0);
                 if(!follower.isBusy()) {
                     launchArtifacts();
@@ -223,7 +203,7 @@ public class auto_BLUESIDE extends OpMode {
 
                         intake_state = 0.5;
                         transfer_state = 0;
-                        follower.setMaxPower(robotSpeed);
+                        follower.setMaxPower(robotFast);
                         follower.followPath(scorePickup3,true);
 
 
