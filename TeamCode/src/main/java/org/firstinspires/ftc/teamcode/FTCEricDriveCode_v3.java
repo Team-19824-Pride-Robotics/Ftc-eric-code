@@ -359,11 +359,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 //            }
 
 
-            telemetry.addData("Distance", distance);
+            //telemetry.addData("Distance", distance);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
             telemetry.addData("intakeOnly", intakeOnly);
-
+            telemetry.addData("Target Velocity", target);
             telemetry.update();
             
         }
