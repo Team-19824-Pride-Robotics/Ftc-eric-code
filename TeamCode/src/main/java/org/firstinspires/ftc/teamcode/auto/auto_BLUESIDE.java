@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -27,8 +28,13 @@ public class auto_BLUESIDE extends OpMode {
     private Servo kicker;
     private Servo helper;
 
+    private PIDController controller;
+    public static double p = 0.005, i = 0, d = 0;
+    public static double f = 0;
     public static double flySpeed = 1400;
-    public static double flySpeed2 = 1400;
+
+//    public static double flySpeed = 1400;
+//    public static double flySpeed2 = 1400;
 
     public static double launchTime = 5;
 
@@ -36,7 +42,7 @@ public class auto_BLUESIDE extends OpMode {
     public static double servo_closed = 0.4;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
-    public static double robotSlower = 0.4;
+    public static double robotSlower = 0.2;
     public double intake_state = 0;
     public double transfer_state = 0;
     public static double scorePos = 140;
@@ -45,6 +51,31 @@ public class auto_BLUESIDE extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
+
+////////timings for launchArtifacts function/////////////
+
+//interval for initial kick into flywheel
+    public static double i1 = 0.7;
+    public static double t1 = i1;
+//interval for transfer to run and throw the second ball into the flywheel
+    public static double i2 = 0.7;
+    public static double t2 = t1 + i2;
+//interval to move the third ball into position
+    public static double i3 = 0.1;
+    public static double t3 = t2 + i3;
+//interval for transfer to run and throw the third ball into the flywheel
+    public static double i4 = 0.2;
+    public static double t4 = t3 + i4;
+//interval to do nothing but before it all shuts down
+    public static double i5 = 0.7;
+    public static double t5 = t4 + i5;
+
+
+    public static double t6 = t5 + 0.1;
+    public static double t7 = t6 + 0.3;
+    public static double t8 = t7 + 0.2;
+    public static double t9 = t8 + 0.2;
+    public static double t10 = t9 + 0.7;
 
 
 
@@ -55,17 +86,19 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose startPose = new Pose(28, 130, Math.toRadians(136)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(55, 100, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
     private final Pose lineup1Pose = new Pose(55, 86.5, Math.toRadians(180));
-    private final Pose lineup1_5Pose = new Pose(28, 86.5, Math.toRadians(180));// Highest (First Set)
+    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
     private final Pose gobble1Pose = new Pose(20, 86.5, Math.toRadians(180)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(55, 62, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble2Pose = new Pose(9, 62, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(55, 100, Math.toRadians(scorePos2));
-    private final Pose lineup2_5Pose = new Pose (28,62, Math.toRadians(180));
+    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
+    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
     private final Pose scorePose3 = new Pose(55, 100, Math.toRadians(scorePos3));
     private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180)); // Middle (Second Set)
 
-    private PathChain scorePreload, lineup1, getTwo1, getLast1, grabPickup1, scorePickup1,lineup2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
+    private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1,lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
 
     public void buildPaths() {
@@ -82,41 +115,51 @@ public class auto_BLUESIDE extends OpMode {
                 .build();
 
 
-        getTwo1 = follower.pathBuilder()
+        getFirstBall1 = follower.pathBuilder()
                 .addPath(new BezierLine(lineup1Pose, lineup1_5Pose))
                 .setConstantHeadingInterpolation(lineup1Pose.getHeading())
+                .build();
+
+        backOff1 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup1_5Pose, lineup1_6Pose))
+                .setConstantHeadingInterpolation(lineup1_5Pose.getHeading())
                 .build();
 
 
         getLast1 = follower.pathBuilder()
 
-                .addPath(new BezierLine(lineup1_5Pose, gobble1Pose))
+                .addPath(new BezierLine(lineup1_6Pose, gobble1Pose))
                 .setConstantHeadingInterpolation(gobble1Pose.getHeading())
                 .build();
+
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(gobble1Pose, scorePose2))
                 .setLinearHeadingInterpolation(gobble1Pose.getHeading(), scorePose2.getHeading())
                 .build();
+
         lineup2 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose2, lineup2Pose))
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), lineup2Pose.getHeading())
                 .build();
 
 
-        getTwo2 = follower.pathBuilder()
+        getFirstBall2 = follower.pathBuilder()
                 .addPath(new BezierLine(lineup2Pose, lineup2_5Pose))
                 .setConstantHeadingInterpolation(lineup2Pose.getHeading())
+                .build();
+
+        backOff2 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup2_5Pose, lineup2_6Pose))
+                .setConstantHeadingInterpolation(lineup2_5Pose.getHeading())
                 .build();
 
 
         getLast2 = follower.pathBuilder()
 
-                .addPath(new BezierLine(lineup2_5Pose, gobble2Pose))
+                .addPath(new BezierLine(lineup2_6Pose, gobble2Pose))
                 .setConstantHeadingInterpolation(gobble2Pose.getHeading())
                 .build();
 
-
-        /* scorePickup2 PathChain --> moves from the gobble2Pose back to the scoring position  */
 
         scorePickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(lineup2Pose, scorePose))
@@ -160,7 +203,7 @@ public class auto_BLUESIDE extends OpMode {
                 break;
 
             case 1:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+
                 if(!follower.isBusy()) {
                     kicker.setPosition(0.185);
                     launchArtifacts();
@@ -176,13 +219,13 @@ public class auto_BLUESIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 0;
+                    transfer_state = 1;
                     follower.setMaxPower(robotSlower);
-                    follower.followPath(getTwo1,true);
+                    follower.followPath(getFirstBall1,true);
                     setPathState(3);
                 }
                 break;
-//launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
+
             case 3:
 
                 if(!follower.isBusy()) {
@@ -191,12 +234,25 @@ public class auto_BLUESIDE extends OpMode {
                     transfer_state = 0.30;
 
                     follower.setMaxPower(robotSlow);
+                    follower.followPath(backOff1,true);
+                    setPathState(4);
+                }
+                break;
+
+            case 4:
+
+                if(!follower.isBusy()) {
+
+                    intake_state = 0.8;
+                    transfer_state = 0;
+
+                    follower.setMaxPower(robotSlow);
                     follower.followPath(getLast1,true);
                     setPathState(4);
                 }
                 break;
 //gets into scoring position
-            case 4:
+            case 5:
 
                 if(!follower.isBusy()) {
                     intake_state = 0.075;
@@ -207,7 +263,7 @@ public class auto_BLUESIDE extends OpMode {
                 }
                 break;
 //scores the balls after opening the servo and gets back in position to pick up the balls
-            case 5:
+            case 6:
                 follower.setMaxPower(robotFast);
                 LegServo.setPosition(0);
                 if(!follower.isBusy()) {
@@ -217,8 +273,8 @@ public class auto_BLUESIDE extends OpMode {
                     setPathState(6);
                 }
                 break;
-            case 6:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+            case 7:
+
                 if(!follower.isBusy()) {
                     kicker.setPosition(0.185);
 
@@ -229,18 +285,18 @@ public class auto_BLUESIDE extends OpMode {
                 }
                 break;
 
-            case 7:
+            case 8:
 
                 if(!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 0;
+                    transfer_state = 1;
                     follower.setMaxPower(robotSlow);
-                    follower.followPath(getTwo2,true);
+                    follower.followPath(getFirstBall2,true);
                     setPathState(8);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
-            case 8:
+            case 9:
 
                 if(!follower.isBusy()) {
 
@@ -248,12 +304,27 @@ public class auto_BLUESIDE extends OpMode {
                     transfer_state = 0.30;
 
                     follower.setMaxPower(robotSlow);
+                    follower.followPath(backOff2,true);
+                    setPathState(9);
+                }
+                break;
+
+            case 10:
+
+                if(!follower.isBusy()) {
+
+                    intake_state = 0.8;
+                    transfer_state = 0;
+
+                    follower.setMaxPower(robotSlow);
                     follower.followPath(getLast2,true);
                     setPathState(9);
                 }
                 break;
+
+
 //gets into scoring position
-            case 9:
+            case 11:
 
                 if(!follower.isBusy()) {
                     intake_state = 0.075;
@@ -264,13 +335,22 @@ public class auto_BLUESIDE extends OpMode {
                 }
                 break;
 //scores the balls after opening the servo and gets back in position to pick up the balls
-            case 10:
+            case 12:
                 follower.setMaxPower(robotFast);
                 LegServo.setPosition(0);
                 if(!follower.isBusy()) {
                     launchArtifacts();
                     //                  follower.setMaxPower(robotSlow);
                     //                   follower.followPath(grabPickup2,true);
+                    setPathState(-1);
+                }
+                break;
+
+            case 13:
+                if(!follower.isBusy()) {
+                    follower.followPath(grabPickup3,true);
+                    intake_state = 0;
+                    transfer_state = 0;
                     setPathState(-1);
                 }
                 break;
@@ -293,8 +373,16 @@ public class auto_BLUESIDE extends OpMode {
         follower.update();
         intake.setPower(intake_state);
         transfer.setPower(transfer_state);
-        fly1.setVelocity(flySpeed);
-        fly2.setVelocity(flySpeed2);
+
+        controller.setPID(p, i, d);
+        double fly1Current = fly1.getVelocity();
+        double fly2Current = fly2.getVelocity();
+        double pid = controller.calculate(fly1Current, flySpeed);
+        double pid2 = controller.calculate(fly2Current, flySpeed);
+
+        fly1.setPower(pid);
+        fly2.setPower(pid2);
+
         autonomousPathUpdate();
 
         // Feedback to Driver Hub for debugging
@@ -373,66 +461,31 @@ public class auto_BLUESIDE extends OpMode {
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
 
 
-
-            while(actionTimer.getElapsedTimeSeconds() > 0 && actionTimer.getElapsedTimeSeconds() < 0.7) {
-
-
+//first interval is to kick the first ball into the flywheel
+            while(actionTimer.getElapsedTimeSeconds() > 0 && actionTimer.getElapsedTimeSeconds() < t1) {
                 kicker.setPosition(0);
             }
-            while(actionTimer.getElapsedTimeSeconds() > 0.7 && actionTimer.getElapsedTimeSeconds() < 1.4) {
+
+//next interval is to run the transfer-only to launch the second ball
+            while(actionTimer.getElapsedTimeSeconds() > t1 && actionTimer.getElapsedTimeSeconds() < t2) {
                 kicker.setPosition(0.185);
                 transfer.setPower(0.8);
-                intake.setPower(1);
-            }
-
-
-        //  **wait time**  one second??
-            while(actionTimer.getElapsedTimeSeconds() > 1.4 && actionTimer.getElapsedTimeSeconds() < 1.5) {
-
-                transfer.setPower(0);
                 intake.setPower(0);
-
             }
-            while(actionTimer.getElapsedTimeSeconds() > 1.5 && actionTimer.getElapsedTimeSeconds() < 1.7) {
 
-                kicker.setPosition(0);
 
-            }
-        //  **score second ball**  --> now turn on the intake and the transfer for 0.25 seconds
-            while(actionTimer.getElapsedTimeSeconds() > 1.7 && actionTimer.getElapsedTimeSeconds() < 2.4) {
-                kicker.setPosition(0.185);
+//next interval is to move the third ball into position
+            while(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
                 transfer.setPower(0);
-                intake.setPower(0);
-
-
-            }
-
-
-            while(actionTimer.getElapsedTimeSeconds() > 2.4 && actionTimer.getElapsedTimeSeconds() < 2.5) {
-                transfer.setPower(1);
                 intake.setPower(1);
 
             }
-            while(actionTimer.getElapsedTimeSeconds() >  2.5 && actionTimer.getElapsedTimeSeconds() < 2.8) {
-                helper.setPosition(0.4);
-            }
-            while(actionTimer.getElapsedTimeSeconds() >  2.8 && actionTimer.getElapsedTimeSeconds() < 3.0) {
-                transfer.setPower(1);
-            }
-            while(actionTimer.getElapsedTimeSeconds() >  3.0 && actionTimer.getElapsedTimeSeconds() < 3.2) {
 
-                kicker.setPosition(0);
-
-            }
-
-            while(actionTimer.getElapsedTimeSeconds() > 3.2 && actionTimer.getElapsedTimeSeconds() <  3.9) {
-                helper.setPosition(0.75);
-                transfer.setPower(0);
+//last interval is to run the transfer again to launch the third ball
+            while(actionTimer.getElapsedTimeSeconds() > t3 && actionTimer.getElapsedTimeSeconds() < t4) {
                 intake.setPower(0);
-                kicker.setPosition(0.185);
-
+                transfer.setPower(0.8);
             }
-
 
         }
     //once you're done scoring, shut it all down!

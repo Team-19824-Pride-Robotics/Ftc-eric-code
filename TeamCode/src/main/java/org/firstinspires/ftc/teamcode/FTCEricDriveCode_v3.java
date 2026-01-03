@@ -265,34 +265,51 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             if (gamepad2.right_trigger > .1) {
                 LegServo.setPosition(0);
                 target = close_launch_speed;
+                controller.setPID(p, i, d);
+                double fly1Current = fly1.getVelocity();
+                double fly2Current = fly2.getVelocity();
+                double pid = controller.calculate(fly1Current, target);
+                double pid2 = controller.calculate(fly2Current, target);
+
+                fly1.setPower(pid);
+                fly2.setPower(pid2);
 
             }
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(0);
                 target = long_launch_speed;
+                controller.setPID(p, i, d);
+                double fly1Current = fly1.getVelocity();
+                double fly2Current = fly2.getVelocity();
+                double pid = controller.calculate(fly1Current, target);
+                double pid2 = controller.calculate(fly2Current, target);
+
+                fly1.setPower(pid);
+                fly2.setPower(pid2);
 
 
             }
             else if (gamepad2.x){
                 LegServo.setPosition(servo_closed);
                 target = backOffSpeed;
+                controller.setPID(p, i, d);
+                double fly1Current = fly1.getVelocity();
+                double fly2Current = fly2.getVelocity();
+                double pid = controller.calculate(fly1Current, target);
+                double pid2 = controller.calculate(fly2Current, target);
+
+                fly1.setPower(pid);
+                fly2.setPower(pid2);
                 transfer.setPower(-1);
             }
 
             else {
                 LegServo.setPosition(servo_closed);
-                target = 0;
-
+                fly1.setPower(0);
+                fly2.setPower(0);
+                fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-
-            controller.setPID(p, i, d);
-            double fly1Current = fly1.getVelocity();
-            double fly2Current = fly2.getVelocity();
-            double pid = controller.calculate(fly1Current, target);
-            double pid2 = controller.calculate(fly2Current, target);
-
-            fly1.setPower(pid);
-            fly2.setPower(pid2);
 
 
             kicker.setPosition(kicker_closed);
