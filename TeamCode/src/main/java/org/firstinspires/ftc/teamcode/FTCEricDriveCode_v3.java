@@ -272,7 +272,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 double pid2 = controller.calculate(fly2Current, target);
 
                 fly1.setPower(pid);
-                fly2.setPower(pid2);
+                fly2.setPower(pid);
 
             }
             else if (gamepad2.left_trigger > .1) {

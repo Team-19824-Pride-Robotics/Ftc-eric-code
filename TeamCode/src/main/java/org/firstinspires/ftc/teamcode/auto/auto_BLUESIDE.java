@@ -30,8 +30,7 @@ public class auto_BLUESIDE extends OpMode {
 
    
 
-//    public static double flySpeed = 1400;
-//    public static double flySpeed2 = 1400;
+
 
     public static double launchTime = 5;
 
@@ -48,7 +47,7 @@ public class auto_BLUESIDE extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-   // public static double flySpeed = 1660;
+    public static double flySpeed = 1400;
 
 ////////timings for launchArtifacts function/////////////
 
@@ -376,7 +375,6 @@ public class auto_BLUESIDE extends OpMode {
 
         double p = 0.005, i = 0, d = 0;
         PIDController controller = new PIDController(p, i, d);
-        double flySpeed = 1490;
 
         controller.setPID(p, i, d);
         double fly1Current = fly1.getVelocity();
@@ -385,7 +383,7 @@ public class auto_BLUESIDE extends OpMode {
         double pid2 = controller.calculate(fly2Current, flySpeed);
 
         fly1.setPower(pid);
-        fly2.setPower(pid2);
+        fly2.setPower(pid);
 
         autonomousPathUpdate();
 
@@ -394,6 +392,7 @@ public class auto_BLUESIDE extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("flywheel velocity", fly1Current);
         telemetry.update();
     }
 
