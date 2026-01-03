@@ -28,10 +28,7 @@ public class auto_BLUESIDE extends OpMode {
     private Servo kicker;
     private Servo helper;
 
-    private PIDController controller;
-    public static double p = 0.005, i = 0, d = 0;
-    public static double f = 0;
-    public static double flySpeed = 1400;
+   
 
 //    public static double flySpeed = 1400;
 //    public static double flySpeed2 = 1400;
@@ -51,20 +48,23 @@ public class auto_BLUESIDE extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
+   // public static double flySpeed = 1660;
 
 ////////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
+        public static double i0 = 2;
+        public static double t0 = i0;
     public static double i1 = 0.7;
-    public static double t1 = i1;
+    public static double t1 = t0 + i1;
 //interval for transfer to run and throw the second ball into the flywheel
     public static double i2 = 0.7;
     public static double t2 = t1 + i2;
 //interval to move the third ball into position
-    public static double i3 = 0.1;
+    public static double i3 = 0.3;
     public static double t3 = t2 + i3;
 //interval for transfer to run and throw the third ball into the flywheel
-    public static double i4 = 0.2;
+    public static double i4 = 1;
     public static double t4 = t3 + i4;
 //interval to do nothing but before it all shuts down
     public static double i5 = 0.7;
@@ -374,6 +374,10 @@ public class auto_BLUESIDE extends OpMode {
         intake.setPower(intake_state);
         transfer.setPower(transfer_state);
 
+        double p = 0.005, i = 0, d = 0;
+        PIDController controller = new PIDController(p, i, d);
+        double flySpeed = 1490;
+
         controller.setPID(p, i, d);
         double fly1Current = fly1.getVelocity();
         double fly2Current = fly2.getVelocity();
@@ -401,6 +405,7 @@ public class auto_BLUESIDE extends OpMode {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
+       
 
         transfer = hardwareMap.get(DcMotorEx.class, "transfer");
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -459,10 +464,12 @@ public class auto_BLUESIDE extends OpMode {
         int tPos;
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
+//lets flywheel charge up
+            while(actionTimer.getElapsedTimeSeconds() > 0 && actionTimer.getElapsedTimeSeconds() < t0) {
 
-
+            }
 //first interval is to kick the first ball into the flywheel
-            while(actionTimer.getElapsedTimeSeconds() > 0 && actionTimer.getElapsedTimeSeconds() < t1) {
+            while(actionTimer.getElapsedTimeSeconds() > t0 && actionTimer.getElapsedTimeSeconds() < t1) {
                 kicker.setPosition(0);
             }
 
@@ -476,9 +483,9 @@ public class auto_BLUESIDE extends OpMode {
 
 //next interval is to move the third ball into position
             while(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
-                transfer.setPower(0);
+                helper.setPosition(0.4);
                 intake.setPower(1);
-
+                transfer.setPower(1);
             }
 
 //last interval is to run the transfer again to launch the third ball
@@ -486,12 +493,15 @@ public class auto_BLUESIDE extends OpMode {
                 intake.setPower(0);
                 transfer.setPower(0.8);
             }
-
+            while(actionTimer.getElapsedTimeSeconds() > t4 && actionTimer.getElapsedTimeSeconds() < t5) {
+                kicker.setPosition(0);
+            }
         }
     //once you're done scoring, shut it all down!
         intake.setPower(0);
         kicker.setPosition(0.185);
         transfer.setPower(0);
+        helper.setPosition(0.75);
         fly1.setPower(0);
         fly2.setPower(0);
         fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
