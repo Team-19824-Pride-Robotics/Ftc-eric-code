@@ -54,19 +54,19 @@ public class auto_BLUESIDE extends OpMode {
 //interval for initial kick into flywheel
     public static double i0 = 2;
     public static double t0 = i0;
-    public static double i1 = 1;
+    public static double i1 = 0.5;
     public static double t1 = t0 + i1;
 //interval for transfer to run and throw the second ball into the flywheel
     public static double i2 = 1;
     public static double t2 = t1 + i2;
 //interval to move the third ball into position
-    public static double i3 = 1;
+    public static double i3 = 0.5;
     public static double t3 = t2 + i3;
 //interval for transfer to run and throw the third ball into the flywheel
     public static double i4 = 1;
     public static double t4 = t3 + i4;
 //interval to do nothing but before it all shuts down
-    public static double i5 = 1.4;
+    public static double i5 = 0.5;
     public static double t5 = t4 + i5;
 
     public static double launchTime = i0 + i1 + i2 + i3 + i4 + i5;
@@ -89,9 +89,9 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose lineup1Pose = new Pose(45, 86.5, Math.toRadians(180));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
-    private final Pose gobble1Pose = new Pose(15, 86.5, Math.toRadians(180)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(55, 62, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(9, 62, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble1Pose = new Pose(22, 86.5, Math.toRadians(180)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(45, 62, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, 62, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(55, 100, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
     private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
@@ -99,7 +99,7 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180)); // Middle (Second Set)
 
-    private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1,lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
+    private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1,lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
 
 
     public void buildPaths() {
@@ -115,6 +115,10 @@ public class auto_BLUESIDE extends OpMode {
                 .setLinearHeadingInterpolation(scorePose.getHeading(), lineup1Pose.getHeading())
                 .build();
 
+        grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup1Pose, gobble1Pose))
+                .setConstantHeadingInterpolation(lineup1Pose.getHeading())
+                .build();
 
         getFirstBall1 = follower.pathBuilder()
                 .addPath(new BezierLine(lineup1Pose, lineup1_5Pose))
@@ -141,6 +145,11 @@ public class auto_BLUESIDE extends OpMode {
         lineup2 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose2, lineup2Pose))
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), lineup2Pose.getHeading())
+                .build();
+
+        grabPickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup2Pose, gobble2Pose))
+                .setConstantHeadingInterpolation(lineup2Pose.getHeading())
                 .build();
 
 
@@ -182,6 +191,11 @@ public class auto_BLUESIDE extends OpMode {
                 .setLinearHeadingInterpolation(lineup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
+        justPark = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2, gobble1Pose))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), gobble1Pose.getHeading())
+                .build();
+
     }
 
 
@@ -220,10 +234,10 @@ public class auto_BLUESIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 1;
-                    follower.setMaxPower(robotSlower);
-                    follower.followPath(getFirstBall1,true);
-                    setPathState(3);
+                    transfer_state = 0.5;
+                    //follower.setMaxPower(robotSlower);
+                    follower.followPath(grabPickup1,true);
+                    setPathState(5);
                 }
                 break;
 
@@ -258,7 +272,7 @@ public class auto_BLUESIDE extends OpMode {
                 if(!follower.isBusy()) {
                     intake_state = 0.075;
                     transfer_state = 0;
-                    follower.setMaxPower(robotFast);
+
                     follower.followPath(scorePickup1,true);
 
                     setPathState(6);
@@ -266,12 +280,11 @@ public class auto_BLUESIDE extends OpMode {
                 break;
 //scores the balls after opening the servo and gets back in position to pick up the balls
             case 6:
-                follower.setMaxPower(robotFast);
+
                 LegServo.setPosition(0);
                 if(!follower.isBusy()) {
                     launchArtifacts();
-  //                  follower.setMaxPower(robotSlow);
- //                   follower.followPath(grabPickup2,true);
+
                     setPathState(7);
                 }
                 break;
@@ -280,7 +293,7 @@ public class auto_BLUESIDE extends OpMode {
                 if(!follower.isBusy()) {
                     kicker.setPosition(0.185);
 
-                    follower.setMaxPower(robotSlow);
+                    //follower.setMaxPower(robotSlow);
                     follower.followPath(lineup2,true);
 
                     setPathState(8);
@@ -291,10 +304,10 @@ public class auto_BLUESIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 1;
-                    follower.setMaxPower(robotSlow);
-                    follower.followPath(getFirstBall2,true);
-                    setPathState(9);
+                    transfer_state = 0.5;
+                    //follower.setMaxPower(robotSlow);
+                    follower.followPath(grabPickup2,true);
+                    setPathState(11);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
@@ -330,7 +343,7 @@ public class auto_BLUESIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     intake_state = 0.075;
-                    transfer_state = -0.075;
+                    transfer_state = 0;
                     follower.followPath(scorePickup2,true);
 
                     setPathState(12);
@@ -338,19 +351,19 @@ public class auto_BLUESIDE extends OpMode {
                 break;
 //scores the balls after opening the servo and gets back in position to pick up the balls
             case 12:
-                follower.setMaxPower(robotFast);
+
                 LegServo.setPosition(0);
                 if(!follower.isBusy()) {
                     launchArtifacts();
                     //                  follower.setMaxPower(robotSlow);
                     //                   follower.followPath(grabPickup2,true);
-                    setPathState(-1);
+                    setPathState(13);
                 }
                 break;
 
             case 13:
                 if(!follower.isBusy()) {
-                    follower.followPath(grabPickup3,true);
+                    follower.followPath(justPark,true);
                     intake_state = 0;
                     transfer_state = 0;
                     setPathState(-1);
@@ -473,9 +486,10 @@ public class auto_BLUESIDE extends OpMode {
             fly2.setVelocity(flySpeed);
 
 //lets flywheel charge up
-            while(actionTimer.getElapsedTimeSeconds() > 0 && actionTimer.getElapsedTimeSeconds() < t0) {
 
-            }
+//            while(Math.abs(fly1.getVelocity()-flySpeed)<40){
+//
+//            }
 //first interval is to kick the first ball into the flywheel
             while(actionTimer.getElapsedTimeSeconds() > t0 && actionTimer.getElapsedTimeSeconds() < t1) {
                 kicker.setPosition(0);
