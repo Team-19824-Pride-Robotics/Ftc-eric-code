@@ -186,7 +186,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             double rightBackPower;
 
             //if pressing the right bumper, turn the robot towards the target
-            if (gamepad1.right_bumper) {
+            if (gamepad1.x) {
 
                 leftFrontPower = turnCorrection;
                 leftBackPower = turnCorrection;
@@ -274,6 +274,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 fly1.setPower(pid);
                 fly2.setPower(pid);
 
+
+
             }
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(0);
@@ -324,13 +326,13 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
-            if(gamepad2.left_bumper) {
+            if(gamepad2.left_bumper || gamepad1.left_bumper) {
 //                transferPosition += transferBump;
 //                runTransfer(transferPosition);
                   transfer.setPower(1);
             }
 
-            else if(gamepad2.right_bumper) {
+            else if(gamepad2.right_bumper || gamepad1.right_bumper) {
 //                transferPosition -= transferBump;
 //                runTransfer(transferPosition);
                   transfer.setPower(-1);
@@ -342,11 +344,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-            if (gamepad1.a || gamepad2.a) {
+            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper) {
                 intake.setPower(intakeOn);
 
             }
-            else if (gamepad1.b || gamepad2.b) {
+            else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
                 intake.setPower(-1);
 
             }
