@@ -42,22 +42,22 @@ public class auto_BLUESIDE extends OpMode {
     public double intake_state = 0;
     public double transfer_state = 0;
     public static double scorePos = 150;
-    public static double scorePos2 = 135;
-    public static double scorePos3 = 140;
+    public static double scorePos2 = 130;
+    public static double scorePos3 = 130;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1450;
+    public static double flySpeed = 1350;
 
 ////////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
-    public static double i0 = 2;
+    public static double i0 = 0;
     public static double t0 = i0;
-    public static double i1 = 0.5;
+    public static double i1 = 1.4;
     public static double t1 = t0 + i1;
 //interval for transfer to run and throw the second ball into the flywheel
-    public static double i2 = 1;
+    public static double i2 = 1.4;
     public static double t2 = t1 + i2;
 //interval to move the third ball into position
     public static double i3 = 0.5;
@@ -90,8 +90,8 @@ public class auto_BLUESIDE extends OpMode {
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
     private final Pose gobble1Pose = new Pose(22, 86.5, Math.toRadians(180)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(45, 62, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(20, 62, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose lineup2Pose = new Pose(45, 64, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, 64, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(55, 100, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
     private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
@@ -388,6 +388,9 @@ public class auto_BLUESIDE extends OpMode {
         follower.update();
         intake.setPower(intake_state);
         transfer.setPower(transfer_state);
+        fly1.setVelocity(flySpeed);
+        fly2.setVelocity(flySpeed);
+
 
 //        double p = 0.005, i = 0, d = 0;
 //        PIDController controller = new PIDController(p, i, d);
@@ -499,7 +502,7 @@ public class auto_BLUESIDE extends OpMode {
 //next interval is to run the transfer-only to move the second ball into position
             while(actionTimer.getElapsedTimeSeconds() > t1 && actionTimer.getElapsedTimeSeconds() < t2) {
                 kicker.setPosition(0.185);
-                transfer.setPower(0.6);
+                transfer.setPower(0.8);
 
             }
 
@@ -514,7 +517,7 @@ public class auto_BLUESIDE extends OpMode {
                 helper.setPosition(0.4);
                 kicker.setPosition(0.185);
                 intake.setPower(1);
-                transfer.setPower(0.6);
+                transfer.setPower(0.8);
 
             }
 

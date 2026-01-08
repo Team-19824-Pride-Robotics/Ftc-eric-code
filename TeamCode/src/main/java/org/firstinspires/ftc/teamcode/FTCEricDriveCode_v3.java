@@ -23,7 +23,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
     public static double f = 0;
-    public static double target = 1550;
+    public static double target = 1600;
 
     private Servo LegServo;
     private Servo kicker;
@@ -48,8 +48,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double kicker_closed = 0.185;
     public static double kickTime = 0.25;
     public static double backOffSpeed = -600;
-    public static double long_launch_speed = 1700;
-    public static double close_launch_speed = 1550;
+    public static double long_launch_speed = 1800;
+    public static double close_launch_speed = 1600;
     public static double servo_closed = 0.4;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
