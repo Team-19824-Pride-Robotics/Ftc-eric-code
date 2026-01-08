@@ -48,8 +48,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double kicker_closed = 0.185;
     public static double kickTime = 0.25;
     public static double backOffSpeed = -600;
-    public static double long_launch_speed = 1800;
-    public static double close_launch_speed = 1600;
+    public static double long_launch_speed = 2000;
+    public static double close_launch_speed = 1650;
     public static double servo_closed = 0.4;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
@@ -153,11 +153,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                     distance = 40;
                 }
 
-                if (llResult.getTx() < -4) {
+                if (llResult.getTx() < -8 ) {
                     turnCorrection = -0.25;
                 }
 
-                else if (llResult.getTx() > 4) {
+                else if (llResult.getTx() > 0 ) {
                     turnCorrection = 0.25;
                 }
 
