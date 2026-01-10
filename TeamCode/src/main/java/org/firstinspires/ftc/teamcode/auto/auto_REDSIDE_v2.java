@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 
 public class auto_REDSIDE_v2 extends OpMode {
-
+// this is graciously professional code.
     private DcMotorEx transfer;
     private DcMotor intake;
     private DcMotorEx fly1;
@@ -36,12 +36,13 @@ public class auto_REDSIDE_v2 extends OpMode {
     public double intake_state = 0;
     public double transfer_state = 0;
     public static double scorePos = 44;
-    public static double scorePos2 = 45;
-    public static double scorePos3 = 46;
+    public static double scorePos2 = 44;
+    public static double scorePos3 = 44;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1350;
+    public static double flySpeed = 1200;
+    public static double flyspeed2 = 1375;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -63,7 +64,7 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double i5 = 0.5;
     public static double t5 = t4 + i5;
 
-    public static double launchTime = 3;
+    public static double launchTime = 4;
 
 
     public static double t6 = t5 + 0.1;
@@ -84,7 +85,7 @@ public class auto_REDSIDE_v2 extends OpMode {
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(0));
     private final Pose gobble1Pose = new Pose(119.5, 86.5, Math.toRadians(0)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(100, 64, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(119.5, 64, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(125, 64, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(100, 100, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose(40, 62, Math.toRadians(0));
     private final Pose lineup2_6Pose = new Pose(45, 62, Math.toRadians(0));
@@ -99,7 +100,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
         scorePreload = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, scorePose))
-                .setConstantHeadingInterpolation(startPose.getHeading())
+                .setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
                 .build();
 
 
@@ -487,12 +488,25 @@ public class auto_REDSIDE_v2 extends OpMode {
             fly1.setVelocity(flySpeed);
             fly2.setVelocity(flySpeed);
 
-            while(actionTimer.getElapsedTimeSeconds() > 0.5) {
+            while(actionTimer.getElapsedTimeSeconds() > 0.5 && actionTimer.getElapsedTimeSeconds()<0.75) {
+
+            kicker.setPosition(0);
+
+            }
+            while(actionTimer.getElapsedTimeSeconds() > 0.75 && actionTimer.getElapsedTimeSeconds()<2.75) {
+                kicker.setPosition(0.185);
+
+                fly1.setVelocity(flyspeed2);
+                fly2.setVelocity(flyspeed2);
+
+            }
+            while(actionTimer.getElapsedTimeSeconds() > 2.75 && actionTimer.getElapsedTimeSeconds()<3.5) {
 
                 transfer.setPower(1);
                 intake.setPower(1);
 
             }
+
         }
         transfer.setPower(0);
         intake.setPower(0);

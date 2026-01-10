@@ -50,7 +50,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 2000;
     public static double close_launch_speed = 1650;
-    public static double servo_closed = 0.4;
+    public static double servo_closed = 0;
+    public static double servo_opened = 0.2;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
 
@@ -263,7 +264,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
             if (gamepad2.right_trigger > .1) {
-                LegServo.setPosition(0);
+                LegServo.setPosition(servo_opened);
                 target = close_launch_speed;
                 controller.setPID(p, i, d);
                 double fly1Current = fly1.getVelocity();
@@ -278,7 +279,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
             }
             else if (gamepad2.left_trigger > .1) {
-                LegServo.setPosition(0);
+                LegServo.setPosition(servo_opened);
                 target = long_launch_speed;
                 controller.setPID(p, i, d);
                 double fly1Current = fly1.getVelocity();
