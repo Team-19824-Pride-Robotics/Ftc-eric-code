@@ -34,7 +34,7 @@ public class auto_REDSIDE extends OpMode {
 
 
     public static double intake_full = 1;
-    public static double servo_closed = 0.4;
+    public static double servo_closed = 0;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
@@ -212,7 +212,7 @@ public class auto_REDSIDE extends OpMode {
 
 
             case 0:
-
+                LegServo.setPosition(0.2);
                 follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
                 setPathState(1);
@@ -222,6 +222,7 @@ public class auto_REDSIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     kicker.setPosition(0.185);
+                    LegServo.setPosition(0.2);
                     launchArtifacts();
 
                     follower.setMaxPower(robotFast);
@@ -234,6 +235,7 @@ public class auto_REDSIDE extends OpMode {
             case 2:
 
                 if(!follower.isBusy()) {
+                    LegServo.setPosition(0);
                     intake_state = 0.75;
                     transfer_state = 0.5;
                     //follower.setMaxPower(robotSlower);
@@ -282,7 +284,7 @@ public class auto_REDSIDE extends OpMode {
 //scores the balls after opening the servo and gets back in position to pick up the balls
             case 6:
 
-                LegServo.setPosition(0);
+                LegServo.setPosition(0.2);
                 if(!follower.isBusy()) {
                     launchArtifacts();
 
@@ -293,7 +295,7 @@ public class auto_REDSIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     kicker.setPosition(0.185);
-
+                    LegServo.setPosition(0);
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(lineup2,true);
 
