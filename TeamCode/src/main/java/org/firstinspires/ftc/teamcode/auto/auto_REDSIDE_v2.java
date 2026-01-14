@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-@Disabled
+
 @Autonomous(name = "auto_REDSIDE_v2")
 @Configurable
 
@@ -30,7 +30,8 @@ public class auto_REDSIDE_v2 extends OpMode {
 
 
     public static double intake_full = 1;
-    public static double servo_closed = 0.4;
+    public static double servo_closed = 0.27;
+    public static double servo_open = 0.05;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
@@ -43,14 +44,15 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static int tChange2 = 160;
     public static int tChange3 = 300;
     public static double flySpeed = 1200;
-    public static double flyspeed2 = 1375;
+    public static double flyspeed2 = 1350;
+    public static double flyspeed3 = 1400;
 
     /// /////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
     public static double i0 = 0;
     public static double t0 = i0;
-    public static double i1 = 0;
+    public static double i1 = 1;
     public static double t1 = t0 + i1;
     //interval for transfer to run and throw the second ball into the flywheel
     public static double i2 = 1.4;
@@ -65,7 +67,7 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double i5 = 0.5;
     public static double t5 = t4 + i5;
 
-    public static double launchTime = 4;
+    public static double launchTime = i0 + i1 + i2 + i3 + i4 + i5;
 
 
     public static double t6 = t5 + 0.1;
@@ -81,12 +83,12 @@ public class auto_REDSIDE_v2 extends OpMode {
 
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(100, 100, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(100, 86.5, Math.toRadians(0));
+    private final Pose lineup1Pose = new Pose(100, 85.5, Math.toRadians(0));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(0));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(119.5, 86.5, Math.toRadians(0)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(100, 64, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(125, 64, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble1Pose = new Pose(121, 85.5, Math.toRadians(0)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(100, 62, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(127, 62, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(100, 100, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose(40, 62, Math.toRadians(0));
     private final Pose lineup2_6Pose = new Pose(45, 62, Math.toRadians(0));
@@ -204,7 +206,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
 
             case 0:
-
+                LegServo.setPosition(servo_open);
                 follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
                 setPathState(1);
@@ -214,8 +216,9 @@ public class auto_REDSIDE_v2 extends OpMode {
 
                 if (!follower.isBusy()) {
                     kicker.setPosition(0.185);
+                    LegServo.setPosition(servo_open);
                     launchArtifacts();
-
+                    LegServo.setPosition(servo_closed);
                     follower.setMaxPower(robotFast);
                     follower.followPath(lineup1, true);
 
@@ -227,7 +230,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
                 if (!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 0.5;
+                    transfer_state = 0.75;
                     //follower.setMaxPower(robotSlower);
                     follower.followPath(grabPickup1, true);
                     setPathState(5);
@@ -265,7 +268,7 @@ public class auto_REDSIDE_v2 extends OpMode {
                 if (!follower.isBusy()) {
                     intake_state = 0.075;
                     transfer_state = 0;
-
+                    LegServo.setPosition(servo_open);
                     follower.followPath(scorePickup1, true);
 
                     setPathState(6);
@@ -277,7 +280,7 @@ public class auto_REDSIDE_v2 extends OpMode {
                 LegServo.setPosition(0);
                 if (!follower.isBusy()) {
                     launchArtifacts();
-
+                    LegServo.setPosition(servo_closed);
                     setPathState(7);
                 }
                 break;
@@ -297,7 +300,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
                 if (!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 0.5;
+                    transfer_state = 0.75;
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2, true);
                     setPathState(11);
@@ -337,6 +340,7 @@ public class auto_REDSIDE_v2 extends OpMode {
                 if (!follower.isBusy()) {
                     intake_state = 0.075;
                     transfer_state = 0;
+                    LegServo.setPosition(servo_open);
                     follower.followPath(scorePickup2, true);
 
                     setPathState(12);
@@ -348,8 +352,8 @@ public class auto_REDSIDE_v2 extends OpMode {
                 LegServo.setPosition(0);
                 if (!follower.isBusy()) {
                     launchArtifacts();
-                    //                  follower.setMaxPower(robotSlow);
-                    //                   follower.followPath(grabPickup2,true);
+
+                    LegServo.setPosition(servo_closed);
                     setPathState(13);
                 }
                 break;
@@ -385,8 +389,8 @@ public class auto_REDSIDE_v2 extends OpMode {
         follower.update();
         intake.setPower(intake_state);
         transfer.setPower(transfer_state);
-        fly1.setVelocity(flySpeed);
-        fly2.setVelocity(flySpeed);
+        fly1.setVelocity(flyspeed3);
+        fly2.setVelocity(flyspeed3);
 
 
 //        double p = 0.005, i = 0, d = 0;
@@ -477,40 +481,75 @@ public class auto_REDSIDE_v2 extends OpMode {
 
 
     public void launchArtifacts() {
-
+        //spin up the flywheel for long enough to launch three artifacts
         actionTimer.resetTimer();
-        LegServo.setPosition(0);
+        LegServo.setPosition(servo_open);
         kicker.setPosition(0.185);
         helper.setPosition(0.75);
         int tPos;
 
-        while (actionTimer.getElapsedTimeSeconds() < launchTime) {
+        while(actionTimer.getElapsedTimeSeconds() < launchTime) {
 
             fly1.setVelocity(flySpeed);
             fly2.setVelocity(flySpeed);
 
-            while(actionTimer.getElapsedTimeSeconds() > 0.5 && actionTimer.getElapsedTimeSeconds()<0.75) {
+//lets flywheel charge up
 
-            kicker.setPosition(0);
-
-            }
-            while(actionTimer.getElapsedTimeSeconds() > 0.75 && actionTimer.getElapsedTimeSeconds()<2.75) {
-                kicker.setPosition(0.185);
-
+//            while(Math.abs(fly1.getVelocity()-flySpeed)<40){
+//
+//            }
+//first interval is to kick the first ball into the flywheel
+            while(actionTimer.getElapsedTimeSeconds() > t0 && actionTimer.getElapsedTimeSeconds() < t1) {
+                kicker.setPosition(0);
                 fly1.setVelocity(flyspeed2);
                 fly2.setVelocity(flyspeed2);
-
             }
-            while(actionTimer.getElapsedTimeSeconds() > 2.75 && actionTimer.getElapsedTimeSeconds()<3.5) {
 
+//next interval is to run the transfer-only to move the second ball into position
+            while(actionTimer.getElapsedTimeSeconds() > t1 && actionTimer.getElapsedTimeSeconds() < t2) {
+                kicker.setPosition(0.185);
                 transfer.setPower(1);
-                intake.setPower(1);
 
             }
 
+            //next interval is to kick the second ball into the flywheel
+            while(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
+                kicker.setPosition(0);
+            }
+
+
+//next interval is to move the third ball into position
+            while(actionTimer.getElapsedTimeSeconds() > t3 && actionTimer.getElapsedTimeSeconds() < t4) {
+                helper.setPosition(0.4);
+                kicker.setPosition(0.185);
+                intake.setPower(1);
+                transfer.setPower(1);
+
+            }
+
+//last interval is to kick the third ball into the flywheel
+            while(actionTimer.getElapsedTimeSeconds() > t4 && actionTimer.getElapsedTimeSeconds() < t5) {
+                intake.setPower(0);
+                helper.setPosition(0.75);
+                transfer.setPower(0);
+                kicker.setPosition(0);
+
+            }
+//            while(actionTimer.getElapsedTimeSeconds() > t4 && actionTimer.getElapsedTimeSeconds() < t5) {
+//                kicker.setPosition(0);
+//
+//            }
         }
-        transfer.setPower(0);
+        //once you're done scoring, shut it all down!
         intake.setPower(0);
+        kicker.setPosition(0.185);
+        transfer.setPower(0);
+        helper.setPosition(0.75);
+        fly1.setPower(0);
+        fly2.setPower(0);
+        fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LegServo.setPosition(servo_closed);
 
     }
 }

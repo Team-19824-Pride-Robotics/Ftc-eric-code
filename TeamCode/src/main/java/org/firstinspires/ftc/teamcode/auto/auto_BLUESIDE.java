@@ -8,13 +8,14 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
+@Disabled
 @Autonomous(name = "auto_BLUESIDE")
 @Configurable
 
@@ -42,14 +43,14 @@ public class auto_BLUESIDE extends OpMode {
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 150;
+    public static double scorePos = 140;
     public static double scorePos2 = 130;
     public static double scorePos3 = 130;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
     public static double flySpeed = 1200;
-    public static double flySpeed2 = 1300;
+    public static double flySpeed2 = 1350;
 
 ////////timings for launchArtifacts function/////////////
 
