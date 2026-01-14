@@ -31,7 +31,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
     public static double intake_full = 1;
     public static double servo_closed = 0.27;
-    public static double servo_open = 0.05;
+    public static double servo_open = 0;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
@@ -45,7 +45,7 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static int tChange3 = 300;
     public static double flySpeed = 1200;
     public static double flyspeed2 = 1350;
-    public static double flyspeed3 = 1400;
+    public static double flyspeed3 = 1300;
 
     /// /////timings for launchArtifacts function/////////////
 

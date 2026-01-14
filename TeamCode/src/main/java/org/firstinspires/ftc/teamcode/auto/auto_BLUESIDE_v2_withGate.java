@@ -14,10 +14,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "auto_BLUESIDE_v2")
+@Autonomous(name = "auto_BLUESIDE_v2_withGate")
 @Configurable
 
-public class auto_BLUESIDE_v2 extends OpMode {
+public class auto_BLUESIDE_v2_withGate extends OpMode {
 // this is graciously professional code.
     private DcMotorEx transfer;
     private DcMotor intake;
@@ -83,6 +83,8 @@ public class auto_BLUESIDE_v2 extends OpMode {
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(55, 100, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
     private final Pose lineup1Pose = new Pose(45, 86.5, Math.toRadians(180));
+    private final Pose gatePose = new Pose(19, 76, Math.toRadians(180));
+    private final Pose backedOffPose = new Pose(28, 76, Math.toRadians(180));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
     private final Pose gobble1Pose = new Pose(22, 86.5, Math.toRadians(180)); // Highest (First Set)
@@ -95,7 +97,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
     private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180));
 
-    private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
+    private PathChain scorePreload, openGate, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
 
 
     public void buildPaths() {
@@ -122,10 +124,14 @@ public class auto_BLUESIDE_v2 extends OpMode {
                 .build();
 
         backOff1 = follower.pathBuilder()
-                .addPath(new BezierLine(lineup1_5Pose, lineup1_6Pose))
-                .setConstantHeadingInterpolation(lineup1_5Pose.getHeading())
+                .addPath(new BezierLine(gobble1Pose, backedOffPose))
+                .setConstantHeadingInterpolation(gobble1Pose.getHeading())
                 .build();
 
+        openGate = follower.pathBuilder()
+                .addPath(new BezierLine(backedOffPose, gatePose))
+                .setConstantHeadingInterpolation(backedOffPose.getHeading())
+                .build();
 
         getLast1 = follower.pathBuilder()
 
@@ -232,7 +238,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
                     transfer_state = 0.75;
                     //follower.setMaxPower(robotSlower);
                     follower.followPath(grabPickup1, true);
-                    setPathState(5);
+                    setPathState(3);
                 }
                 break;
 
@@ -240,10 +246,9 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    intake_state = 0.8;
-                    transfer_state = 0.30;
+                    intake_state = 0.075;
+                    transfer_state = 0;
 
-                    follower.setMaxPower(robotSlow);
                     follower.followPath(backOff1, true);
                     setPathState(4);
                 }
@@ -253,11 +258,11 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    intake_state = 0.8;
+                    intake_state = 0.075;
                     transfer_state = 0;
 
                     follower.setMaxPower(robotSlow);
-                    follower.followPath(getLast1, true);
+                    follower.followPath(openGate, true);
                     setPathState(5);
                 }
                 break;
@@ -267,6 +272,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
                 if (!follower.isBusy()) {
                     intake_state = 0.075;
                     transfer_state = 0;
+                    follower.setMaxPower(robotFast);
                     LegServo.setPosition(servo_open);
                     follower.followPath(scorePickup1, true);
 
@@ -280,7 +286,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
                 if (!follower.isBusy()) {
                     launchArtifacts();
                     LegServo.setPosition(servo_closed);
-                    setPathState(7);
+                    setPathState(13);
                 }
                 break;
             case 7:
