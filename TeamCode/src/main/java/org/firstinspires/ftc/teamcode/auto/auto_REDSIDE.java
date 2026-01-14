@@ -35,7 +35,7 @@ public class auto_REDSIDE extends OpMode {
 
     public static double intake_full = 1;
     public static double servo_closed = 0.27;
-    public static double servo_open = 0.27;
+    public static double servo_open = 0.05;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
@@ -48,13 +48,13 @@ public class auto_REDSIDE extends OpMode {
     public static int tChange2 = 160;
     public static int tChange3 = 300;
     public static double flySpeed = 1200;
-    public static double flySpeed2 = 1300;
+    public static double flySpeed2 = 1350;
 
 
 ////////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
-    public static double i0 = 0;
+    public static double i0 = 0.4;
     public static double t0 = i0;
     public static double i1 = 2;
     public static double t1 = t0 + i1;
@@ -91,9 +91,9 @@ public class auto_REDSIDE extends OpMode {
     private final Pose lineup1Pose = new Pose(100, 85.5, Math.toRadians(0));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(0));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(119.5, 85.5, Math.toRadians(0)); // Highest (First Set)
+    private final Pose gobble1Pose = new Pose(121, 85.5, Math.toRadians(0)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(100, 62, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(125, 62, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(127, 62, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(100, 100, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(0));
     private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(0));
@@ -223,7 +223,7 @@ public class auto_REDSIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     kicker.setPosition(0.185);
-
+                    LegServo.setPosition(servo_open);
                     launchArtifacts();
 
                     LegServo.setPosition(servo_closed);
@@ -238,9 +238,9 @@ public class auto_REDSIDE extends OpMode {
             case 2:
 
                 if(!follower.isBusy()) {
-                    LegServo.setPosition(servo_open);
+                    LegServo.setPosition(servo_closed);
                     intake_state = 0.75;
-                    transfer_state = 0.5;
+                    transfer_state = 0.75;
                     //follower.setMaxPower(robotSlower);
                     follower.followPath(grabPickup1,true);
                     setPathState(5);
@@ -278,7 +278,7 @@ public class auto_REDSIDE extends OpMode {
                 if(!follower.isBusy()) {
                     intake_state = 0.075;
                     transfer_state = 0;
-
+                    LegServo.setPosition(servo_open);
                     follower.followPath(scorePickup1,true);
 
                     setPathState(6);
@@ -287,7 +287,10 @@ public class auto_REDSIDE extends OpMode {
 //scores the balls after opening the servo and gets back in position to pick up the balls
             case 6:
 
+
+
                 if(!follower.isBusy()) {
+
                     launchArtifacts();
                     LegServo.setPosition(servo_closed);
                     setPathState(7);
@@ -309,7 +312,7 @@ public class auto_REDSIDE extends OpMode {
 
                 if(!follower.isBusy()) {
                     intake_state = 0.75;
-                    transfer_state = 0.5;
+                    transfer_state = 0.75;
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2,true);
                     setPathState(11);
@@ -349,6 +352,7 @@ public class auto_REDSIDE extends OpMode {
                 if(!follower.isBusy()) {
                     intake_state = 0.075;
                     transfer_state = 0;
+                    LegServo.setPosition(servo_open);
                     follower.followPath(scorePickup2,true);
 
                     setPathState(12);
@@ -357,11 +361,12 @@ public class auto_REDSIDE extends OpMode {
 //scores the balls after opening the servo and gets back in position to pick up the balls
             case 12:
 
-                LegServo.setPosition(servo_open);
+
+
                 if(!follower.isBusy()) {
+
                     launchArtifacts();
-                    //                  follower.setMaxPower(robotSlow);
-                    //                   follower.followPath(grabPickup2,true);
+                    LegServo.setPosition(servo_closed);
                     setPathState(13);
                 }
                 break;
@@ -483,7 +488,7 @@ public class auto_REDSIDE extends OpMode {
     public void launchArtifacts() {
         //spin up the flywheel for long enough to launch three artifacts
         actionTimer.resetTimer();
-        LegServo.setPosition(0);
+        LegServo.setPosition(servo_open);
         kicker.setPosition(0.185);
         helper.setPosition(0.75);
         int tPos;
@@ -500,7 +505,7 @@ public class auto_REDSIDE extends OpMode {
 //            }
 //first interval is to kick the first ball into the flywheel
             while(actionTimer.getElapsedTimeSeconds() > t0 && actionTimer.getElapsedTimeSeconds() < t1) {
-             kicker.setPosition(0);
+                kicker.setPosition(0);
                 fly1.setVelocity(flySpeed2);
                 fly2.setVelocity(flySpeed2);
             }
@@ -508,7 +513,7 @@ public class auto_REDSIDE extends OpMode {
 //next interval is to run the transfer-only to move the second ball into position
             while(actionTimer.getElapsedTimeSeconds() > t1 && actionTimer.getElapsedTimeSeconds() < t2) {
                 kicker.setPosition(0.185);
-                transfer.setPower(0.8);
+                transfer.setPower(1);
 
             }
 
@@ -523,7 +528,7 @@ public class auto_REDSIDE extends OpMode {
                 helper.setPosition(0.4);
                 kicker.setPosition(0.185);
                 intake.setPower(1);
-                transfer.setPower(0.8);
+                transfer.setPower(1);
 
             }
 

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.arcrobotics.ftclib.controller.PIDController;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -35,7 +35,8 @@ public class auto_BLUESIDE extends OpMode {
 
 
     public static double intake_full = 1;
-    public static double servo_closed = 0.4;
+    public static double servo_closed = 0.27;
+    public static double servo_open = 0.05;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
@@ -47,14 +48,15 @@ public class auto_BLUESIDE extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1350;
+    public static double flySpeed = 1200;
+    public static double flySpeed2 = 1300;
 
 ////////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
     public static double i0 = 0;
     public static double t0 = i0;
-    public static double i1 = 1.4;
+    public static double i1 = 2;
     public static double t1 = t0 + i1;
 //interval for transfer to run and throw the second ball into the flywheel
     public static double i2 = 1.4;
