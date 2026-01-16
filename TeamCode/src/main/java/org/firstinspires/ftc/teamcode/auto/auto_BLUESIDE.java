@@ -29,6 +29,8 @@ public class auto_BLUESIDE extends OpMode {
     private Servo kicker;
     private Servo helper;
 
+    //67
+
    
 
 
