@@ -245,20 +245,6 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 //               transfer.setPower(0.1);
 //            }
 
-            helper.setPosition(helper_open);
-
-            if (gamepad2.dpad_right || gamepad1.y) {
-                transfer.setPower(1);
-                resetRuntime();
-                while (getRuntime() < kickTime) {
-                    helper.setPosition(helper_closed);
-                }
-
-            }
-            else{
-                transfer.setPower(0);
-            }
-
 
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
@@ -327,16 +313,24 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
+
+            helper.setPosition(helper_open);
+
             if(gamepad2.left_bumper || gamepad1.left_bumper) {
-//                transferPosition += transferBump;
-//                runTransfer(transferPosition);
                   transfer.setPower(1);
             }
 
             else if(gamepad2.right_bumper || gamepad1.right_bumper) {
-//                transferPosition -= transferBump;
-//                runTransfer(transferPosition);
                   transfer.setPower(-1);
+            }
+
+            else if (gamepad2.dpad_right || gamepad1.y) {
+                transfer.setPower(1);
+                resetRuntime();
+                while (getRuntime() < kickTime) {
+                    helper.setPosition(helper_closed);
+                }
+
             }
             else {
                 transfer.setPower(0);
