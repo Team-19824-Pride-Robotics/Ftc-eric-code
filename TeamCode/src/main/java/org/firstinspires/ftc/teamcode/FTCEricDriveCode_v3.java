@@ -46,7 +46,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
     public static double speedReducer = 0.75;
 
-   public static boolean intakeOnly = false;
+    boolean isBCurrentlyPressed = false;
+    boolean isACurrentlyPressed = false;
     public static double kicker_kick = 0;
     public static double kicker_closed = 0.185;
     public static double kickTime = 0.25;
@@ -340,16 +341,28 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-            boolean isACurrentlyPressed = gamepad2.a;
-            boolean isBCurrentlyPressed = gamepad2.b;
+
+
+            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
+
+                isACurrentlyPressed = true;
+            }
+            else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+
+                isBCurrentlyPressed = true;
+            }
+            else {
+                isACurrentlyPressed = false;
+                isBCurrentlyPressed = false;
+            }
 
             if (isACurrentlyPressed && !wasAButtonPressedLastLoop) {
 
-                intakePosition = intakePosition + 200;
+                intakePosition = intakePosition + 600;
             }
             if (isBCurrentlyPressed && !wasBButtonPressedLastLoop) {
 
-                intakePosition = intakePosition - 200;
+                intakePosition = intakePosition - 400;
             }
 
             // Update the previous button state for the next loop iteration
@@ -359,24 +372,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
             intake.setTargetPosition(intakePosition);
             intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             intake.setPower(1);
-                 
 
 
 
 
-//            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper) {
-//
-//                intakePosition = intakePosition + 200;
-//            }
-//            else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
-//
-//                intakePosition = intakePosition - 200;
-//            }
-
-
-
-
-
+            telemetry.addData("Button Pressed", isACurrentlyPressed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
             telemetry.addData("Target Velocity", target);
