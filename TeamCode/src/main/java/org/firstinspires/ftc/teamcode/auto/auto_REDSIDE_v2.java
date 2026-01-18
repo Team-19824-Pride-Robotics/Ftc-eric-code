@@ -83,10 +83,10 @@ public class auto_REDSIDE_v2 extends OpMode {
 
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(90, 90, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(100, 84, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(121, 84, Math.toRadians(0)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(100, 60, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(127, 60, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(100, 90.5, Math.toRadians(0));
+    private final Pose gobble1Pose = new Pose(121, 90.5, Math.toRadians(0)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(100, 58, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(127, 58, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(90, 90, Math.toRadians(scorePos3));
 

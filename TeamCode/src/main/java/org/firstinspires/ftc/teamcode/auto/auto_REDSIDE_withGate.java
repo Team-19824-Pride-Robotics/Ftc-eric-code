@@ -81,13 +81,13 @@ public class auto_REDSIDE_withGate extends OpMode {
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43));
     private final Pose scorePose = new Pose(100, 100, Math.toRadians(scorePos));
 
-    private final Pose lineup1Pose = new Pose(100, 86.5, Math.toRadians(0));
+    private final Pose lineup1Pose = new Pose(100, 94.5, Math.toRadians(0));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(0));
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(119.5, 86.5, Math.toRadians(0));
+    private final Pose gobble1Pose = new Pose(119.5, 94.5, Math.toRadians(0));
 
-    private final Pose backedOffPose = new Pose(115, 76, Math.toRadians(0));
-    private final Pose gatePose = new Pose(128, 76, Math.toRadians(0));
+    private final Pose backedOffPose = new Pose(115, 79, Math.toRadians(0));
+    private final Pose gatePose = new Pose(128, 79, Math.toRadians(0));
 
     private final Pose lineup2Pose = new Pose(100, 64, Math.toRadians(0));
     private final Pose gobble2Pose = new Pose(119.5, 64, Math.toRadians(0));

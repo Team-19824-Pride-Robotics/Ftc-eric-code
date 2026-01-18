@@ -82,12 +82,12 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(45, 86.5, Math.toRadians(180));
+    private final Pose lineup1Pose = new Pose(45, 87, Math.toRadians(180));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
-    private final Pose gobble1Pose = new Pose(22, 86.5, Math.toRadians(180)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(45, 64, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(20, 64, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble1Pose = new Pose(22, 87, Math.toRadians(180)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(45, 66, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, 66, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
     private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
@@ -177,8 +177,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
                 .addPath(new BezierLine(scorePose, lineup3Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), lineup3Pose.getHeading())
-                .addPath(new BezierLine(lineup3Pose, gobble3Pose))
-                .setConstantHeadingInterpolation(lineup3Pose.getHeading())
+                .addPath(new BezierLine(lineup3Pose, gobble3Pose)).setConstantHeadingInterpolation(lineup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
