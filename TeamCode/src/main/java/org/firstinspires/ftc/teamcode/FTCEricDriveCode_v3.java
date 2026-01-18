@@ -41,6 +41,9 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 
     //Declare variables
+    boolean wasAButtonPressedLastLoop = false;
+    boolean wasBButtonPressedLastLoop = false;
+
     public static double speedReducer = 0.75;
 
    public static boolean intakeOnly = false;
@@ -337,18 +340,40 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper) {
+            boolean isACurrentlyPressed = gamepad2.a;
+            boolean isBCurrentlyPressed = gamepad2.b;
+
+            if (isACurrentlyPressed && !wasAButtonPressedLastLoop) {
 
                 intakePosition = intakePosition + 200;
             }
-            else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+            if (isBCurrentlyPressed && !wasBButtonPressedLastLoop) {
 
                 intakePosition = intakePosition - 200;
             }
 
+            // Update the previous button state for the next loop iteration
+            wasAButtonPressedLastLoop = isACurrentlyPressed;
+            wasBButtonPressedLastLoop = isBCurrentlyPressed;
+
             intake.setTargetPosition(intakePosition);
             intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             intake.setPower(1);
+                 
+
+
+
+
+//            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper) {
+//
+//                intakePosition = intakePosition + 200;
+//            }
+//            else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+//
+//                intakePosition = intakePosition - 200;
+//            }
+
+
 
 
 
