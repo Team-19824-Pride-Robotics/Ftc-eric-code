@@ -57,6 +57,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 
     public static double intakeOn = 1;
     public static int transferBump = 250;
+    public int intakePosition = 0;
     public static double scoreZone = 1;
     public static double p_turn = 1;
     double fly1Speed = 0;
@@ -240,10 +241,7 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                 BL.setPower(-.2);
                 BR.setPower(-.2);
             }
-//            if (gamepad2.dpad_left) {
-//
-//               transfer.setPower(0.1);
-//            }
+
 
 
 
@@ -340,43 +338,22 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
             if (gamepad1.a || gamepad2.a || gamepad1.left_bumper) {
-                intake.setPower(intakeOn);
 
+                intakePosition = intakePosition + 200;
             }
             else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
-                intake.setPower(-1);
 
-            }
-            else {
-                intake.setPower(0);
+                intakePosition = intakePosition - 200;
             }
 
-//            if (gamepad2.a && intakeOnly == true) {
-//
-//                intake.setPower(intakeOn);
-//            }
-//            else if (gamepad2.a && intakeOnly == false) {
-//                intake.setPower(intakeOn);
-//                transfer.setPower(1);
-//            }
-//            else if (gamepad2.b && intakeOnly == true) {
-//
-//                intake.setPower(-1);
-//            }
-//            else if (gamepad2.b && intakeOnly == false) {
-//                intake.setPower(-1);
-//                transfer.setPower(-1);
-//            }
-//            else {
-//                intake.setPower(0);
-//                transfer.setPower(0);
-//            }
+            intake.setTargetPosition(intakePosition);
+            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intake.setPower(1);
 
 
-            //telemetry.addData("Distance", distance);
+
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
-            telemetry.addData("intakeOnly", intakeOnly);
             telemetry.addData("Target Velocity", target);
             telemetry.update();
             
@@ -384,11 +361,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     }
 
 
-    public void runTransfer(int newTransferPosition) {
-        transfer.setTargetPosition(newTransferPosition);
-        transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        transfer.setPower(1);
-        while (transfer.isBusy()) {
+    public void runIntake(int newIntakePosition) {
+        intake.setTargetPosition(newIntakePosition);
+        intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.setPower(1);
+        while (intake.isBusy()) {
             //wait for the motor to reach its target position
         }
         transfer.setPower(0);
