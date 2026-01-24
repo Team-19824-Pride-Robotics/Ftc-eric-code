@@ -37,15 +37,19 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 46;
-    public static double scorePos2 = 44;
-    public static double scorePos3 = 44;
+    public static double scorePos = 43;
+    public static double scorePos2 = 43;
+    public static double scorePos3 = 43;
+    public static double lineupY1 = 82;
+    public static double lineupY2 = 58;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1300;
-    public static double flyspeed2 = 1400;
-    public static double flyspeed3 = 1200;
+    public static double flySpeed = 1500;
+    public static double flyspeed2 = 1580;
+    public static double flyspeed3 = 1500;
+    public static double flyspeed4 = 1500;
+    public static double flyspeed5 = 1550;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -58,7 +62,7 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double i2 = 1.4;
     public static double t2 = t1 + i2;
     //interval to move the third ball into position
-    public static double i3 = 0.5;
+    public static double i3 = 1.25;
     public static double t3 = t2 + i3;
     //interval for transfer to run and throw the third ball into the flywheel
     public static double i4 = 1;
@@ -83,10 +87,10 @@ public class auto_REDSIDE_v2 extends OpMode {
 
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(90, 90, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(100, 90.5, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(121, 90.5, Math.toRadians(0)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(100, 58, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(127, 58, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(95, lineupY1, Math.toRadians(0));
+    private final Pose gobble1Pose = new Pose(125, lineupY1, Math.toRadians(0)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(100, lineupY2, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(127, lineupY2, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(90, 90, Math.toRadians(scorePos3));
 
@@ -461,6 +465,9 @@ public class auto_REDSIDE_v2 extends OpMode {
             //next interval is to kick the second ball into the flywheel
             while(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
                 kicker.setPosition(0);
+
+                fly1.setVelocity(flyspeed5);
+                fly2.setVelocity(flyspeed5);
             }
 
 
@@ -508,8 +515,8 @@ public class auto_REDSIDE_v2 extends OpMode {
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
 
-            fly1.setVelocity(1380);
-            fly2.setVelocity(1380);
+            fly1.setVelocity(flyspeed4);
+            fly2.setVelocity(flyspeed4);
 
 //lets flywheel charge up
 
