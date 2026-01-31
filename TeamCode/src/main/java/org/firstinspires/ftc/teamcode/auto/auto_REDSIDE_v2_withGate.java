@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class auto_REDSIDE_v2_withGate extends OpMode {
 // this is graciously professional code.
+    //eric that wasnt nice
     private DcMotorEx transfer;
     private DcMotor intake;
     private DcMotorEx fly1;
@@ -36,16 +37,19 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 46;
-    public static double scorePos2 = 44;
-    public static double scorePos3 = 44;
+    public static double scorePos = 43;
+    public static double scorePos2 = 43;
+    public static double scorePos3 = 43;
+    public static double lineupY1 = 82;
+    public static double lineupY2 = 58;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1300;
-    public static double flyspeed2 = 1400;
-    public static double flyspeed3 = 1200;
-
+    public static double flySpeed = 1500;
+    public static double flyspeed2 = 1580;
+    public static double flyspeed3 = 1500;
+    public static double flyspeed4 = 1500;
+    public static double flyspeed5 = 1550;
     /// /////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
@@ -82,14 +86,14 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
 
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(95, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(100, 85.5, Math.toRadians(0));
+    private final Pose lineup1Pose = new Pose(100, lineupY1, Math.toRadians(0));
     private final Pose backedOffPose = new Pose(115, 76, Math.toRadians(0));
-    private final Pose gatePose = new Pose(128, 76, Math.toRadians(0));
+    private final Pose gatePose = new Pose(127.5, 74, Math.toRadians(0));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(0));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(121, 85.5, Math.toRadians(0)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(100, 62, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(127, 62, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble1Pose = new Pose(122.5, lineupY1, Math.toRadians(0)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(100, lineupY2, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(127, lineupY2, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(95, 95, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose(40, 62, Math.toRadians(0));
     private final Pose lineup2_6Pose = new Pose(45, 62, Math.toRadians(0));
@@ -270,6 +274,7 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
             case 5:
 
                 if (!follower.isBusy()) {
+                    waitTimer(2);
                     intake_state = 0.075;
                     transfer_state = 0;
                     follower.setMaxPower(robotFast);
@@ -520,6 +525,9 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
             //next interval is to kick the second ball into the flywheel
             while(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
                 kicker.setPosition(0);
+
+                fly1.setVelocity(flyspeed5);
+                fly2.setVelocity(flyspeed5);
             }
 
 
@@ -567,8 +575,8 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
 
-            fly1.setVelocity(1380);
-            fly2.setVelocity(1380);
+            fly1.setVelocity(flyspeed4);
+            fly2.setVelocity(flyspeed4);
 
 //lets flywheel charge up
 
@@ -627,6 +635,11 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
         fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LegServo.setPosition(servo_closed);
 
+    }
+    public void waitTimer(double time) {
+        actionTimer.resetTimer();
+        while (actionTimer.getElapsedTimeSeconds() < time) {
+        }
     }
 }
 

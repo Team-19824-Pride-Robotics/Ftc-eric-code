@@ -39,12 +39,16 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
     public static double scorePos = 138;
     public static double scorePos2 = 130;
     public static double scorePos3 = 130;
+    public static double lineupY1 = 85.5;
+    public static double lineupY2 = 63;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1300;
-    public static double flyspeed2 = 1400;
-    public static double flyspeed3 = 1200;
+    public static double flySpeed = 1500;
+    public static double flyspeed2 = 1580;
+    public static double flyspeed3 = 1500;
+    public static double flyspeed4 = 1500;
+    public static double flyspeed5 = 1550;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -82,14 +86,14 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(45, 91.5, Math.toRadians(180));
-    private final Pose gatePose = new Pose(19, 79, Math.toRadians(180));
+    private final Pose lineup1Pose = new Pose(45, lineupY1, Math.toRadians(180));
+    private final Pose gatePose = new Pose(18.5, 74.3, Math.toRadians(180));
     private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(180));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
-    private final Pose gobble1Pose = new Pose(22, 91.5, Math.toRadians(180)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(45, 66, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(20, 66, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble1Pose = new Pose(21, lineupY1, Math.toRadians(180)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(45, lineupY2, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
     private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
     private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
@@ -270,6 +274,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
             case 5:
 
                 if (!follower.isBusy()) {
+                    waitTimer(2);
                     intake_state = 0.075;
                     transfer_state = 0;
                     follower.setMaxPower(robotFast);
@@ -520,6 +525,8 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
             //next interval is to kick the second ball into the flywheel
             while(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
                 kicker.setPosition(0);
+                fly1.setVelocity(flyspeed5);
+                fly2.setVelocity(flyspeed5);
             }
 
 
@@ -567,8 +574,8 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
         while(actionTimer.getElapsedTimeSeconds() < launchTime) {
 
-            fly1.setVelocity(1380);
-            fly2.setVelocity(1380);
+            fly1.setVelocity(flyspeed4);
+            fly2.setVelocity(flyspeed4);
 
 //lets flywheel charge up
 
@@ -627,6 +634,11 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
         fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LegServo.setPosition(servo_closed);
 
+    }
+    public void waitTimer(double time) {
+        actionTimer.resetTimer();
+        while (actionTimer.getElapsedTimeSeconds() < time) {
+        }
     }
 }
 
