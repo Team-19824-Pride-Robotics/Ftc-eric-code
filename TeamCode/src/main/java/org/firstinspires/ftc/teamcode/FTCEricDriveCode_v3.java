@@ -133,6 +133,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
         kicker.setPosition(0);
         helper.setPosition(helper_open);
 
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         runtime.reset();
 
        // Wait for the game to start (driver presses START)

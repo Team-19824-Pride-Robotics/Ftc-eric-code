@@ -30,7 +30,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
 
     public static double intake_full = 1;
-    public static double servo_closed = 0.27;
+    public static double servo_closed = 0.20;
     public static double servo_open = 0;
     public static double robotFast = 0.6;
     public static double robotSlow = 0.5;
