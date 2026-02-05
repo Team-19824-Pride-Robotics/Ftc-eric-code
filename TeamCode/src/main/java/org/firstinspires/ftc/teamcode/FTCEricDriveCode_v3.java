@@ -52,8 +52,8 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
     public static double kicker_closed = 0.185;
     public static double kickTime = 0.25;
     public static double backOffSpeed = -600;
-    public static double long_launch_speed = 1700;
-    public static double close_launch_speed = 1850;
+    public static double long_launch_speed = 1850;
+    public static double close_launch_speed = 1800;
     //for 3 at once combo deal
     public static double servo_closed = 0.2;
     public static double servo_opened = 0;
