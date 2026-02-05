@@ -87,7 +87,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
     private final Pose lineup1Pose = new Pose(45, lineupY1, Math.toRadians(180));
-    private final Pose gatePose = new Pose(18.5, 74.3, Math.toRadians(180));
+    private final Pose gatePose = new Pose(18.5, 75, Math.toRadians(180));
     private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(180));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
