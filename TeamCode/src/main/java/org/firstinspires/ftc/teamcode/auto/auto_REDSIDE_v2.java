@@ -37,11 +37,11 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 43;
-    public static double scorePos2 = 43;
-    public static double scorePos3 = 43;
-    public static double lineupY1 = 78;
-    public static double lineupY2 = 58;
+    public static double scorePos = 41;
+    public static double scorePos2 = 42;
+    public static double scorePos3 = 42;
+    public static double lineupY1 =85;
+    public static double lineupY2 = 59;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
@@ -87,10 +87,11 @@ public class auto_REDSIDE_v2 extends OpMode {
 
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(90, 90, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(125, lineupY1, Math.toRadians(0)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(95, lineupY2, Math.toRadians(0)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(127, lineupY2, Math.toRadians(0)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(355));
+    private final Pose gobble1Pose = new Pose(120.5, lineupY1, Math.toRadians(355)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(95, lineupY2, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(125, lineupY2, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose backOff2Pose = new Pose(95, lineupY2, Math.toRadians(355)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(90, 90, Math.toRadians(scorePos3));
 
@@ -125,6 +126,11 @@ public class auto_REDSIDE_v2 extends OpMode {
                 .addPath(new BezierLine(scorePose2, lineup2Pose))
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), lineup2Pose.getHeading())
                 .build();
+        backOff2 = follower.pathBuilder()
+                .addPath(new BezierLine(gobble2Pose, backOff2Pose))
+                .setConstantHeadingInterpolation(backOff2Pose.getHeading())
+                .build();
+
 
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(lineup2Pose, gobble2Pose))
@@ -132,8 +138,8 @@ public class auto_REDSIDE_v2 extends OpMode {
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(gobble2Pose, scorePose3))
-                .setLinearHeadingInterpolation(gobble2Pose.getHeading(), scorePose3.getHeading())
+                .addPath(new BezierLine(backOff2Pose, scorePose3))
+                .setLinearHeadingInterpolation(backOff2Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
 
@@ -253,7 +259,7 @@ public class auto_REDSIDE_v2 extends OpMode {
                     transfer_state = 0.75;
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2, true);
-                    setPathState(11);
+                    setPathState(9);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
@@ -261,12 +267,8 @@ public class auto_REDSIDE_v2 extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    intake_state = 0.8;
-                    transfer_state = 0.30;
-
-                    follower.setMaxPower(robotSlow);
                     follower.followPath(backOff2, true);
-                    setPathState(10);
+                    setPathState(11);
                 }
                 break;
 

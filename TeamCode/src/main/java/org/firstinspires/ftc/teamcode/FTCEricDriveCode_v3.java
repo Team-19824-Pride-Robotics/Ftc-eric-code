@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 @Configurable
 
 public class FTCEricDriveCode_v3 extends LinearOpMode {
-
+//we love being gracious and professional 
     private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
     public static double f = 0;
@@ -162,11 +162,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                     distance = 40;
                 }
 
-                if (llResult.getTx() < -4 ) {
+                if (llResult.getTx() < -6 ) {
                     turnCorrection = -0.25;
                 }
 
-                else if (llResult.getTx() > 4 ) {
+                else if (llResult.getTx() > 2 ) {
                     turnCorrection = 0.25;
                 }
 
