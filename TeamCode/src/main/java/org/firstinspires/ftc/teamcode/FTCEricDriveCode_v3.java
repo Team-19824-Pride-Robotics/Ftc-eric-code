@@ -162,11 +162,11 @@ public class FTCEricDriveCode_v3 extends LinearOpMode {
                     distance = 40;
                 }
 
-                if (llResult.getTx() < -8 ) {
+                if (llResult.getTx() < -4 ) {
                     turnCorrection = -0.25;
                 }
 
-                else if (llResult.getTx() > 0 ) {
+                else if (llResult.getTx() > 4 ) {
                     turnCorrection = 0.25;
                 }
 
