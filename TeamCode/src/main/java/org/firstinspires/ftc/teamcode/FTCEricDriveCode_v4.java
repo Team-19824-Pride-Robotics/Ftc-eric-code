@@ -409,9 +409,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
     ///LAUNCH ARTIFACTS///
     public void launchArtifacts2() {
         //spin up the flywheel for long enough to launch three artifacts
-        LegServo.setPosition(servo_opened);
-        kicker.setPosition(0.185);
-        helper.setPosition(0.75);
+
         int tPos;
 
 
