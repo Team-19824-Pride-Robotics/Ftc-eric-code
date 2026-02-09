@@ -64,6 +64,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
     public int intakePosition = 0;
     public static double scoreZone = 1;
     public static double p_turn = 1;
+    private boolean launch = false;
     public static double flyspeed2 = 1580;
     public static double flyspeed3 = 1500;
     public static double flyspeed4 = 1500;
@@ -169,6 +170,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
         while (opModeIsActive()) {
 
 
+
 //////////////////////LIMELIGHT SETUP//////////////////////////////////
             LLResult llResult = limelight.getLatestResult();
 
@@ -182,11 +184,11 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
                     distance = 40;
                 }
 
-                if (llResult.getTx() < -6  ) {
+                if (llResult.getTx() < -3  ) {
                     turnCorrection = -0.25;
                 }
 
-                else if (llResult.getTx() > 2 ) {
+                else if (llResult.getTx() > 0 ) {
                     turnCorrection = 0.25;
                 }
 
@@ -214,25 +216,19 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             double rightFrontPower;
             double rightBackPower;
 
-            //if pressing the right bumper, turn the robot towards the target
-            if (gamepad1.x) {
-
+            if (gamepad1.x){
                 leftFrontPower = turnCorrection;
                 leftBackPower = turnCorrection;
                 rightFrontPower = -turnCorrection;
                 rightBackPower = -turnCorrection;
-
+                //otherwise drive normally
             }
-
-            //otherwise drive normally
-            else {
-
+            else{
                 leftFrontPower = ((y + x + rx) / denominator);
                 leftBackPower = ((y - x + rx) / denominator);
                 rightFrontPower = ((y - x - rx) / denominator);
                 rightBackPower = ((y + x - rx) / denominator);
             }
-
             FL.setPower(leftFrontPower * speedReducer);
             BL.setPower(leftBackPower * speedReducer);
             FR.setPower(rightFrontPower * speedReducer);
@@ -273,22 +269,34 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
+            controller.setPID(p, i, d);
+            double fly1Current = fly1.getVelocity();
+            double fly2Current = fly2.getVelocity();
+            double pid = controller.calculate(fly1Current, target);
+            double pid2 = controller.calculate(fly2Current, target);
+
+            fly1.setPower(pid);
+            fly2.setPower(pid2);
+
             if (gamepad2.dpad_down) {
-                waitTimer(2);
+                launch = true;
+                actionTimer.resetTimer();
+            }
+
+            if (launch) {
                 launchArtifacts2();
+            }
+            else {
+                LegServo.setPosition(servo_closed);
+            }
+
+            if (gamepad2.dpad_up) {
+                launch = false;
             }
 
             if (gamepad2.right_trigger > .1) {
                 LegServo.setPosition(servo_opened);
                 target = close_launch_speed;
-                controller.setPID(p, i, d);
-                double fly1Current = fly1.getVelocity();
-                double fly2Current = fly2.getVelocity();
-                double pid = controller.calculate(fly1Current, target);
-                double pid2 = controller.calculate(fly2Current, target);
-
-                fly1.setPower(pid);
-                fly2.setPower(pid);
 
 
 
@@ -296,41 +304,15 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             else if (gamepad2.left_trigger > .1) {
                 LegServo.setPosition(servo_opened);
                 target = long_launch_speed;
-                controller.setPID(p, i, d);
-                double fly1Current = fly1.getVelocity();
-                double fly2Current = fly2.getVelocity();
-                double pid = controller.calculate(fly1Current, target);
-                double pid2 = controller.calculate(fly2Current, target);
-
-                fly1.setPower(pid);
-                fly2.setPower(pid2);
 
 
             }
             else if (gamepad2.x){
                 LegServo.setPosition(servo_closed);
                 target = backOffSpeed;
-                controller.setPID(p, i, d);
-                double fly1Current = fly1.getVelocity();
-                double fly2Current = fly2.getVelocity();
-                double pid = controller.calculate(fly1Current, target);
-                double pid2 = controller.calculate(fly2Current, target);
-
-                fly1.setPower(pid);
-                fly2.setPower(pid2);
                 transfer.setPower(-1);
             }
 
-            else {
-                LegServo.setPosition(servo_closed);
-                fly1.setPower(0);
-                fly2.setPower(0);
-                fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-
-
-            kicker.setPosition(kicker_closed);
 
             if(gamepad2.y) {
                 resetRuntime();
@@ -424,15 +406,17 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
         transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    ///LAUNCH ARTIFACTS///
     public void launchArtifacts2() {
         //spin up the flywheel for long enough to launch three artifacts
-        actionTimer.resetTimer();
         LegServo.setPosition(servo_opened);
         kicker.setPosition(0.185);
         helper.setPosition(0.75);
         int tPos;
 
-        while(actionTimer.getElapsedTimeSeconds() < launchTime) {
+
+        if(actionTimer.getElapsedTimeSeconds() < launchTime) {
+            //at the start of the sequence; corrects aiming
 
             fly1.setVelocity(flyspeed4);
             fly2.setVelocity(flyspeed4);
@@ -443,26 +427,26 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 //
 //            }
 //first interval is to kick the first ball into the flywheel
-            while(actionTimer.getElapsedTimeSeconds() > 1 && actionTimer.getElapsedTimeSeconds() < 2) {
+            if (actionTimer.getElapsedTimeSeconds() > t0 && actionTimer.getElapsedTimeSeconds() < t1) {
                 kicker.setPosition(0);
 
             }
 
 //next interval is to run the transfer-only to move the second ball into position
-            while(actionTimer.getElapsedTimeSeconds() > 2 && actionTimer.getElapsedTimeSeconds() < 3) {
+            if (actionTimer.getElapsedTimeSeconds() > t1 && actionTimer.getElapsedTimeSeconds() < t2) {
                 kicker.setPosition(0.185);
                 transfer.setPower(1);
 
             }
 
             //next interval is to kick the second ball into the flywheel
-            while(actionTimer.getElapsedTimeSeconds() > 3 && actionTimer.getElapsedTimeSeconds() < 3.5) {
+            if(actionTimer.getElapsedTimeSeconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
                 kicker.setPosition(0);
             }
 
 
 //next interval is to move the third ball into position
-            while(actionTimer.getElapsedTimeSeconds() > 3.5 && actionTimer.getElapsedTimeSeconds() < 4.5) {
+            if(actionTimer.getElapsedTimeSeconds() > t3 && actionTimer.getElapsedTimeSeconds() < t4) {
                 helper.setPosition(0.4);
                 kicker.setPosition(0.185);
                 intake.setPower(1);
@@ -471,7 +455,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             }
 
 //last interval is to kick the third ball into the flywheel
-            while(actionTimer.getElapsedTimeSeconds() > 4.5 && actionTimer.getElapsedTimeSeconds() < 5) {
+            if(actionTimer.getElapsedTimeSeconds() > t4 && actionTimer.getElapsedTimeSeconds() < t5) {
                 intake.setPower(0);
                 helper.setPosition(0.75);
                 transfer.setPower(0);
@@ -484,16 +468,18 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 //            }
         }
         //once you're done scoring, shut it all down!
-        intake.setPower(0);
-        kicker.setPosition(0.185);
-        transfer.setPower(0);
-        helper.setPosition(0.75);
-        fly1.setPower(0);
-        fly2.setPower(0);
-        fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LegServo.setPosition(servo_closed);
-
+        if (actionTimer.getElapsedTimeSeconds()> t5) {
+            intake.setPower(0);
+            kicker.setPosition(0.185);
+            transfer.setPower(0);
+            helper.setPosition(0.75);
+            fly1.setPower(0);
+            fly2.setPower(0);
+            fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            LegServo.setPosition(servo_closed);
+            launch = false;
+        }
     }
     public void waitTimer(double time) {
         actionTimer.resetTimer();
