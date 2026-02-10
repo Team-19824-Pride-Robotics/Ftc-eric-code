@@ -491,7 +491,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//           LegServo.setPosition(servo_closed);
+           LegServo.setPosition(servo_closed);
             launch = false;
         }
     }
