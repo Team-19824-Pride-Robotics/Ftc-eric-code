@@ -283,9 +283,17 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             fly1.setPower(pid);
             fly2.setPower(pid2);
 
+            if (launch==false) {
+                LegServo.setPosition(servo_closed);
+            }
+            else if (launch){
+                LegServo.setPosition(servo_opened);
+            }
+
             if (gamepad2.dpad_down) {
                 launch = true;
                 timer.reset();
+                timer.startTime();
             }
 
             if (launch) {
@@ -297,24 +305,24 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
                 launch = false;
             }
 
-            if (gamepad2.right_trigger > .1) {
-                LegServo.setPosition(servo_opened);
-                target = close_launch_speed;
-
-
-
-            }
-            else if (gamepad2.left_trigger > .1) {
-                LegServo.setPosition(servo_opened);
-                target = long_launch_speed;
-
-
-            }
-            else if (gamepad2.x){
-                LegServo.setPosition(servo_closed);
-                target = backOffSpeed;
-                transfer.setPower(-1);
-            }
+//            if (gamepad2.right_trigger > .1) {
+//                LegServo.setPosition(servo_opened);
+//                target = close_launch_speed;
+//
+//
+//
+//            }
+//            else if (gamepad2.left_trigger > .1) {
+//                LegServo.setPosition(servo_opened);
+//                target = long_launch_speed;
+//
+//
+//            }
+//            else if (gamepad2.x){
+//                LegServo.setPosition(servo_closed);
+//                target = backOffSpeed;
+//                transfer.setPower(-1);
+//            }
 
 
             if(gamepad2.y) {
@@ -328,7 +336,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
 
-            helper.setPosition(helper_open);
+
 
             if(gamepad2.left_bumper || gamepad1.left_bumper) {
                   transfer.setPower(1);
@@ -349,11 +357,15 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             else {
                 transfer.setPower(0);
             }
-
+            if (!launch) {
+                helper.setPosition(helper_open);
+            }
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-
+            if (!launch) {
+                kicker.setPosition(kicker_closed);
+            }
 
             if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
 
@@ -412,7 +424,9 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
     ///LAUNCH ARTIFACTS///
     public void launchArtifacts2() {
         //spin up the flywheel for long enough to launch three artifacts
-
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setPower(0);
 
         if(timer.seconds() < launchTime) {
             //at the start of the sequence; corrects aiming
@@ -426,26 +440,26 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 //
 //            }
 //first interval is to kick the first ball into the flywheel
-            if (timer.seconds() > t0 && actionTimer.getElapsedTimeSeconds() < t1) {
+            if (timer.seconds() > t0 && timer.seconds() < t1) {
                 kicker.setPosition(kicker_kick);
 
             }
 
 //next interval is to run the transfer-only to move the second ball into position
-            if (timer.seconds() > t1 && actionTimer.getElapsedTimeSeconds() < t2) {
+            if (timer.seconds() > t1 && timer.seconds() < t2) {
                 kicker.setPosition(kicker_closed);
                 transfer.setPower(1);
 
             }
 
             //next interval is to kick the second ball into the flywheel
-            if(timer.seconds() > t2 && actionTimer.getElapsedTimeSeconds() < t3) {
+            if(timer.seconds() > t2 && timer.seconds() < t3) {
                 kicker.setPosition(kicker_kick);
             }
 
 
 //next interval is to move the third ball into position
-            if(timer.seconds() > t3 && actionTimer.getElapsedTimeSeconds() < t4) {
+            if(timer.seconds() > t3 && timer.seconds() < t4) {
                 helper.setPosition(helper_closed);
                 kicker.setPosition(kicker_closed);
                 intake.setPower(1);
@@ -454,7 +468,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             }
 
 //last interval is to kick the third ball into the flywheel
-            if(timer.seconds() > t4 && actionTimer.getElapsedTimeSeconds() < t5) {
+            if(timer.seconds() > t4 && timer.seconds() < t5) {
                 intake.setPower(0);
                 helper.setPosition(helper_open);
                 transfer.setPower(0);
@@ -476,7 +490,8 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
             fly2.setPower(0);
             fly1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-           LegServo.setPosition(servo_closed);
+            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//           LegServo.setPosition(servo_closed);
             launch = false;
         }
     }
