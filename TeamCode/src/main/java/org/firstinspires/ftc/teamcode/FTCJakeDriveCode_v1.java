@@ -74,17 +74,28 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
     public static double flyspeed5 = 1550;
     public static double i0 = 0;
     public static double t0 = i0;
-    public static double i1 = 1;
+    public static double i1 = 0.25;
     public static double t1 = t0 + i1;
     //interval for transfer to run and throw the second ball into the flywheel
-    public static double i2 = 1.4;
+    public static double i2 = 0.5;
     public static double t2 = t1 + i2;
     //interval to move the third ball into position
-    public static double i3 = 1.25;
+    public static double i3 = 0.5;
     public static double t3 = t2 + i3;
     //interval for transfer to run and throw the third ball into the flywheel
-    public static double i4 = 3;
+    public static double i4 = 1;
     public static double t4 = t3 + i4;
+    public static double i5 = 1;
+    public static double t5 = t4 + i5;
+    public static double i6 = 2;
+
+    public static double t6 = t5+ i6;
+
+
+
+
+
+
     //interval to do nothing but before it all shuts down
 
     public static double launchTime = i0 + i1 + i2 + i3 + i4;
@@ -440,12 +451,10 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
         //spin up the flywheel for long enough to launch three artifacts
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setPower(1);
-        LegServo.setPosition(servo_opened);
+        intake.setPower(0);
 
 
         if(timer.seconds() < launchTime) {
-            //at the start of the sequence; corrects aiming
             fly1.setVelocity(flyspeed4);
             fly2.setVelocity(flyspeed4);
 
@@ -457,31 +466,36 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
 //first interval is to kick the first ball into the flywheel
             if (timer.seconds() > t0 && timer.seconds() < t1) {
              LegServo.setPosition(servo_opened);
-
             }
 
 //next interval is to run the transfer-only to move the second ball into position
             if (timer.seconds() > t1 && timer.seconds() < t2) {
                 kicker.setPosition(kicker_kick);
-                transfer.setPower(1);
-
+                transfer.setPower(0);
             }
 
             //next interval is to kick the second ball into the flywheel
             if(timer.seconds() > t2 && timer.seconds() < t3) {
-                transfer.setPower(0);
+              kicker.setPosition(kicker_closed);
                 LegServo.setPosition(servo_closed);
             }
 
 
 //next interval is to move the third ball into position
             if(timer.seconds() > t3 && timer.seconds() < t4) {
+                intake.setPower(1);
                 transfer.setPower(1);
-                helper.setPosition(helper_closed);
-                kicker.setPosition(kicker_closed);
 
             }
+//            if (timer.seconds() > t4 && timer.seconds() < t5) {
+//                transfer.setPower(1);
+//                LegServo.setPosition(servo_closed);
+//            }
+//            if (timer.seconds() > t5 && timer.seconds() < t6) {
 //
+//                transfer.setPower(1);
+//            }
+////
 ////last interval is to kick the third ball into the flywheel
 //            if(timer.seconds() > t4 && timer.seconds() < t5) {
 //                intake.setPower(0);
