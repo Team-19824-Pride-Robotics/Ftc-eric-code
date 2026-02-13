@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.util.InterpLUT;
@@ -14,10 +14,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.launchAuto;
+
 @TeleOp(name="FTCJakeDriveCode_v1")
 @Configurable
 
-public class FTCJakeDriveCode_v1 extends LinearOpMode {
+public class FTCJakeDriveCode_v2 extends LinearOpMode {
 //we love being gracious and professional
     private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
@@ -46,6 +48,23 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
     public static double speedReducer = 0.75;
     ElapsedTime timer = new ElapsedTime();
 
+    enum LaunchState {
+        IDLE,
+        SPINNING_UP,
+        FIRE,
+        RESET_SERVO,
+        INDEX_NEXT,
+        SETTLE,
+        DONE
+    }
+
+    private LaunchState launchState = LaunchState.IDLE;
+    private double stateStartTime = 0;
+
+    public static double flyTolerance = 40;     // allowed velocity error
+    public static double fireTime = 0.20;       // time gate is open
+    public static double resetTime = 0.15;      // time to close gate
+    public static double settleTime = 0.10;     // allow artifact to settle
 
     boolean isBCurrentlyPressed = false;
     boolean isACurrentlyPressed = false;
@@ -307,23 +326,9 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
                 flywheel = true;
             }
 
-            if (launch==false) {
-                LegServo.setPosition(servo_closed);
-            }
-
-            if (gamepad2.dpad_down) {
-                launch = true;
-                timer.reset();
-                timer.startTime();
-            }
-
-            if (launch) {
-                launchArtifacts2();
-            }
-
-
-            if (gamepad2.dpad_up) {
-                launch = false;
+            if (gamepad2.dpad_down && launchState == LaunchState.IDLE) {
+                launchState = LaunchState.SPINNING_UP;
+                stateStartTime = getRuntime();
             }
 
             if (gamepad2.right_trigger > .1) {
@@ -414,9 +419,9 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
             intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             intake.setPower(1);
 
+            LaunchArtifacts();
 
-
-
+            telemetry.addData("Launch State", launchState);
             telemetry.addData("Button Pressed", isACurrentlyPressed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
@@ -440,46 +445,80 @@ public class FTCJakeDriveCode_v1 extends LinearOpMode {
     }
 
     ///LAUNCH ARTIFACTS///
-    public void launchArtifacts2() {
+    public void LaunchArtifacts() {
 
-        if(timer.seconds() < launchTime) {
-            fly1.setVelocity(flyspeed4);
-            fly2.setVelocity(flyspeed4);
+        switch (launchState) {
 
-//lets flywheel charge up
+            case IDLE:
+                break;
 
-//            while(Math.abs(fly1.getVelocity()-flySpeed)<40){
-//
-//            }
-//first interval is to kick the first ball into the flywheel
-            if (timer.seconds() > t0 && timer.seconds() < t1) {
-             LegServo.setPosition(servo_opened);
-            }
+            case SPINNING_UP:
 
-//next interval is to run the transfer-only to move the second ball into position
-            if (timer.seconds() > t1 && timer.seconds() < t2) {
-                kicker.setPosition(kicker_kick);
-            }
+                fly1.setVelocity(flyspeed4);
+                fly2.setVelocity(flyspeed4);
 
-            //next interval is to kick the second ball into the flywheel
-            if(timer.seconds() > t2 && timer.seconds() < t3) {
-                kicker.setPosition(kicker_closed);
+                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
+                    launchState = LaunchState.FIRE;
+                    stateStartTime = getRuntime();
+                }
+                break;
+
+
+            case FIRE:
+
+                LegServo.setPosition(servo_opened);
+
+                if (getRuntime() - stateStartTime > fireTime) {
+                    launchState = LaunchState.RESET_SERVO;
+                    stateStartTime = getRuntime();
+                }
+                break;
+
+
+            case RESET_SERVO:
+
                 LegServo.setPosition(servo_closed);
-            }
 
-//next interval is to move the third ball into position
-            if(timer.seconds() > t3 && timer.seconds() < t4) {
-                transfer.setPower(1);
-            }
+                if (getRuntime() - stateStartTime > resetTime) {
+                    launchState = LaunchState.INDEX_NEXT;
 
-        }
-        //once you're done scoring, shut it all down!
-        if (timer.seconds() > t4) {
-            kicker.setPosition(kicker_closed);
-            transfer.setPower(0);
-            helper.setPosition(helper_open);
-           LegServo.setPosition(servo_closed);
-            launch = false;
+                    // Move transfer exactly one artifact forward
+                    transferPosition += transferBump;
+                    transfer.setTargetPosition(transferPosition);
+                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transfer.setPower(1);
+                }
+                break;
+
+
+            case INDEX_NEXT:
+
+                if (!transfer.isBusy()) {
+                    transfer.setPower(0);
+                    launchState = LaunchState.SETTLE;
+                    stateStartTime = getRuntime();
+                }
+                break;
+
+
+            case SETTLE:
+
+                if (getRuntime() - stateStartTime > settleTime) {
+                    launchState = LaunchState.DONE;
+                }
+                break;
+
+
+            case DONE:
+
+                // Stay spun up if you want rapid fire
+                // Or shut down flywheel here if desired
+
+                launchState = LaunchState.IDLE;
+                LegServo.setPosition(servo_closed);
+                transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                break;
         }
     }
 //    public void waitTimer(double time) {
