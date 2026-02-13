@@ -81,7 +81,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     public static double helper_closed = 0.4;
 
     public static double intakeOn = 1;
-    public static int transferBump = 250;
+    public static int transferBump1 = 50;
+
+    public static int transferBump2 = 250;
     public int intakePosition = 0;
     public static double scoreZone = 1;
     public static double p_turn = 1;
@@ -119,7 +121,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
     public static double launchTime = i0 + i1 + i2 + i3 + i4;
 
-    int transferPosition = 0;
+    int transferPosition1 = 0;
+
+    int transferPosition2 = 0;
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
@@ -456,6 +460,8 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
                 fly1.setVelocity(flyspeed4);
                 fly2.setVelocity(flyspeed4);
+                LegServo.setPosition(servo_opened);
+
 
                 if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
                     launchState = LaunchState.FIRE;
@@ -466,7 +472,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
             case FIRE:
 
-                LegServo.setPosition(servo_opened);
+                transferPosition1 += transferBump1;
+                transfer.setTargetPosition(transferPosition1);
+                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (getRuntime() - stateStartTime > fireTime) {
                     launchState = LaunchState.RESET_SERVO;
@@ -483,10 +491,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                     launchState = LaunchState.INDEX_NEXT;
 
                     // Move transfer exactly one artifact forward
-                    transferPosition += transferBump;
-                    transfer.setTargetPosition(transferPosition);
+                    transferPosition2 += transferBump2;
+                    transfer.setTargetPosition(transferPosition2);
                     transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    transfer.setPower(1);
                 }
                 break;
 
