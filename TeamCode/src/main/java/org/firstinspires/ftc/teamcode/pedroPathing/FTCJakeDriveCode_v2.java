@@ -277,31 +277,31 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
             if (gamepad1.dpad_left) {
 
-                FL.setPower(-.2);
-                FR.setPower(.2);
-                BL.setPower(-.2);
-                BR.setPower(.2);
+                FL.setPower(-.15);
+                FR.setPower(.15);
+                BL.setPower(-.15);
+                BR.setPower(.15);
             }
             if (gamepad1.dpad_right) {
 
-                FL.setPower(.2);
-                FR.setPower(-.2);
-                BL.setPower(.2);
-                BR.setPower(-.2);
+                FL.setPower(.15);
+                FR.setPower(-.15);
+                BL.setPower(.15);
+                BR.setPower(-.15);
             }
             if (gamepad1.dpad_up) {
 
-                FL.setPower(.2);
-                FR.setPower(.2);
-                BL.setPower(.2);
-                BR.setPower(.2);
+                FL.setPower(.15);
+                FR.setPower(.15);
+                BL.setPower(.15);
+                BR.setPower(.15);
             }
             if (gamepad1.dpad_down) {
 
-                FL.setPower(-.2);
-                FR.setPower(-.2);
-                BL.setPower(-.2);
-                BR.setPower(-.2);
+                FL.setPower(-.15);
+                FR.setPower(-.15);
+                BL.setPower(-.15);
+                BR.setPower(-.15);
             }
 
 
