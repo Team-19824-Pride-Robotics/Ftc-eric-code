@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.launchAuto;
 
-@TeleOp(name="FTCJakeDriveCode_v1")
+@TeleOp(name="FTCJakeDriveCode_v2")
 @Configurable
 
 public class FTCJakeDriveCode_v2 extends LinearOpMode {
@@ -61,10 +61,10 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
 
-    public static double flyTolerance = 40;     // allowed velocity error
-    public static double fireTime = 0.20;       // time gate is open
-    public static double resetTime = 0.15;      // time to close gate
-    public static double settleTime = 0.10;     // allow artifact to settle
+    public static double flyTolerance = 100;     // allowed velocity error
+    public static double fireTime = 1;       // time gate is open
+    public static double resetTime = 1;      // time to close gate
+    public static double settleTime = 1;     // allow artifact to settle
 
     boolean isBCurrentlyPressed = false;
     boolean isACurrentlyPressed = false;
@@ -81,9 +81,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     public static double helper_closed = 0.4;
 
     public static double intakeOn = 1;
-    public static int transferBump1 = 50;
+    public static int transferBump1 = 100;
 
-    public static int transferBump2 = 250;
+    public static int transferBump2 = 500;
     public int intakePosition = 0;
     public static double scoreZone = 1;
     public static double p_turn = 1;
@@ -120,10 +120,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     //interval to do nothing but before it all shuts down
 
     public static double launchTime = i0 + i1 + i2 + i3 + i4;
-
-    int transferPosition1 = 0;
-
-    int transferPosition2 = 0;
+    int transferStartPosition;
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
@@ -191,12 +188,10 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
         helper.setPosition(helper_open);
         LegServo.setPosition(servo_opened);
 
-
-
+        launchState = LaunchState.IDLE;
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        runtime.reset();
-        actionTimer = new Timer();
+
 
        // Wait for the game to start (driver presses START)
         waitForStart();
@@ -319,8 +314,8 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 fly2.setVelocity(0);
             }
             else {
-                fly1.setPower(pid);
-                fly2.setPower(pid2);
+                fly1.setVelocity(pid);
+                fly2.setVelocity(pid2);
             }
 
             if (gamepad1.start || gamepad2.dpad_left) {
@@ -330,11 +325,24 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 flywheel = true;
             }
 
+            /// launch system
+
             if (gamepad2.dpad_down && launchState == LaunchState.IDLE) {
+                launch = true;
+            }
+            if (launch==false) {
+                LegServo.setPosition(servo_closed);
+            }
+            if (launch && launchState == LaunchState.IDLE) {
                 launchState = LaunchState.SPINNING_UP;
                 stateStartTime = getRuntime();
             }
+            if (gamepad2.dpad_up) {
+                launch = false;
+            }
 
+
+            /// alternate launch
             if (gamepad2.right_trigger > .1) {
                 transfer.setPower(1);
                 LegServo.setPosition(servo_opened);
@@ -358,7 +366,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
             if(gamepad2.y) {
                 resetRuntime();
-                while (getRuntime() < kickTime) {
+                if (getRuntime() < kickTime) {
                     kicker.setPosition(kicker_kick);
                 }
             }
@@ -370,20 +378,24 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
 
             if(gamepad2.left_bumper || gamepad1.left_bumper) {
+                transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                   transfer.setPower(1);
             }
 
             else if(gamepad2.right_bumper || gamepad1.right_bumper) {
-                  transfer.setPower(-1);
+                transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                transfer.setPower(-1);
             }
-
             else if (gamepad2.dpad_right || gamepad1.y) {
                 transfer.setPower(1);
                 resetRuntime();
-                while (getRuntime() < kickTime) {
+                if (getRuntime() < kickTime) {
                     helper.setPosition(helper_closed);
                 }
 
+            }
+            else {
+                transfer.setPower(0);
             }
 
 
@@ -436,17 +448,17 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     }
 
 
-    public void runIntake(int newIntakePosition) {
-        intake.setTargetPosition(newIntakePosition);
-        intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(1);
-        while (intake.isBusy()) {
-            //wait for the motor to reach its target position
-        }
-        transfer.setPower(0);
-        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
+//    public void runIntake(int newIntakePosition) {
+//        intake.setTargetPosition(newIntakePosition);
+//        intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        intake.setPower(1);
+//        while (intake.isBusy()) {
+//            //wait for the motor to reach its target position
+//        }
+//        transfer.setPower(0);
+//        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//    }
 
     ///LAUNCH ARTIFACTS///
     public void LaunchArtifacts() {
@@ -457,7 +469,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 break;
 
             case SPINNING_UP:
-
+                transferStartPosition = transfer.getCurrentPosition();
                 fly1.setVelocity(flyspeed4);
                 fly2.setVelocity(flyspeed4);
                 LegServo.setPosition(servo_opened);
@@ -472,9 +484,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
             case FIRE:
 
-                transferPosition1 += transferBump1;
-                transfer.setTargetPosition(transferPosition1);
+                transfer.setTargetPosition(transferStartPosition + transferBump1);
                 transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                transfer.setPower(1);
 
                 if (getRuntime() - stateStartTime > fireTime) {
                     launchState = LaunchState.RESET_SERVO;
@@ -491,9 +503,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                     launchState = LaunchState.INDEX_NEXT;
 
                     // Move transfer exactly one artifact forward
-                    transferPosition2 += transferBump2;
-                    transfer.setTargetPosition(transferPosition2);
+                    transfer.setTargetPosition(transferStartPosition + transferBump2);
                     transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transfer.setPower(1);
                 }
                 break;
 
@@ -517,15 +529,14 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
 
             case DONE:
-
-                // Stay spun up if you want rapid fire
-                // Or shut down flywheel here if desired
-
-                launchState = LaunchState.IDLE;
                 LegServo.setPosition(servo_closed);
-                transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                helper.setPosition(helper_open);
+                transfer.setPower(0);
+                transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                launch = false;
+                launchState = LaunchState.IDLE;
                 break;
+
         }
     }
 //    public void waitTimer(double time) {
