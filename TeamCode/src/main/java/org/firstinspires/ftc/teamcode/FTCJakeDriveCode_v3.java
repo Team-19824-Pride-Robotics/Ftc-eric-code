@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
-
-import android.content.pm.LauncherApps;
+package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.util.InterpLUT;
@@ -16,12 +14,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.launchAuto;
+import org.firstinspires.ftc.teamcode.pedroPathing.FTCJakeDriveCode_v2;
 
-@TeleOp(name="FTCJakeDriveCode_v2")
+@TeleOp(name="FTCJakeDriveCode_v3")
 @Configurable
 
-public class FTCJakeDriveCode_v2 extends LinearOpMode {
+public class FTCJakeDriveCode_v3 extends LinearOpMode {
     //we love being gracious and professional
     private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
@@ -50,9 +48,6 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     private boolean lastDpadLeft = false;
 
 
-
-
-
     private Timer actionTimer;
     public static double speedReducer = 1;
     ElapsedTime timer = new ElapsedTime();
@@ -60,26 +55,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     enum LaunchState {
         IDLE,
         SPINNING_UP,
-        FEED,
-        KICK,
-        FIRE,
-        RESET_SERVO,
-        SETTLE,
-        DONE
-    }
-    enum SecondLaunchState {
-        IDLE,
-        SPINNING_UP,
-        FEED,
-        KICK,
-        FIRE,
-        RESET_SERVO,
-        DONE
-    }
-    enum FinalLaunchState {
-        IDLE,
-        SPINNING_UP,
-        PUSH,
+        PUSH_IF_FINAL,
         FEED,
         KICK,
         RESET_SERVO,
@@ -87,9 +63,6 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
         DONE
     }
 
-
-    private FinalLaunchState finalLaunchState = FinalLaunchState.IDLE;
-    private SecondLaunchState secondLaunchState = SecondLaunchState.IDLE;
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
 
@@ -130,8 +103,14 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     private boolean FinalArtifact = false;
     private boolean flywheel = false;
     private boolean killLaunch = false;
+
+    private void startLaunch() {
+        launchState = LaunchState.SPINNING_UP;
+        stateStartTime = getRuntime();
+    }
+
     private boolean isLaunching() {
-        return launchState != LaunchState.IDLE || finalLaunchState != FinalLaunchState.IDLE || secondLaunchState != SecondLaunchState.IDLE;
+        return launchState != LaunchState.IDLE;
     }
 
     private int launcher = 0;
@@ -149,8 +128,6 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
-
 
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
@@ -229,8 +206,6 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
             boolean currentDpadDown = gamepad2.dpad_down;
 
             LaunchArtifacts();
-            SecondLaunchArtifacts();
-            FinalLaunchArtifacts();
 
 //////////////////////LIMELIGHT SETUP//////////////////////////////////
             LLResult llResult = limelight.getLatestResult();
@@ -333,51 +308,40 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 //                fly1.setVelocity(0);
 //                fly2.setVelocity(0);
 //            } else {
-                fly1.setPower(pid);
-                fly2.setPower(pid2);
-
+            fly1.setPower(pid);
+            fly2.setPower(pid2);
 
 
             /// launch system - 1 at a time
 
-            if (currentDpadDown && !lastDpadDown && launchState == LaunchState.IDLE && finalLaunchState == FinalLaunchState.IDLE && secondLaunchState == SecondLaunchState.IDLE ) {
-                if (launcher <= 1) {
-                    launchState = LaunchState.SPINNING_UP;
-                }
-                else if (launcher == 2) {
-                    secondLaunchState = SecondLaunchState.SPINNING_UP;
-                }
-                else if (launcher == 3) {
-                    finalLaunchState = FinalLaunchState.SPINNING_UP;
-                }
-
-                stateStartTime = getRuntime();
+// Single shot
+            if (currentDpadDown && !lastDpadDown && launchState == LaunchState.IDLE) {
+                multiSequenceActive = false;
+                startLaunch();
             }
-            lastDpadDown = currentDpadDown;
-            ///  Launch system - all three
-            if (currentDpadLeft && !lastDpadLeft && launchState == LaunchState.IDLE && finalLaunchState == FinalLaunchState.IDLE) {
 
-                launcher = 0;
+// Triple shot
+            if (currentDpadLeft && !lastDpadLeft && launchState == LaunchState.IDLE) {
                 multiSequenceActive = true;
-                launchState = LaunchState.SPINNING_UP;
-                stateStartTime = getRuntime();
+                launcher = 0;
+                startLaunch();
             }
+
+            lastDpadDown = currentDpadDown;
             lastDpadLeft = currentDpadLeft;
 
-
             if (gamepad2.dpad_up) {
-                    killLaunch = true;
-                    launchState = LaunchState.IDLE;
-                    finalLaunchState = FinalLaunchState.IDLE;
-                    launch = false;
-                    multiSequenceActive = false;
-                    launcher = 0;
-                    transfer.setPower(0);
-                    LegServo.setPosition(servo_closed);
-                    helper.setPosition(helper_open);
-                } else {
-                    killLaunch = false;
-                }
+                killLaunch = true;
+                launchState = LaunchState.IDLE;
+                launch = false;
+                multiSequenceActive = false;
+                launcher = 0;
+                transfer.setPower(0);
+                LegServo.setPosition(servo_closed);
+                helper.setPosition(helper_open);
+            } else {
+                killLaunch = false;
+            }
 
             /// alternate launch
 
@@ -433,38 +397,35 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
 
-        if (!isLaunching()) {
-            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
+            if (!isLaunching()) {
+                if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
 
-                isACurrentlyPressed = true;
-            } else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+                    isACurrentlyPressed = true;
+                } else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
 
-                isBCurrentlyPressed = true;
-            } else {
-                isACurrentlyPressed = false;
-                isBCurrentlyPressed = false;
+                    isBCurrentlyPressed = true;
+                } else {
+                    isACurrentlyPressed = false;
+                    isBCurrentlyPressed = false;
+                }
+
+                if (isACurrentlyPressed && !wasAButtonPressedLastLoop) {
+
+                    intakePosition = intakePosition + 600;
+                }
+                if (isBCurrentlyPressed && !wasBButtonPressedLastLoop) {
+
+                    intakePosition = intakePosition - 400;
+                }
+
+                // Update the previous button state for the next loop iteration
+                wasAButtonPressedLastLoop = isACurrentlyPressed;
+                wasBButtonPressedLastLoop = isBCurrentlyPressed;
+
+                intake.setTargetPosition(intakePosition);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake.setPower(1);
             }
-
-            if (isACurrentlyPressed && !wasAButtonPressedLastLoop) {
-
-                intakePosition = intakePosition + 600;
-            }
-            if (isBCurrentlyPressed && !wasBButtonPressedLastLoop) {
-
-                intakePosition = intakePosition - 400;
-            }
-
-            // Update the previous button state for the next loop iteration
-            wasAButtonPressedLastLoop = isACurrentlyPressed;
-            wasBButtonPressedLastLoop = isBCurrentlyPressed;
-
-            intake.setTargetPosition(intakePosition);
-            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            intake.setPower(1);
-        }
-
-
-
 
 
             telemetry.addData("Launch State", launchState);
@@ -497,9 +458,10 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
         if (killLaunch) {
             launchState = LaunchState.IDLE;
-            launch = false;
             multiSequenceActive = false;
+            launcher = 0;
             transfer.setPower(0);
+            intake.setPower(0);
             LegServo.setPosition(servo_closed);
             helper.setPosition(helper_open);
             return;
@@ -511,20 +473,45 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 break;
 
             case SPINNING_UP:
-                transferStartPosition = transfer.getCurrentPosition();
+
                 fly1.setVelocity(flyspeed4);
                 fly2.setVelocity(flyspeed4);
                 LegServo.setPosition(servo_opened);
 
-
                 if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
+
+                    // If this is the 3rd shot, do PUSH
+                    if (launcher == 2) {
+                        launchState = LaunchState.PUSH_IF_FINAL;
+                    } else {
+                        launchState = LaunchState.FEED;
+                    }
+
+                    stateStartTime = getRuntime();
+                }
+                break;
+
+            case PUSH_IF_FINAL:
+
+                helper.setPosition(helper_closed);
+                intake.setTargetPosition(intake.getCurrentPosition() + intakeBump1);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake.setPower(1);
+                transfer.setTargetPosition(transfer.getCurrentPosition() + transferBump1);
+                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                transfer.setPower(1);
+
+                if (!intake.isBusy() && !transfer.isBusy()) {
+                    intake.setPower(0);
+                    transfer.setPower(0);
+                    helper.setPosition(helper_open);
                     launchState = LaunchState.FEED;
                     stateStartTime = getRuntime();
                 }
                 break;
 
-
             case FEED:
+
                 transfer.setPower(1);
 
                 if (getRuntime() - stateStartTime > feedTime) {
@@ -535,6 +522,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 break;
 
             case KICK:
+
                 kicker.setPosition(kicker_kick);
 
                 if (getRuntime() - stateStartTime > kickUpTime) {
@@ -543,27 +531,19 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 }
                 break;
 
-
             case RESET_SERVO:
 
                 LegServo.setPosition(servo_closed);
                 kicker.setPosition(kicker_closed);
 
-                if (getRuntime() - stateStartTime > resetTime) {
+                if (launcher <= 1 && getRuntime() - stateStartTime > resetTime) {
                     launchState = LaunchState.SETTLE;
+                    stateStartTime = getRuntime();
+                }
+                else {
+                    launchState = LaunchState.DONE;
                 }
                 break;
-
-
-//            case INDEX_NEXT:
-//
-//                if (!transfer.isBusy()) {
-//                    transfer.setPower(0);
-//                    launchState = LaunchState.SETTLE;
-//                    stateStartTime = getRuntime();
-//                }
-//                break;
-
 
             case SETTLE:
 
@@ -575,8 +555,8 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
                     launchState = LaunchState.DONE;
                 }
-                break;
 
+                break;
 
             case DONE:
                 LegServo.setPosition(servo_closed);
@@ -585,214 +565,15 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 launch = false;
                 launcher++;
-                launchState = LaunchState.IDLE;
-
-                if (multiSequenceActive) {
-
-                    if (launcher <= 1) {
+                if (multiSequenceActive && launcher < 3) {
                         launchState = LaunchState.SPINNING_UP;
-                        stateStartTime = getRuntime();
+                    } else {
+                        launchState = LaunchState.IDLE;
+                        launcher = 0;
+                        multiSequenceActive = false;
                     }
-                    else if (launcher == 2) {
-                        secondLaunchState = SecondLaunchState.SPINNING_UP;
-                        stateStartTime = getRuntime();
-                    }
-                    else if (launcher == 3){
-                        finalLaunchState = FinalLaunchState.SPINNING_UP;
-                        stateStartTime = getRuntime();
-                    }
-                }
-
                 break;
-
+                }
         }
     }
-    public void SecondLaunchArtifacts() {
 
-        if (killLaunch) {
-            secondLaunchState = SecondLaunchState.IDLE;
-            launch = false;
-            multiSequenceActive = false;
-            transfer.setPower(0);
-            LegServo.setPosition(servo_closed);
-            helper.setPosition(helper_open);
-            return;
-        }
-
-        switch (secondLaunchState) {
-
-            case IDLE:
-                break;
-
-            case SPINNING_UP:
-                transferStartPosition = transfer.getCurrentPosition();
-                fly1.setVelocity(flyspeed4);
-                fly2.setVelocity(flyspeed4);
-                LegServo.setPosition(servo_opened);
-
-
-                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
-                    secondLaunchState = SecondLaunchState.FEED;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-
-            case FEED:
-                transfer.setPower(1);
-
-                if (getRuntime() - stateStartTime > feedTime) {
-                    transfer.setPower(0);
-                    secondLaunchState = SecondLaunchState.KICK;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-            case KICK:
-                kicker.setPosition(kicker_kick);
-
-                if (getRuntime() - stateStartTime > kickUpTime) {
-                    secondLaunchState = SecondLaunchState.RESET_SERVO;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-
-            case RESET_SERVO:
-
-                LegServo.setPosition(servo_closed);
-                kicker.setPosition(kicker_closed);
-
-                if (getRuntime() - stateStartTime > resetTime) {
-                    secondLaunchState = SecondLaunchState.DONE;
-                }
-                break;
-
-
-//            case INDEX_NEXT:
-//
-//                if (!transfer.isBusy()) {
-//                    transfer.setPower(0);
-//                    launchState = LaunchState.SETTLE;
-//                    stateStartTime = getRuntime();
-//                }
-//                break;
-            case DONE:
-                LegServo.setPosition(servo_closed);
-                helper.setPosition(helper_open);
-                transfer.setPower(0);
-                transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                launch = false;
-                launcher++;
-                secondLaunchState = SecondLaunchState.IDLE;
-
-                if (multiSequenceActive && launcher == 3) {
-                    finalLaunchState = FinalLaunchState.SPINNING_UP;
-                    stateStartTime = getRuntime();
-                }
-
-                break;
-
-        }
-    }
-    public void FinalLaunchArtifacts() {
-        if (killLaunch) {
-            finalLaunchState = FinalLaunchState.IDLE;
-            launch = false;
-            multiSequenceActive = false;
-            transfer.setPower(0);
-            LegServo.setPosition(servo_closed);
-            helper.setPosition(helper_open);
-            return;
-        }
-
-        switch (finalLaunchState) {
-
-            case IDLE:
-                break;
-
-            case SPINNING_UP:
-                transferStartPosition = transfer.getCurrentPosition();
-                fly1.setVelocity(flyspeed4);
-                fly2.setVelocity(flyspeed4);
-                LegServo.setPosition(servo_opened);
-                intake.setPower(1);
-
-                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
-                    finalLaunchState = FinalLaunchState.PUSH;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-            case PUSH:
-                helper.setPosition(helper_closed);
-            intake.setTargetPosition(intake.getCurrentPosition() + intakeBump1);
-            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            intake.setPower(1);
-            transfer.setTargetPosition(transfer.getCurrentPosition() + transferBump1);
-            transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            transfer.setPower(1);
-
-                if (!intake.isBusy() && !transfer.isBusy()) {
-                    intake.setPower(0);
-                    transfer.setPower(0);
-                    helper.setPosition(helper_open);
-                    finalLaunchState = FinalLaunchState.FEED;
-                    stateStartTime = getRuntime();
-                }
-             break;
-
-            case FEED:
-                transfer.setPower(1);
-
-                if (getRuntime() - stateStartTime > feedTime) {
-                    transfer.setPower(0);
-                    finalLaunchState = FinalLaunchState.KICK;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-            case KICK:
-                kicker.setPosition(kicker_kick);
-
-                if (getRuntime() - stateStartTime > kickUpTime) {
-                    finalLaunchState = FinalLaunchState.RESET_SERVO;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-            case RESET_SERVO:
-                LegServo.setPosition(servo_closed);
-                kicker.setPosition(kicker_closed);
-
-                if (getRuntime() - stateStartTime > resetTime) {
-                    finalLaunchState = FinalLaunchState.SETTLE;
-                    stateStartTime = getRuntime();
-                }
-                break;
-
-            case SETTLE:
-                transfer.setTargetPosition(transfer.getCurrentPosition() + transferBump2);
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transfer.setPower(1);
-
-                if (getRuntime() - stateStartTime > settleTime) {
-                    finalLaunchState = FinalLaunchState.DONE;
-                }
-                break;
-
-            case DONE:
-                LegServo.setPosition(servo_closed);
-                helper.setPosition(helper_open);
-                transfer.setPower(0);
-                transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                launch = false;
-                launcher = 0;   // reset after final shot
-                finalLaunchState = FinalLaunchState.IDLE;
-                multiSequenceActive = false;
-                intake.setPower(0);
-                intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                break;
-        }
-    }
-}
