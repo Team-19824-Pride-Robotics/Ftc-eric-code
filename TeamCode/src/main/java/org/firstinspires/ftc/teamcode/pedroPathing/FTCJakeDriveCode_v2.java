@@ -46,6 +46,14 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     //Declare variables
     boolean wasAButtonPressedLastLoop = false;
     boolean wasBButtonPressedLastLoop = false;
+    private boolean lastDpadDown = false;
+    boolean currentDpadDown = gamepad2.dpad_down;
+    private boolean lastDpadLeft = false;
+    private boolean currentDpadLeft = gamepad2.dpad_left;
+
+
+
+
     private Timer actionTimer;
     public static double speedReducer = 1;
     ElapsedTime timer = new ElapsedTime();
@@ -71,6 +79,12 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
         SETTLE,
         DONE
     }
+    enum launchMode {
+        NONE,
+        SINGLE,
+        EVERY
+    }
+
     private FinalLaunchState finalLaunchState = FinalLaunchState.IDLE;
 
 
@@ -107,8 +121,12 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     public static double scoreZone = 1;
     public static double p_turn = 1;
     private boolean launch = false;
+    private boolean multiSequenceActive = false;
+
     private boolean FinalArtifact = false;
     private boolean flywheel = false;
+    private boolean killLaunch = false;
+
     private int launcher = 0;
     public static double flyspeed2 = 1580;
     public static double flyspeed3 = 1500;
@@ -216,6 +234,8 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            LaunchArtifacts();
+            FinalLaunchArtifacts();
 
 //////////////////////LIMELIGHT SETUP//////////////////////////////////
             LLResult llResult = limelight.getLatestResult();
@@ -322,38 +342,46 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 fly2.setPower(pid2);
 
 
-//            if (gamepad1.start || gamepad2.dpad_left) {
-//                flywheel = false;
-//            } else {
-//                flywheel = true;
-//            }
 
-            /// launch system
+            /// launch system - 1 at a time
 
-            if (gamepad2.dpad_down && launchState == LaunchState.IDLE) {
-                launch = true;
+            if (currentDpadDown && !lastDpadDown && launchState == LaunchState.IDLE && finalLaunchState == FinalLaunchState.IDLE) {
+                if (launcher < 2) {
+                    launchState = LaunchState.SPINNING_UP;
+                } else {
+                    finalLaunchState = FinalLaunchState.SPINNING_UP;
+                }
+
+                stateStartTime = getRuntime();
             }
-            if (launch == false) {
-                LegServo.setPosition(servo_closed);
-            }
-            if (launch && launchState == LaunchState.IDLE) {
+            lastDpadDown = currentDpadDown;
+            ///  Launch system - all three
+            if (currentDpadLeft && !lastDpadLeft && launchState == LaunchState.IDLE && finalLaunchState == FinalLaunchState.IDLE) {
+
+                launcher = 0;
+                multiSequenceActive = true;
                 launchState = LaunchState.SPINNING_UP;
                 stateStartTime = getRuntime();
             }
+            lastDpadLeft = currentDpadLeft;
 
 
             if (gamepad2.dpad_up) {
-                launch = false;
+                killLaunch = true;
+            } else {
+                killLaunch = false;
             }
 
 
             /// alternate launch
+
+
             if (gamepad2.right_trigger > .1) {
-                transfer.setPower(1);
                 LegServo.setPosition(servo_opened);
                 target = close_launch_speed;
             }
 //
+
 //
 //            }
 //            else if (gamepad2.left_trigger > .1) {
@@ -427,16 +455,8 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
             intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             intake.setPower(1);
 
-            if (launcher < 3) {
-                LaunchArtifacts();
-            } else {
-                FinalLaunchArtifacts();
-            }
 
-            if (launch && launcher >= 3 && finalLaunchState == FinalLaunchState.IDLE) {
-                finalLaunchState = FinalLaunchState.SPINNING_UP;
-                stateStartTime = getRuntime();
-            }
+
 
 
 
@@ -464,8 +484,19 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 //
 //    }
 
+
     /// LAUNCH ARTIFACTS///
     public void LaunchArtifacts() {
+
+        if (killLaunch) {
+            launchState = LaunchState.IDLE;
+            launch = false;
+            multiSequenceActive = false;
+            transfer.setPower(0);
+            LegServo.setPosition(servo_closed);
+            helper.setPosition(helper_open);
+            return;
+        }
 
         switch (launchState) {
 
@@ -548,11 +579,33 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 launch = false;
                 launcher++;
                 launchState = LaunchState.IDLE;
+
+                if (multiSequenceActive) {
+
+                    if (launcher < 2) {
+                        launchState = LaunchState.SPINNING_UP;
+                        stateStartTime = getRuntime();
+                    }
+                    else {
+                        finalLaunchState = FinalLaunchState.SPINNING_UP;
+                        stateStartTime = getRuntime();
+                    }
+                }
+
                 break;
 
         }
     }
     public void FinalLaunchArtifacts() {
+        if (killLaunch) {
+            finalLaunchState = FinalLaunchState.IDLE;
+            launch = false;
+            multiSequenceActive = false;
+            transfer.setPower(0);
+            LegServo.setPosition(servo_closed);
+            helper.setPosition(helper_open);
+            return;
+        }
 
         switch (finalLaunchState) {
 
@@ -630,8 +683,9 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 transfer.setPower(0);
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 launch = false;
+                launcher = 0;   // reset after final shot
                 finalLaunchState = FinalLaunchState.IDLE;
-                launcher = 0;
+                multiSequenceActive = false;
                 break;
         }
     }
