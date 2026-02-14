@@ -90,9 +90,9 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     public static double helper_closed = 0.4;
 
     public static double intakeOn = 1;
-    public static int transferBump1 = 3000;
+    public static int transferBump1 = 6000;
     public static int intakeBump1 = 3000;
-    public static int transferBump2 = 3000;
+    public static int transferBump2 = 6000;
 
     public int intakePosition = 0;
     public static double scoreZone = 1;
@@ -536,13 +536,11 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
                 LegServo.setPosition(servo_closed);
                 kicker.setPosition(kicker_closed);
 
-                if (launcher <= 1 && getRuntime() - stateStartTime > resetTime) {
+                if (getRuntime() - stateStartTime > resetTime) {
                     launchState = LaunchState.SETTLE;
                     stateStartTime = getRuntime();
                 }
-                else {
-                    launchState = LaunchState.DONE;
-                }
+
                 break;
 
             case SETTLE:
@@ -564,16 +562,24 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
                 transfer.setPower(0);
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 launch = false;
+
+                // increment launcher
                 launcher++;
-                if (multiSequenceActive && launcher < 3) {
-                        launchState = LaunchState.SPINNING_UP;
-                    } else {
-                        launchState = LaunchState.IDLE;
-                        launcher = 0;
-                        multiSequenceActive = false;
-                    }
-                break;
+
+                // reset launcher after 3 launches
+                if (launcher >= 3) {
+                    launcher = 0;
                 }
+
+                // handle multi-sequence continuation
+                if (multiSequenceActive && launcher < 3) {
+                    launchState = LaunchState.SPINNING_UP; // continue multi-shot
+                } else {
+                    launchState = LaunchState.IDLE;       // sequence finished
+                    multiSequenceActive = false;
+                }
+                break;
         }
     }
+}
 
