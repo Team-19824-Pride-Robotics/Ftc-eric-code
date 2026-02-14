@@ -47,9 +47,8 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
     boolean wasAButtonPressedLastLoop = false;
     boolean wasBButtonPressedLastLoop = false;
     private boolean lastDpadDown = false;
-    boolean currentDpadDown = gamepad2.dpad_down;
     private boolean lastDpadLeft = false;
-    private boolean currentDpadLeft = gamepad2.dpad_left;
+
 
 
 
@@ -163,6 +162,11 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        boolean currentDpadLeft = gamepad2.dpad_left;
+        boolean currentDpadDown = gamepad2.dpad_down;
+
+
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
         lut.add(30, 950);
@@ -367,11 +371,18 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
 
             if (gamepad2.dpad_up) {
-                killLaunch = true;
-            } else {
-                killLaunch = false;
-            }
-
+                    killLaunch = true;
+                    launchState = LaunchState.IDLE;
+                    finalLaunchState = FinalLaunchState.IDLE;
+                    launch = false;
+                    multiSequenceActive = false;
+                    launcher = 0;
+                    transfer.setPower(0);
+                    LegServo.setPosition(servo_closed);
+                    helper.setPosition(helper_open);
+                } else {
+                    killLaunch = false;
+                }
 
             /// alternate launch
 
