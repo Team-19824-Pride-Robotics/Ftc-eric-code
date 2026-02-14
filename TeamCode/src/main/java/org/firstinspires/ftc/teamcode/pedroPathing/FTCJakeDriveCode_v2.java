@@ -79,7 +79,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
 
     public static double flyTolerance = 100;     // allowed velocity error
     public static double fireTime = 1;       // time gate is open
-    public static double pushTime = 1;
+    public static double pushTime = 2;
     public static double resetTime = 0.5;      // time to close gate
     public static double settleTime = 2;     // allow artifact to settle
     public static double feedTime = 0.25;
@@ -564,6 +564,7 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 fly1.setVelocity(flyspeed4);
                 fly2.setVelocity(flyspeed4);
                 LegServo.setPosition(servo_opened);
+                intake.setPower(1);
 
                 if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
                     finalLaunchState = FinalLaunchState.PUSH;
@@ -572,11 +573,10 @@ public class FTCJakeDriveCode_v2 extends LinearOpMode {
                 break;
 
             case PUSH:
-            intake.setPower(1);
             transfer.setPower(1);
             helper.setPosition(helper_closed);
 
-                if (Math.abs(helper.getPosition() - helper_closed) < 0.01){
+                if (getRuntime() - stateStartTime > pushTime) {
                     intake.setPower(0);
                     transfer.setPower(0);
                     helper.setPosition(helper_open);
