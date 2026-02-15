@@ -46,7 +46,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     boolean wasBButtonPressedLastLoop = false;
     boolean settleInitialized = false;
     boolean pushInitialized = false;
-
+    boolean kickInitialized = false;
     private boolean lastDpadDown = false;
     private boolean lastDpadLeft = false;
 
@@ -88,6 +88,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     public static int transferBump1 = 1000;
     public static int intakeBump1 = 1000;
     public static int transferBump2 = 1000;
+    public static int transferBump3 = 300;
     public int intakePosition = 0;
     private boolean multiSequenceActive = false;
     private boolean killLaunch = false;
@@ -520,9 +521,17 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
 
             case KICK:
 
-                kicker.setPosition(kicker_kick);
+                if (!kickInitialized) {
+                    transferStartPosition = transfer.getCurrentPosition();
+                    transfer.setTargetPosition(transferStartPosition + transferBump3);
+                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transfer.setPower(1);
+                    kicker.setPosition(kicker_kick);
+                    kickInitialized = true;
+                }
 
-                if (getRuntime() - stateStartTime > kickUpTime) {
+                if (getRuntime() - stateStartTime > kickUpTime || !transfer.isBusy()) {
+                    kickInitialized = false;
                     launchState = LaunchState.RESET_SERVO;
                     stateStartTime = getRuntime();
                 }
