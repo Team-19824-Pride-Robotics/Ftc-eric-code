@@ -244,17 +244,14 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
             double rightBackPower;
 
             if (gamepad1.x) {
-                leftFrontPower = turnCorrection;
-                leftBackPower = turnCorrection;
-                rightFrontPower = -turnCorrection;
-                rightBackPower = -turnCorrection;
-                //otherwise drive normally
-            } else {
-                leftFrontPower = ((y + x + rx) / denominator);
-                leftBackPower = ((y - x + rx) / denominator);
-                rightFrontPower = ((y - x - rx) / denominator);
-                rightBackPower = ((y + x - rx) / denominator);
+                rx += turnCorrection; // add correction to rotation
             }
+
+            leftFrontPower = ((y + x + rx) / denominator);
+            leftBackPower = ((y - x + rx) / denominator);
+            rightFrontPower = ((y - x - rx) / denominator);
+            rightBackPower = ((y + x - rx) / denominator);
+
             FL.setPower(leftFrontPower * speedReducer);
             BL.setPower(leftBackPower * speedReducer);
             FR.setPower(rightFrontPower * speedReducer);
