@@ -56,6 +56,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
 
     enum LaunchState {
+        WAIT,
         IDLE,
         SPINNING_UP,
         PUSH_IF_FINAL,
@@ -68,7 +69,9 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
     public static double flyTolerance = 70;     // allowed velocity error
-    public static double resetTime = 0.25;      // time to close gate
+    public static double resetTime = 0.25;
+    public static double waitTime = 0.25;      // time to close gate
+    // time to close gate
     public static double settleTime = 1;     // allow artifact to settle
     public static double feedTime = 0.125;
     public static double kickUpTime = 0.125;
@@ -543,12 +546,23 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
                 kicker.setPosition(kicker_closed);
 
                 if (getRuntime() - stateStartTime > resetTime) {
-                    launchState = LaunchState.SETTLE;
-                    stateStartTime = getRuntime();
+                    if (launcher >= 1) {
+                        launchState = LaunchState.WAIT;
+                        stateStartTime = getRuntime();
+                    }
+                    else {
+                        launchState = LaunchState.SETTLE;
+                        stateStartTime = getRuntime();
+                    }
                 }
 
                 break;
 
+            case WAIT:
+             if (getRuntime() - stateStartTime > waitTime) {
+                 launchState = LaunchState.DONE;
+             }
+                break;
             case SETTLE:
 
                 if (!settleInitialized) {
