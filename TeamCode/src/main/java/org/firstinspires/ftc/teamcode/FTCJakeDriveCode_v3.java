@@ -44,6 +44,9 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     //Declare variables
     boolean wasAButtonPressedLastLoop = false;
     boolean wasBButtonPressedLastLoop = false;
+    boolean settleInitialized = false;
+    boolean pushInitialized = false;
+
     private boolean lastDpadDown = false;
     private boolean lastDpadLeft = false;
 
@@ -62,46 +65,31 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
         SETTLE,
         DONE
     }
-
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
-
-    public static double flyTolerance = 100;     // allowed velocity error
-    public static double fireTime = 1;       // time gate is open
-    public static double pushTime = 4;
-    public static double resetTime = 0.5;      // time to close gate
-    public static double settleTime = 2;     // allow artifact to settle
-    public static double feedTime = 0.25;
-    public static double kickUpTime = 0.25;
-
+    public static double flyTolerance = 70;     // allowed velocity error
+    public static double resetTime = 0.25;      // time to close gate
+    public static double settleTime = 1;     // allow artifact to settle
+    public static double feedTime = 0.125;
+    public static double kickUpTime = 0.125;
     boolean isBCurrentlyPressed = false;
     boolean isACurrentlyPressed = false;
-    public static double kicker_kick = 0;
-    public static double kicker_closed = 0.185;
-    public static double kickTime = 0.25;
-
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1850;
     public static double close_launch_speed = 1800;
+    public static double kicker_kick = 0;
+    public static double kicker_closed = 0.185;
+    public static double kickTime = 0.25;
     //for 3 at once combo deal
     public static double servo_closed = 0.2;
     public static double servo_opened = 0;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
-
-    public static double intakeOn = 1;
-    public static int transferBump1 = 6000;
-    public static int intakeBump1 = 3000;
-    public static int transferBump2 = 6000;
-
+    public static int transferBump1 = 15;
+    public static int intakeBump1 = 20;
+    public static int transferBump2 = 15;
     public int intakePosition = 0;
-    public static double scoreZone = 1;
-    public static double p_turn = 1;
-    private boolean launch = false;
     private boolean multiSequenceActive = false;
-
-    private boolean FinalArtifact = false;
-    private boolean flywheel = false;
     private boolean killLaunch = false;
 
     private void startLaunch() {
@@ -119,6 +107,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     public static double flyspeed4 = 1500;
     public static double flyspeed5 = 1550;
     int transferStartPosition;
+    int intakeStartPosition;
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
@@ -168,12 +157,18 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
         helper = hardwareMap.get(Servo.class, "helper");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
+
         fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
         fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
         transfer.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         transfer.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         controller = new PIDController(p, i, d);
 
@@ -187,10 +182,6 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
         LegServo.setPosition(servo_closed);
 
         launchState = LaunchState.IDLE;
-
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
         // Wait for the game to start (driver presses START)
         waitForStart();
 
@@ -333,7 +324,6 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
             if (gamepad2.dpad_up) {
                 killLaunch = true;
                 launchState = LaunchState.IDLE;
-                launch = false;
                 multiSequenceActive = false;
                 launcher = 0;
                 transfer.setPower(0);
@@ -377,7 +367,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
 
-
+        if (!isLaunching()) {
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 transfer.setPower(1);
@@ -393,6 +383,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
             } else {
                 helper.setPosition(helper_open);
             }
+        }
 
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
@@ -492,16 +483,21 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
                 break;
 
             case PUSH_IF_FINAL:
-
-                helper.setPosition(helper_closed);
-                intake.setTargetPosition(intake.getCurrentPosition() + intakeBump1);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intake.setPower(1);
-                transfer.setTargetPosition(transfer.getCurrentPosition() + transferBump1);
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transfer.setPower(1);
+                if (!pushInitialized) {
+                    transferStartPosition = transfer.getCurrentPosition();
+                    intakeStartPosition = intake.getCurrentPosition();
+                    helper.setPosition(helper_closed);
+                    intake.setTargetPosition(intakeStartPosition + intakeBump1);
+                    intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    intake.setPower(1);
+                    transfer.setTargetPosition(transferStartPosition + transferBump1);
+                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transfer.setPower(1);
+                    pushInitialized = true;
+                }
 
                 if (!intake.isBusy() && !transfer.isBusy()) {
+                    pushInitialized = false;
                     intake.setPower(0);
                     transfer.setPower(0);
                     helper.setPosition(helper_open);
@@ -545,38 +541,47 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
 
             case SETTLE:
 
-                transfer.setTargetPosition(transfer.getCurrentPosition() + transferBump2);
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transfer.setPower(1);
+                if (!settleInitialized) {
+                    transferStartPosition = transfer.getCurrentPosition();
+                    transfer.setTargetPosition(transferStartPosition + transferBump2);
+                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    transfer.setPower(1);
+                    settleInitialized = true;
+                }
 
-                if (getRuntime() - stateStartTime > settleTime) {
-
+                if (!transfer.isBusy()) {
+                    settleInitialized = false;
                     launchState = LaunchState.DONE;
                 }
 
                 break;
 
             case DONE:
+
                 LegServo.setPosition(servo_closed);
                 helper.setPosition(helper_open);
                 transfer.setPower(0);
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                launch = false;
+                intake.setPower(0);
+                intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                // increment launcher
                 launcher++;
 
-                // reset launcher after 3 launches
-                if (launcher >= 3) {
-                    launcher = 0;
-                }
-
-                // handle multi-sequence continuation
+                // If multi-shot AND not yet at 3, continue
                 if (multiSequenceActive && launcher < 3) {
-                    launchState = LaunchState.SPINNING_UP; // continue multi-shot
-                } else {
-                    launchState = LaunchState.IDLE;       // sequence finished
+
+                    launchState = LaunchState.SPINNING_UP;
+
+                }
+                else {
+
+                    launchState = LaunchState.IDLE;
                     multiSequenceActive = false;
+
+                    // Reset counter AFTER sequence ends
+                    if (launcher >= 3) {
+                        launcher = 0;
+                    }
                 }
                 break;
         }
