@@ -85,9 +85,9 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
     public static double servo_opened = 0;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
-    public static int transferBump1 = 15;
-    public static int intakeBump1 = 20;
-    public static int transferBump2 = 15;
+    public static int transferBump1 = 1000;
+    public static int intakeBump1 = 1000;
+    public static int transferBump2 = 1000;
     public int intakePosition = 0;
     private boolean multiSequenceActive = false;
     private boolean killLaunch = false;
@@ -483,6 +483,7 @@ public class FTCJakeDriveCode_v3 extends LinearOpMode {
                 break;
 
             case PUSH_IF_FINAL:
+
                 if (!pushInitialized) {
                     transferStartPosition = transfer.getCurrentPosition();
                     intakeStartPosition = intake.getCurrentPosition();
