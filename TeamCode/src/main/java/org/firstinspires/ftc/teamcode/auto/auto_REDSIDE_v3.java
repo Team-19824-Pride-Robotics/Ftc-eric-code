@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+/// uses new launching
 @Autonomous(name = "auto_REDSIDE_v3")
 @Configurable
 

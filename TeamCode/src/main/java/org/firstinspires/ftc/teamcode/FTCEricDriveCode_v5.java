@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+/// adds interpolation table; needs tuning
 @TeleOp(name="FTCEricDriveCode_v5")
 @Configurable
 

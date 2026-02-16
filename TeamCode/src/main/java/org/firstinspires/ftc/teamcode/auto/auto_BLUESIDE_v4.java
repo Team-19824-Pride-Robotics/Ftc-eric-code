@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.FTCEricDriveCode_v4;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
+/// uses new launcher
 @Autonomous(name = "auto_BLUESIDE_v4")
 @Configurable
 
