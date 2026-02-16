@@ -14,16 +14,16 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="FTCEricDriveCode_v4")
+@TeleOp(name="FTCEricDriveCode_v5")
 @Configurable
 
-public class FTCEricDriveCode_v4 extends LinearOpMode {
+public class FTCEricDriveCode_v5 extends LinearOpMode {
     //we love being gracious and professional
     private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
     public static double f = 0;
     public static double target = 1600;
-
+    double flywheelTarget;
     private Servo LegServo;
     private Servo kicker;
     private Servo helper;
@@ -215,6 +215,11 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
                     distance = 40;
                 }
 
+
+                flywheelTarget = lut.get(distance);              // LUT-based velocity
+                flywheelTarget = Math.round(flywheelTarget/10.0)*10.0;
+
+
                 if (llResult.getTx() < -5) {
                     turnCorrection = -0.25;
                 } else if (llResult.getTx() > 1) {
@@ -291,18 +296,19 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
-            controller.setPID(p, i, d);
-            double fly1Current = fly1.getVelocity();
-            double fly2Current = fly2.getVelocity();
-            double pid = controller.calculate(fly1Current, target);
-            double pid2 = controller.calculate(fly2Current, target);
-
+//            controller.setPID(p, i, d);
+//            double fly1Current = fly1.getVelocity();
+//            double fly2Current = fly2.getVelocity();
+//            double pid = controller.calculate(fly1Current, target);
+//            double pid2 = controller.calculate(fly2Current, target);
+//
 //            if (flywheel == false) {
 //                fly1.setVelocity(0);
 //                fly2.setVelocity(0);
 //            } else {
-            fly1.setPower(pid);
-            fly2.setPower(pid2);
+
+            fly1.setVelocity(flywheelTarget);
+            fly2.setVelocity(flywheelTarget);
 
 
             /// launch system - 1 at a time
@@ -467,11 +473,11 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
 
             case SPINNING_UP:
 
-                fly1.setVelocity(flyspeed4);
-                fly2.setVelocity(flyspeed4);
+                fly1.setVelocity(flywheelTarget);
+                fly2.setVelocity(flywheelTarget);
                 LegServo.setPosition(servo_opened);
 
-                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
+                if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance) {
 
                     // If this is the 3rd shot, do PUSH
                     if (launcher == 2) {
