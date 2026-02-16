@@ -14,12 +14,10 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.FTCJakeDriveCode_v2;
-
-@TeleOp(name="FTCJakeDriveCode_v3")
+@TeleOp(name="FTCEricDriveCode_v4")
 @Configurable
 
-public class FTCJakeDriveCode_v3 extends LinearOpMode {
+public class FTCEricDriveCode_v4 extends LinearOpMode {
     //we love being gracious and professional
     private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
