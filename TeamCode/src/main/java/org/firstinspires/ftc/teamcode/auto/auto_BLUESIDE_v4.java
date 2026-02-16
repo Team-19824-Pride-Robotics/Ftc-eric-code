@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.FTCEricDriveCode_v4;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "auto_BLUESIDE_v2")
+@Autonomous(name = "auto_BLUESIDE_v4")
 @Configurable
 
 public class auto_BLUESIDE_v4 extends OpMode {
