@@ -393,6 +393,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
+    helper.setPosition(helper_open);
 
         if (!isLaunching()) {
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
@@ -404,22 +405,16 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
             } else {
                 transfer.setPower(0);
             }
-            if (gamepad2.dpad_right || gamepad1.y) {
-                transferStartPosition = transfer.getCurrentPosition();
-                intakeStartPosition = intake.getCurrentPosition();
-                helper.setPosition(helper_closed);
-                intake.setTargetPosition(intakeStartPosition + intakeBump1);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intake.setPower(1);
-                transfer.setTargetPosition(transferStartPosition + transferBump1);
-                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                transfer.setPower(1);
-            }
 
-            if (!intake.isBusy() && !transfer.isBusy()) {
-                intake.setPower(0);
-                transfer.setPower(0);
-                helper.setPosition(helper_open);
+             if (gamepad2.dpad_right || gamepad1.y) {
+                transfer.setPower(1);
+                intake.setPower(1);
+                resetRuntime();
+
+                while (getRuntime() < kickTime) {
+                    helper.setPosition(helper_closed);
+                }
+
             }
         }
 
@@ -438,18 +433,8 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     intake.setPower(-1);
 
                 } else {
-
                     intake.setPower(0);
                 }
-
-
-                // Update the previous button state for the next loop iteration
-                wasAButtonPressedLastLoop = isACurrentlyPressed;
-                wasBButtonPressedLastLoop = isBCurrentlyPressed;
-
-                intake.setTargetPosition(intakePosition);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intake.setPower(1);
             }
 
 
