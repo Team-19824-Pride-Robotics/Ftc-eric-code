@@ -177,7 +177,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         controller = new PIDController(p, i, d);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -413,27 +413,23 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
 
 ///////////////////INTAKE CONTROLS///////////////////////////////////
-
             if (!isLaunching()) {
                 if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
 
-                    isACurrentlyPressed = true;
+                    intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    intake.setPower(1);
+
                 } else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
 
-                    isBCurrentlyPressed = true;
+
+                    intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    intake.setPower(-1);
+
                 } else {
-                    isACurrentlyPressed = false;
-                    isBCurrentlyPressed = false;
+
+                    intake.setPower(0);
                 }
 
-                if (isACurrentlyPressed && !wasAButtonPressedLastLoop) {
-
-                    intakePosition = intakePosition + 600;
-                }
-                if (isBCurrentlyPressed && !wasBButtonPressedLastLoop) {
-
-                    intakePosition = intakePosition - 400;
-                }
 
                 // Update the previous button state for the next loop iteration
                 wasAButtonPressedLastLoop = isACurrentlyPressed;
