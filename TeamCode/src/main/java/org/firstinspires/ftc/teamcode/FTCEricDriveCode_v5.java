@@ -404,9 +404,20 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                 transfer.setPower(0);
             }
             if (gamepad2.dpad_right || gamepad1.y) {
-                transfer.setPower(1);
+                transferStartPosition = transfer.getCurrentPosition();
+                intakeStartPosition = intake.getCurrentPosition();
                 helper.setPosition(helper_closed);
-            } else {
+                intake.setTargetPosition(intakeStartPosition + intakeBump1);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake.setPower(1);
+                transfer.setTargetPosition(transferStartPosition + transferBump1);
+                transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                transfer.setPower(1);
+            }
+
+            if (!intake.isBusy() && !transfer.isBusy()) {
+                intake.setPower(0);
+                transfer.setPower(0);
                 helper.setPosition(helper_open);
             }
         }
