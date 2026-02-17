@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.controller.PIDController;
+//import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.util.Timer;
@@ -20,13 +20,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class FTCEricDriveCode_v5 extends LinearOpMode {
     //we love being gracious and professional
-    private PIDController controller;
+//    private PIDController controller;
     public static double p = 0.005, i = 0, d = 0;
     public static double f = 0;
     public static double target = 1600;
     double flywheelTarget;
-    double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-
     private Servo LegServo;
     private Servo kicker;
     private Servo helper;
@@ -128,7 +126,6 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-
 ///////////////LOOKUP TABLE SETUP/////////////////////////
         lut.add(30, 950);
         lut.add(35, 950 + addition);
@@ -182,7 +179,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        controller = new PIDController(p, i, d);
+//        controller = new PIDController(p, i, d);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(8); //this is the april tag
@@ -492,13 +489,16 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
             case SPINNING_UP:
 
+                double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
                 double compensatedTarget = flywheelTarget * (13.2 / voltage);
 
                 fly1.setVelocity(compensatedTarget);
                 fly2.setVelocity(compensatedTarget);
                 LegServo.setPosition(servo_opened);
 
-                if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance && getRuntime() - stateStartTime > 0.1) {
+                if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance &&
+                        Math.abs(fly2.getVelocity() - flywheelTarget) < flyTolerance  &&
+                        getRuntime() - stateStartTime > 0.1) {
 
                     // If this is the 3rd shot, do PUSH
                     if (launcher == 2) {
