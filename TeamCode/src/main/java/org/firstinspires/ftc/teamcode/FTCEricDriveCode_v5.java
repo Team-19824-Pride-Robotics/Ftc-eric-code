@@ -38,10 +38,13 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     private Limelight3A limelight;
     private IMU imu;
 
-
     //Declare variables
     boolean wasAButtonPressedLastLoop = false;
     boolean wasBButtonPressedLastLoop = false;
+    private double lastValidFlywheelTarget = 1500;   // safe startup default
+    private double visionTimeout = 0.5;              // seconds before fallback
+    private ElapsedTime visionTimer = new ElapsedTime();
+    private boolean ValidTarget = false;
     boolean settleInitialized = false;
     boolean pushInitialized = false;
     boolean kickInitialized = false;
@@ -209,30 +212,45 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
             if (llResult != null && llResult.isValid()) {
 
+                ValidTarget = true;
+                visionTimer.reset();
+
                 distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
 
                 if (distance > 150) {
-                    distance = 40;
+                    distance = Math.min(Math.max(distance, 30), 150);
                 }
 
 
                 flywheelTarget = lut.get(distance);              // LUT-based velocity
                 flywheelTarget = Math.round(flywheelTarget/10.0)*10.0;
 
+                double computedTarget = lut.get(distance);
+                computedTarget = Math.round(computedTarget / 10.0) * 10.0;
+
+                lastValidFlywheelTarget = computedTarget;
 
                 if (llResult.getTx() < -5) {
                     turnCorrection = -0.25;
                 } else if (llResult.getTx() > 1) {
                     turnCorrection = 0.25;
                 }
-
                 //stop turning if you're facing the target (whether or not you can see AprilTag)
                 else {
+                    ValidTarget = false;
                     turnCorrection = 0;
                 }
-            } else {
+            }
+
+            else {
                 turnCorrection = 0;
                 distance = 60;
+            }
+
+            if (visionTimer.seconds() > visionTimeout) {
+                flywheelTarget = flyspeed4;
+            } else {
+                flywheelTarget = lastValidFlywheelTarget;
             }
 
 /////////////////////////DRIVE CONTROLS///////////////////////////////////
@@ -431,7 +449,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
             telemetry.addData("Button Pressed", isACurrentlyPressed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
             telemetry.addData("Current Velocity", fly2.getVelocity());
-            telemetry.addData("Target Velocity", target);
+            telemetry.addData("Target Velocity", flywheelTarget);
             telemetry.addData("Launch Count", launcher);
             telemetry.update();
 
