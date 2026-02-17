@@ -111,6 +111,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     public static double flyspeed2 = 1580;
     public static double flyspeed3 = 1500;
     public static double flyspeed4 = 1500;
+    public static double driveSpeed = 900;
     public static double flyspeed5 = 1550;
     int transferStartPosition;
     int intakeStartPosition;
@@ -325,10 +326,14 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 //                fly1.setVelocity(0);
 //                fly2.setVelocity(0);
 //            } else {
-
+        if (isLaunching()) {
             fly1.setVelocity(flywheelTarget);
             fly2.setVelocity(flywheelTarget);
-
+        }
+        else {
+            fly1.setVelocity(driveSpeed);
+            fly2.setVelocity(driveSpeed);
+        }
 
             /// launch system - 1 at a time
 
