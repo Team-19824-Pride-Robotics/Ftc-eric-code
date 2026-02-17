@@ -25,6 +25,8 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     public static double f = 0;
     public static double target = 1600;
     double flywheelTarget;
+    double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+
     private Servo LegServo;
     private Servo kicker;
     private Servo helper;
@@ -326,14 +328,15 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 //                fly1.setVelocity(0);
 //                fly2.setVelocity(0);
 //            } else {
-        if (isLaunching()) {
-            fly1.setVelocity(flywheelTarget);
-            fly2.setVelocity(flywheelTarget);
-        }
-        else {
-            fly1.setVelocity(driveSpeed);
-            fly2.setVelocity(driveSpeed);
-        }
+            if (ValidTarget || gamepad1.x)
+                driveSpeed = flywheelTarget - 200;
+            else
+                driveSpeed= 1200;
+
+            if (!isLaunching()) {
+                fly1.setVelocity(driveSpeed);
+                fly2.setVelocity(driveSpeed);
+            }
 
             /// launch system - 1 at a time
 
@@ -416,7 +419,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                 intake.setPower(1);
                 resetRuntime();
 
-                while (getRuntime() < kickTime) {
+                if (getRuntime() < kickTime) {
                     helper.setPosition(helper_closed);
                 }
 
@@ -489,11 +492,13 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
             case SPINNING_UP:
 
-                fly1.setVelocity(flywheelTarget);
-                fly2.setVelocity(flywheelTarget);
+                double compensatedTarget = flywheelTarget * (13.2 / voltage);
+
+                fly1.setVelocity(compensatedTarget);
+                fly2.setVelocity(compensatedTarget);
                 LegServo.setPosition(servo_opened);
 
-                if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance) {
+                if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance && getRuntime() - stateStartTime > 0.1) {
 
                     // If this is the 3rd shot, do PUSH
                     if (launcher == 2) {
@@ -503,6 +508,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     }
 
                     stateStartTime = getRuntime();
+                }
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
                 }
                 break;
 
@@ -529,6 +537,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     launchState = LaunchState.FEED;
                     stateStartTime = getRuntime();
                 }
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
+                }
                 break;
 
             case FEED:
@@ -539,6 +550,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     transfer.setPower(0);
                     launchState = LaunchState.KICK;
                     stateStartTime = getRuntime();
+                }
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
                 }
                 break;
 
@@ -558,6 +572,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     launchState = LaunchState.RESET_SERVO;
                     stateStartTime = getRuntime();
                 }
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
+                }
                 break;
 
             case RESET_SERVO:
@@ -575,7 +592,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                         stateStartTime = getRuntime();
                     }
                 }
-
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
+                }
                 break;
 
             case WAIT:
@@ -597,7 +616,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     settleInitialized = false;
                     launchState = LaunchState.DONE;
                 }
-
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
+                }
                 break;
 
             case DONE:
@@ -626,6 +647,9 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                     if (launcher >= 3) {
                         launcher = 0;
                     }
+                }
+                if (getRuntime() - stateStartTime > 2.0) {
+                    launchState = LaunchState.IDLE;
                 }
                 break;
         }
