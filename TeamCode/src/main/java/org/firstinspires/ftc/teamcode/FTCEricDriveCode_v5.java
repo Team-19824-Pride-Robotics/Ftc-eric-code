@@ -489,11 +489,8 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
             case SPINNING_UP:
 
-                double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-                double compensatedTarget = flywheelTarget * (13.2 / voltage);
-
-                fly1.setVelocity(compensatedTarget);
-                fly2.setVelocity(compensatedTarget);
+                fly1.setVelocity(flywheelTarget);
+                fly2.setVelocity(flywheelTarget);
                 LegServo.setPosition(servo_opened);
 
                 if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance &&
