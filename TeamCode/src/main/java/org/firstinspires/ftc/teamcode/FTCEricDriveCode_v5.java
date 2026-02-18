@@ -42,8 +42,8 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     //Declare variables
     boolean wasAButtonPressedLastLoop = false;
     boolean wasBButtonPressedLastLoop = false;
-    private double lastValidFlywheelTarget = 1500;   // safe startup default
-    private double visionTimeout = 0.5;              // seconds before fallback
+    private double lastValidFlywheelTarget = 1500;
+    private double visionTimeout = 0.5;
     private ElapsedTime visionTimer = new ElapsedTime();
     private boolean ValidTarget = false;
     boolean settleInitialized = false;
@@ -71,12 +71,12 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
     public static double flyTolerance = 70;     // allowed velocity error
-    public static double resetTime = 0.25;
-    public static double waitTime = 0.25;      // time to close gate
+    public static double resetTime = 0.18;
+    public static double waitTime = 0.1;      // time to close gate
     // time to close gate
     public static double settleTime = 1;     // allow artifact to settle
-    public static double feedTime = 0.125;
-    public static double kickUpTime = 0.125;
+    public static double feedTime = 0.09;
+    public static double kickUpTime = 0.09;
     boolean isBCurrentlyPressed = false;
     boolean isACurrentlyPressed = false;
     public static double backOffSpeed = -600;
@@ -92,7 +92,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     public static double helper_closed = 0.4;
     public static int transferBump1 = 1000;
     public static int intakeBump1 = 1000;
-    public static int transferBump2 = 1000;
+    public static int transferBump2 = 650;
     public static int transferBump3 = 300;
     public int intakePosition = 0;
     private boolean multiSequenceActive = false;
@@ -325,16 +325,20 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 //                fly1.setVelocity(0);
 //                fly2.setVelocity(0);
 //            } else {
-            if (ValidTarget || gamepad1.x)
-                driveSpeed = flywheelTarget - 200;
-            else
-                driveSpeed= 1200;
-
+            /// MAY WANT TO ADD THIS BACK IF THERE IS A BATTERY ISSUE
+//            if (ValidTarget || gamepad1.x)
+//                driveSpeed = flywheelTarget - 200;
+//            else
+//                driveSpeed= 1200;
+//
+//            if (!isLaunching()) {
+//                fly1.setVelocity(driveSpeed);
+//                fly2.setVelocity(driveSpeed);
+//            }
             if (!isLaunching()) {
-                fly1.setVelocity(driveSpeed);
-                fly2.setVelocity(driveSpeed);
+                fly1.setVelocity(flywheelTarget);
+                fly2.setVelocity(flywheelTarget);
             }
-
             /// launch system - 1 at a time
 
 // Single shot
@@ -398,9 +402,11 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
 
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
-    helper.setPosition(helper_open);
 
         if (!isLaunching()) {
+
+            helper.setPosition(helper_open);
+
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 transfer.setPower(1);
