@@ -208,7 +208,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
 
             case 0:
-                waitTimer(3.75);
+
                 LegServo.setPosition(servo_open);
                 follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);

@@ -7,7 +7,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,10 +14,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "auto_REDSIDE_v2")
+@Autonomous(name = "auto_REDSIDE_v5")
 @Configurable
 
-public class auto_REDSIDE_v2 extends OpMode {
+public class auto_REDSIDE_v5 extends OpMode {
 // this is graciously professional code.
     private DcMotorEx transfer;
     private DcMotor intake;
@@ -162,6 +161,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
 
             case 0:
+                waitTimer(3.75);
                 LegServo.setPosition(servo_open);
                 follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
