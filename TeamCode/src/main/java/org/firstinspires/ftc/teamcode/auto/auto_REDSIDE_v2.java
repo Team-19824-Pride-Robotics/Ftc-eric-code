@@ -162,6 +162,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
 
             case 0:
+                waitTimer(0.5);
                 LegServo.setPosition(servo_open);
                 follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
@@ -577,6 +578,11 @@ public class auto_REDSIDE_v2 extends OpMode {
         fly2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LegServo.setPosition(servo_closed);
 
+    }
+    public void waitTimer(double time) {
+        actionTimer.resetTimer();
+        while (actionTimer.getElapsedTimeSeconds() < time) {
+        }
     }
 }
 

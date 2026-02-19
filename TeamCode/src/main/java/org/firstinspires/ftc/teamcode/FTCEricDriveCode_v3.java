@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-@Disabled
+//@Disabled
 @TeleOp(name="FTCEricdrivecode_v3")
 @Configurable
 

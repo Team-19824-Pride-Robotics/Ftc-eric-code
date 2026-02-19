@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /// this runs launch artifacts without the interpolation
+@Disabled
 @TeleOp(name="FTCEricDriveCode_v4")
 @Configurable
 
