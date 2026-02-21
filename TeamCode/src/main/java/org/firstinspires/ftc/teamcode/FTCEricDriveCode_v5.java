@@ -72,7 +72,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     private double stateStartTime = 0;
     public static double flyTolerance = 70;     // allowed velocity error
     public static double resetTime = 0.18;
-    public static double waitTime = 0.1;      // time to close gate
+    public static double waitTime = 0.2;      // time to close gate
     // time to close gate
     public static double settleTime = 1;     // allow artifact to settle
     public static double feedTime = 0.09;
@@ -118,8 +118,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
-    int addition = 300;
-
+    public static int addition = 450;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -127,6 +126,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     public void runOpMode() {
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
+        lut.add (-2000,950);
         lut.add(30, 950);
         lut.add(35, 950 + addition);
         lut.add(45, 1000 + addition);
@@ -142,6 +142,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
         lut.add(130, 1280 + addition);
         lut.add(140, 1340 + addition);
         lut.add(150, 1360 + addition);
+        lut.add(1000000,1360 + addition);
 
         lut.createLUT();
 
@@ -246,12 +247,6 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
             else {
                 turnCorrection = 0;
                 distance = 60;
-            }
-
-            if (visionTimer.seconds() > visionTimeout) {
-                flywheelTarget = flyspeed4;
-            } else {
-                flywheelTarget = lastValidFlywheelTarget;
             }
 
 /////////////////////////DRIVE CONTROLS///////////////////////////////////
