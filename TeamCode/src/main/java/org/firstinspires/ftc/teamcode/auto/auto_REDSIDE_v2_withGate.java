@@ -86,12 +86,12 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
 
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(95, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(355));
+    private final Pose lineup1Pose = new Pose(88, lineupY1, Math.toRadians(355));
     private final Pose backedOffPose = new Pose(115, 76, Math.toRadians(355));
-    private final Pose gatePose = new Pose(127, 71, Math.toRadians(355));
+    private final Pose gatePose = new Pose(121, 71, Math.toRadians(355));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(0));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(0));
-    private final Pose gobble1Pose = new Pose(123, lineupY1, Math.toRadians(355)); // Highest (First Set)
+    private final Pose gobble1Pose = new Pose(121, lineupY1, Math.toRadians(355)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(100, lineupY2, Math.toRadians(0)); // Middle (Second Set)
     private final Pose gobble2Pose = new Pose(127, lineupY2, Math.toRadians(0)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(95, 95, Math.toRadians(scorePos2));

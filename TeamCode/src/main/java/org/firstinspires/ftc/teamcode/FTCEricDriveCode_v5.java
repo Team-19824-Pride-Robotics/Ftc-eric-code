@@ -24,7 +24,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     public static double p = 0.005, i = 0, d = 0;
     public static double f = 0;
     public static double target = 1600;
-    double flywheelTarget;
+    double flywheelTarget = 1600;
     private Servo LegServo;
     private Servo kicker;
     private Servo helper;
@@ -71,12 +71,12 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
     public static double flyTolerance = 70;     // allowed velocity error
-    public static double resetTime = 0.18;
-    public static double waitTime = 0.2;      // time to close gate
+    public static double resetTime = 0.25;
+    public static double waitTime = 0.25;      // time to close gate
     // time to close gate
     public static double settleTime = 1;     // allow artifact to settle
-    public static double feedTime = 0.09;
-    public static double kickUpTime = 0.09;
+    public static double feedTime = 0.125;
+    public static double kickUpTime = 0.125;
     boolean isBCurrentlyPressed = false;
     boolean isACurrentlyPressed = false;
     public static double backOffSpeed = -600;
@@ -119,6 +119,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
     public static int addition = 450;
+    public static int longaddition = 80;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -133,16 +134,16 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
         lut.add(50, 1100 + addition);
         lut.add(55, 1120 + addition);
         lut.add(60, 1140 + addition);
-        lut.add(70, 1160 + addition);
-        lut.add(80, 1170 + addition);
-        lut.add(90, 1180 + addition);
-        lut.add(100, 1190 + addition);
-        lut.add(110, 1200 + addition);
-        lut.add(120, 1260 + addition);
-        lut.add(130, 1280 + addition);
-        lut.add(140, 1340 + addition);
-        lut.add(150, 1360 + addition);
-        lut.add(1000000,1360 + addition);
+        lut.add(70, 1160 + addition + longaddition);
+        lut.add(80, 1170 + addition + longaddition);
+        lut.add(90, 1180 + addition + longaddition);
+        lut.add(100, 1190 + addition + longaddition);
+        lut.add(110, 1200 + addition + longaddition);
+        lut.add(120, 1260 + addition + longaddition);
+        lut.add(130, 1280 + addition + longaddition);
+        lut.add(140, 1340 + addition + longaddition);
+        lut.add(150, 1360 + addition + longaddition);
+        lut.add(1000000,1360 + addition + longaddition);
 
         lut.createLUT();
 
@@ -366,11 +367,11 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
             /// alternate launch
 
-
-            if (gamepad2.right_trigger > .1) {
-                LegServo.setPosition(servo_opened);
-                target = close_launch_speed;
-            }
+//
+//            if (gamepad2.right_trigger > .1) {
+//                LegServo.setPosition(servo_opened);
+//                target = close_launch_speed;
+//            }
 //
 
 //
@@ -399,7 +400,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 ///////////////////TRANSFER CONTROLS///////////////////////////////////
 
         if (!isLaunching()) {
-
+            LegServo.setPosition(servo_closed);
             helper.setPosition(helper_open);
 
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
@@ -443,7 +444,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
                 }
             }
 
-
+            telemetry.addData("Distance from Goal", distance);
             telemetry.addData("Launch State", launchState);
             telemetry.addData("Button Pressed", isACurrentlyPressed);
             telemetry.addData("Current Velocity", fly1.getVelocity());

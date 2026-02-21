@@ -422,7 +422,7 @@ public class FTCEricDriveCode_v4 extends LinearOpMode {
                 intake.setPower(1);
             }
 
-
+            telemetry.addData("Distance from Goal", distance);
             telemetry.addData("Launch State", launchState);
             telemetry.addData("Button Pressed", isACurrentlyPressed);
             telemetry.addData("Current Velocity", fly1.getVelocity());
