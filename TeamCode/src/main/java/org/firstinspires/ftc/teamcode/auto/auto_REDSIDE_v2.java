@@ -41,15 +41,15 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double scorePos2 = 42;
     public static double scorePos3 = 42;
     public static double lineupY1 =85;
-    public static double lineupY2 = 59;
+    public static double lineupY2 = 61;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1500;
-    public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1500;
-    public static double flyspeed5 = 1550;
+    public static double flySpeed = 1595;
+    public static double flyspeed2 = 1595;
+    public static double flyspeed3 = 1595;
+    public static double flyspeed4 = 1595;
+    public static double flyspeed5 = 1595;
 
     /// /////timings for launchArtifacts function/////////////
 

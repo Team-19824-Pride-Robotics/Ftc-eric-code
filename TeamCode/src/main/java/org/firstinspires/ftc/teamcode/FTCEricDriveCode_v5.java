@@ -70,12 +70,12 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     }
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
-    public static double flyTolerance = 70;     // allowed velocity error
-    public static double resetTime = 0.25;
-    public static double waitTime = 0.25;      // time to close gate
+    public static double flyTolerance = 50;     // allowed velocity error
+    public static double resetTime = 0.2;
+    public static double waitTime = 0.3;      // time to close gate
     // time to close gate
-    public static double settleTime = 1;     // allow artifact to settle
-    public static double feedTime = 0.125;
+    public static double settleTime = 0.8;     // allow artifact to settle
+    public static double feedTime = 0.11;
     public static double kickUpTime = 0.125;
     boolean isBCurrentlyPressed = false;
     boolean isACurrentlyPressed = false;
@@ -118,7 +118,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
-    public static int addition = 450;
+    public static int addition = 475;
     public static int longaddition = 80;
     private ElapsedTime runtime = new ElapsedTime();
 
