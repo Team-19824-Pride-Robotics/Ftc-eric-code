@@ -44,11 +44,11 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1500;
+    public static double flySpeed = 1580;
     public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1500;
-    public static double flyspeed5 = 1550;
+    public static double flyspeed3 = 1580;
+    public static double flyspeed4 = 1580;
+    public static double flyspeed5 = 1580;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -87,7 +87,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
     private final Pose lineup1Pose = new Pose(45, lineupY1, Math.toRadians(180));
-    private final Pose gatePose = new Pose(18.5, 75, Math.toRadians(180));
+    private final Pose gatePose = new Pose(21, 75, Math.toRadians(180));
     private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(180));
     private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));

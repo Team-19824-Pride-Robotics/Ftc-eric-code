@@ -72,7 +72,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     private double stateStartTime = 0;
     public static double flyTolerance = 50;     // allowed velocity error
     public static double resetTime = 0.2;
-    public static double waitTime = 0.3;      // time to close gate
+    public static double waitTime = 0.27;      // time to close gate
     // time to close gate
     public static double settleTime = 0.8;     // allow artifact to settle
     public static double feedTime = 0.11;
@@ -119,7 +119,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
     public static int addition = 475;
-    public static int longaddition = 80;
+    public static int longaddition = 50;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -131,19 +131,19 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
         lut.add(30, 950);
         lut.add(35, 950 + addition);
         lut.add(45, 1000 + addition);
-        lut.add(50, 1100 + addition);
-        lut.add(55, 1120 + addition);
-        lut.add(60, 1140 + addition);
-        lut.add(70, 1160 + addition + longaddition);
+        lut.add(50, 1550);
+        lut.add(55, 1110 + addition);
+        lut.add(60, 1120 + addition);
+        lut.add(70, 1215 + addition);
         lut.add(80, 1170 + addition + longaddition);
         lut.add(90, 1180 + addition + longaddition);
         lut.add(100, 1190 + addition + longaddition);
-        lut.add(110, 1200 + addition + longaddition);
-        lut.add(120, 1260 + addition + longaddition);
-        lut.add(130, 1280 + addition + longaddition);
-        lut.add(140, 1340 + addition + longaddition);
-        lut.add(150, 1360 + addition + longaddition);
-        lut.add(1000000,1360 + addition + longaddition);
+        lut.add(110, 1425 + addition + longaddition);
+        lut.add(120, 1475 + addition + longaddition);
+        lut.add(130, 1500 + addition + longaddition);
+        lut.add(140, 1550 + addition + longaddition);
+        lut.add(150, 1650 + addition + longaddition);
+        lut.add(1000000,1700 + addition + longaddition);
 
         lut.createLUT();
 
@@ -368,8 +368,8 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
             /// alternate launch
 
 //
-//            if (gamepad2.right_trigger > .1) {
-//                LegServo.setPosition(servo_opened);
+
+
 //                target = close_launch_speed;
 //            }
 //

@@ -45,11 +45,11 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1500;
+    public static double flySpeed = 1580;
     public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1500;
-    public static double flyspeed5 = 1550;
+    public static double flyspeed3 = 1580;
+    public static double flyspeed4 = 1580;
+    public static double flyspeed5 = 1580;
     /// /////timings for launchArtifacts function/////////////
 
 //interval for initial kick into flywheel
