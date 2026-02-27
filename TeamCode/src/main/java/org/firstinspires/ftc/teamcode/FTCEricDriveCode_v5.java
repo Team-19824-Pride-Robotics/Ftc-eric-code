@@ -133,13 +133,14 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
         lut.add(45, 1000 + addition);
         lut.add(50, 1550);
         lut.add(55, 1110 + addition);
-        lut.add(60, 1120 + addition);
+        lut.add(60, 1125 + addition);
         lut.add(70, 1215 + addition);
-        lut.add(80, 1170 + addition + longaddition);
-        lut.add(90, 1180 + addition + longaddition);
-        lut.add(100, 1190 + addition + longaddition);
+        lut.add(80, 1200 + addition + longaddition);
+        lut.add(90, 1210 + addition + longaddition);
+        lut.add(100, 1210 + addition + longaddition);
         lut.add(110, 1425 + addition + longaddition);
         lut.add(120, 1475 + addition + longaddition);
+        lut.add(125, 1480 + addition + longaddition);
         lut.add(130, 1500 + addition + longaddition);
         lut.add(140, 1550 + addition + longaddition);
         lut.add(150, 1650 + addition + longaddition);
