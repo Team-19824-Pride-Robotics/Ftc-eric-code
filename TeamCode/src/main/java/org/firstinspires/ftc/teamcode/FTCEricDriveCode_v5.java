@@ -390,18 +390,28 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 //            }
 
 
+
+
+///////////////////TRANSFER CONTROLS///////////////////////////////////
+
+        if (!isLaunching()) {
+            if (gamepad2.right_trigger > 0.1) {
+                LegServo.setPosition(servo_opened);
+            }
+            else {
+                LegServo.setPosition(servo_closed);
+            }
             if (gamepad2.y) {
                 resetRuntime();
                 if (getRuntime() < kickTime) {
                     kicker.setPosition(kicker_kick);
                 }
             }
+            else {
+                kicker.setPosition(kicker_closed);
+            }
 
 
-///////////////////TRANSFER CONTROLS///////////////////////////////////
-
-        if (!isLaunching()) {
-            LegServo.setPosition(servo_closed);
             helper.setPosition(helper_open);
 
             if (gamepad2.left_bumper || gamepad1.left_bumper) {

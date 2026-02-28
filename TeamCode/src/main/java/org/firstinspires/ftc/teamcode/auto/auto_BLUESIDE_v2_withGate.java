@@ -86,20 +86,20 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(45, lineupY1, Math.toRadians(180));
-    private final Pose gatePose = new Pose(21, 75, Math.toRadians(180));
-    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(180));
-    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
-    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
-    private final Pose gobble1Pose = new Pose(21, lineupY1, Math.toRadians(180)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(45, lineupY2, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(55, lineupY1, Math.toRadians(185));
+    private final Pose gatePose = new Pose(22, 70, Math.toRadians(185));
+    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(185));
+    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(185));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(185));
+    private final Pose gobble1Pose = new Pose(22, lineupY1, Math.toRadians(185)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(185)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(185)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
-    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
-    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
+    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(185));
+    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(185));
     private final Pose scorePose3 = new Pose(60, 95, Math.toRadians(scorePos3));
-    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(185)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(185));
 
     private PathChain scorePreload, openGate, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
 
@@ -274,7 +274,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
             case 5:
 
                 if (!follower.isBusy()) {
-                    waitTimer(2);
+                    waitTimer(1);
                     intake_state = 0.075;
                     transfer_state = 0;
                     follower.setMaxPower(robotFast);
@@ -313,7 +313,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
                     transfer_state = 0.75;
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2, true);
-                    setPathState(11);
+                    setPathState(-1);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
@@ -361,8 +361,8 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
                 LegServo.setPosition(0);
                 if (!follower.isBusy()) {
-                    launchArtifacts();
-                    
+                    launchArtifacts2();
+
                     LegServo.setPosition(servo_closed);
                     setPathState(13);
                 }

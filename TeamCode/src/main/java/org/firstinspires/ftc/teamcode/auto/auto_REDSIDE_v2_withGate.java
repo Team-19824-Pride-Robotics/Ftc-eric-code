@@ -313,7 +313,7 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
                     transfer_state = 0.75;
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2, true);
-                    setPathState(11);
+                    setPathState(9);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
@@ -321,12 +321,8 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    intake_state = 0.8;
-                    transfer_state = 0.30;
-
-                    follower.setMaxPower(robotSlow);
                     follower.followPath(backOff2, true);
-                    setPathState(10);
+                    setPathState(11);
                 }
                 break;
 
@@ -361,7 +357,7 @@ public class auto_REDSIDE_v2_withGate extends OpMode {
 
                 LegServo.setPosition(0);
                 if (!follower.isBusy()) {
-                    launchArtifacts();
+                    launchArtifacts2();
 
                     LegServo.setPosition(servo_closed);
                     setPathState(13);
