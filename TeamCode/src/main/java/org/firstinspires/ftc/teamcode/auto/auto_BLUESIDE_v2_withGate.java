@@ -36,19 +36,19 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 138;
-    public static double scorePos2 = 130;
-    public static double scorePos3 = 130;
-    public static double lineupY1 = 85.5;
-    public static double lineupY2 = 63;
+    public static double scorePos = 138.5;
+    public static double scorePos2 = 138.5;
+    public static double scorePos3 = 137;
+    public static double lineupY1 = 89;
+    public static double lineupY2 = 64.5;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1580;
-    public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1580;
-    public static double flyspeed4 = 1580;
-    public static double flyspeed5 = 1580;
+    public static double flySpeed = 1560;
+    public static double flyspeed2 = 1560;
+    public static double flyspeed3 = 1560;
+    public static double flyspeed4 = 1560;
+    public static double flyspeed5 = 1560;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -86,20 +86,20 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(55, lineupY1, Math.toRadians(185));
-    private final Pose gatePose = new Pose(22, 70, Math.toRadians(185));
-    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(185));
-    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(185));// Highest (First Set)
-    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(185));
-    private final Pose gobble1Pose = new Pose(22, lineupY1, Math.toRadians(185)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(185)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(185)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(55, lineupY1, Math.toRadians(175));
+    private final Pose gatePose = new Pose(23.5, 70, Math.toRadians(175));
+    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(175));
+    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(175));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(175));
+    private final Pose gobble1Pose = new Pose(23.5, lineupY1, Math.toRadians(175)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(175)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(175)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
-    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(185));
-    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(185));
+    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(175));
+    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(175));
     private final Pose scorePose3 = new Pose(60, 95, Math.toRadians(scorePos3));
-    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(185)); // Middle (Second Set)
-    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(185));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(175)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(175));
 
     private PathChain scorePreload, openGate, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
 

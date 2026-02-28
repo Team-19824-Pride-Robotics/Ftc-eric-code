@@ -14,10 +14,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "auto_BLUESIDE_v2")
+@Autonomous(name = "auto_BLUESIDE_JESUIT")
 @Configurable
 
-public class auto_BLUESIDE_v2 extends OpMode {
+public class auto_BLUESIDE_JESUIT extends OpMode {
 // this is graciously professional code.
     private DcMotorEx transfer;
     private DcMotor intake;
@@ -31,8 +31,8 @@ public class auto_BLUESIDE_v2 extends OpMode {
     public static double intake_full = 1;
     public static double servo_closed = 0.27;
     public static double servo_open = 0;
-    public static double robotFast = 0.8;
-    public static double robotSlow = 0.6;
+    public static double robotFast = 0.6;
+    public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
@@ -40,7 +40,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
     public static double scorePos2 = 138.5;
     public static double scorePos3 = 137;
     public static double lineupY1 = 89;
-    public static double lineupY2 = 63.5;
+    public static double lineupY2 = 64.5;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
@@ -61,7 +61,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
     public static double i2 = 1.4;
     public static double t2 = t1 + i2;
     //interval to move the third ball into position
-    public static double i3 = 1.25;
+    public static double i3 = 0.5;
     public static double t3 = t2 + i3;
     //interval for transfer to run and throw the third ball into the flywheel
     public static double i4 = 1;
@@ -86,20 +86,22 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(57, lineupY1, Math.toRadians(175));
-    private final Pose lineup1_5Pose = new Pose(40, 85.5, Math.toRadians(180));// Highest (First Set)
-    private final Pose lineup1_6Pose = new Pose(45, 85.5, Math.toRadians(180));
-    private final Pose gobble1Pose = new Pose(23.5, lineupY1, Math.toRadians(175)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(57, lineupY2, Math.toRadians(175)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(55, lineupY1, Math.toRadians(175));
+    private final Pose gatePose = new Pose(23.5, 70, Math.toRadians(175));
+    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(175));
+    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(175));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(175));
+    private final Pose gobble1Pose = new Pose(60, 135, Math.toRadians(175)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(175)); // Middle (Second Set)
     private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(175)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
-    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
-    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
+    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(175));
+    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(175));
     private final Pose scorePose3 = new Pose(60, 95, Math.toRadians(scorePos3));
-    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
-    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(175)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(175));
 
-    private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
+    private PathChain scorePreload, openGate, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
 
 
     public void buildPaths() {
@@ -111,7 +113,7 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
 
         lineup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, lineup1Pose))
+                .addPath(new BezierLine(scorePose, gobble1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), lineup1Pose.getHeading())
                 .build();
 
@@ -126,10 +128,14 @@ public class auto_BLUESIDE_v2 extends OpMode {
                 .build();
 
         backOff1 = follower.pathBuilder()
-                .addPath(new BezierLine(lineup1_5Pose, lineup1_6Pose))
-                .setConstantHeadingInterpolation(lineup1_5Pose.getHeading())
+                .addPath(new BezierLine(gobble1Pose, backedOffPose))
+                .setConstantHeadingInterpolation(gobble1Pose.getHeading())
                 .build();
 
+        openGate = follower.pathBuilder()
+                .addPath(new BezierLine(backedOffPose, gatePose))
+                .setConstantHeadingInterpolation(backedOffPose.getHeading())
+                .build();
 
         getLast1 = follower.pathBuilder()
 
@@ -181,7 +187,8 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
                 .addPath(new BezierLine(scorePose, lineup3Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), lineup3Pose.getHeading())
-                .addPath(new BezierLine(lineup3Pose, gobble3Pose)).setConstantHeadingInterpolation(lineup3Pose.getHeading())
+                .addPath(new BezierLine(lineup3Pose, gobble3Pose))
+                .setConstantHeadingInterpolation(lineup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -208,9 +215,8 @@ public class auto_BLUESIDE_v2 extends OpMode {
 
 
             case 0:
-
                 LegServo.setPosition(servo_open);
-                follower.setMaxPower(robotSlow);
+                follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
@@ -225,153 +231,10 @@ public class auto_BLUESIDE_v2 extends OpMode {
                     follower.setMaxPower(robotFast);
                     follower.followPath(lineup1, true);
 
-                    setPathState(2);
-                }
-                break;
-
-            case 2:
-
-                if (!follower.isBusy()) {
-                    intake_state = 0.75;
-                    transfer_state = 0.75;
-                    follower.followPath(grabPickup1, true);
-                    setPathState(5);
-                }
-                break;
-
-//            case 3:
-//
-//                if (!follower.isBusy()) {
-//
-//                    intake_state = 0.8;
-//                    transfer_state = 0.30;
-//
-//                    follower.setMaxPower(robotSlow);
-//                    follower.followPath(backOff1, true);
-//                    setPathState(4);
-//                }
-//                break;
-//
-//            case 4:
-//
-//                if (!follower.isBusy()) {
-//
-//                    intake_state = 0.8;
-//                    transfer_state = 0;
-//
-//                    follower.setMaxPower(robotSlow);
-//                    follower.followPath(getLast1, true);
-//                    setPathState(5);
-//                }
-//                break;
-//gets into scoring position
-            case 5:
-
-                if (!follower.isBusy()) {
-                    intake_state = 0.075;
-                    transfer_state = 0;
-                    LegServo.setPosition(servo_open);
-                    follower.followPath(scorePickup1, true);
-
-                    setPathState(6);
-                }
-                break;
-//scores the balls after opening the servo and gets back in position to pick up the balls
-            case 6:
-
-                LegServo.setPosition(0);
-                if (!follower.isBusy()) {
-                    launchArtifacts2();
-                    LegServo.setPosition(servo_closed);
-                    setPathState(7);
-                }
-                break;
-            case 7:
-
-                if (!follower.isBusy()) {
-                    kicker.setPosition(0.185);
-
-                    //follower.setMaxPower(robotSlow);
-                    follower.followPath(lineup2, true);
-
-                    setPathState(8);
-                }
-                break;
-
-            case 8:
-
-                if (!follower.isBusy()) {
-                    intake_state = 0.75;
-                    transfer_state = 0.75;
-                    //follower.setMaxPower(robotSlow);
-                    follower.followPath(grabPickup2, true);
-                    setPathState(11);
-                }
-                break;
-//launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
-            case 9:
-
-                if (!follower.isBusy()) {
-
-                    intake_state = 0.8;
-                    transfer_state = 0.30;
-
-                    follower.setMaxPower(robotSlow);
-                    follower.followPath(backOff2, true);
-                    setPathState(10);
-                }
-                break;
-
-            case 10:
-
-                if (!follower.isBusy()) {
-
-                    intake_state = 0.8;
-                    transfer_state = 0;
-
-                    follower.setMaxPower(robotSlow);
-                    follower.followPath(getLast2, true);
-                    setPathState(11);
-                }
-                break;
-
-
-//gets into scoring position
-            case 11:
-
-                if (!follower.isBusy()) {
-                    intake_state = 0.075;
-                    transfer_state = 0;
-                    LegServo.setPosition(servo_open);
-                    follower.followPath(scorePickup2, true);
-
-                    setPathState(12);
-                }
-                break;
-//scores the balls after opening the servo and gets back in position to pick up the balls
-            case 12:
-
-                LegServo.setPosition(0);
-                if (!follower.isBusy()) {
-                    launchArtifacts2();
-                    
-                    LegServo.setPosition(servo_closed);
-                    setPathState(13);
-                }
-                break;
-
-            case 13:
-                if (!follower.isBusy()) {
-                    follower.followPath(justPark, true);
-                    intake_state = 0;
-                    transfer_state = 0;
                     setPathState(-1);
                 }
                 break;
-
-        }
-    }
-
+        }}
     /**
      * These change the states of the paths and actions. It will also reset the timers of the individual switches
      **/

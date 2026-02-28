@@ -32,8 +32,8 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double intake_full = 1;
     public static double servo_closed = 0.20;
     public static double servo_open = 0;
-    public static double robotFast = 0.6;
-    public static double robotSlow = 0.55;
+    public static double robotFast = 0.8;
+    public static double robotSlow = 0.6;
     public static double robotSlower = 0.3;
     public double intake_state = 0;
     public double transfer_state = 0;
@@ -163,7 +163,7 @@ public class auto_REDSIDE_v2 extends OpMode {
 
             case 0:
                 LegServo.setPosition(servo_open);
-                follower.setMaxPower(robotFast);
+                follower.setMaxPower(robotSlow);
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;

@@ -7,18 +7,16 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-@Disabled
-@Autonomous(name = "auto_REDSIDE_v5")
+@Autonomous(name = "auto_REDSIDE_SPARKPLUGS")
 @Configurable
 
-public class auto_REDSIDE_v5 extends OpMode {
+public class auto_REDSIDE_SPARKPLUGS extends OpMode {
 // this is graciously professional code.
     private DcMotorEx transfer;
     private DcMotor intake;
@@ -41,15 +39,15 @@ public class auto_REDSIDE_v5 extends OpMode {
     public static double scorePos2 = 42;
     public static double scorePos3 = 42;
     public static double lineupY1 =85;
-    public static double lineupY2 = 59;
+    public static double lineupY2 = 61;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1500;
+    public static double flySpeed = 1580;
     public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1500;
-    public static double flyspeed5 = 1550;
+    public static double flyspeed3 = 1580;
+    public static double flyspeed4 = 1580;
+    public static double flyspeed5 = 1580;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -88,9 +86,9 @@ public class auto_REDSIDE_v5 extends OpMode {
     private final Pose startPose = new Pose(118, 128, Math.toRadians(43)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(90, 90, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
     private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(355));
-    private final Pose gobble1Pose = new Pose(120.5, lineupY1, Math.toRadians(355)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(95, lineupY2, Math.toRadians(355)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(125, lineupY2, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose gobble1Pose = new Pose(119, lineupY1, Math.toRadians(355)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(90, lineupY2, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(123, lineupY2, Math.toRadians(355)); // Middle (Second Set)
     private final Pose backOff2Pose = new Pose(95, lineupY2, Math.toRadians(355)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
     private final Pose scorePose3 = new Pose(90, 90, Math.toRadians(scorePos3));
