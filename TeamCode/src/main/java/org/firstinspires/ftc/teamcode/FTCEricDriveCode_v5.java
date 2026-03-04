@@ -118,7 +118,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
-    public static int addition = 475;
+    public static int addition = 450;
     public static int longaddition = 50;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -136,7 +136,7 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
         lut.add(60, 1125 + addition);
         lut.add(70, 1215 + addition);
         lut.add(80, 1200 + addition + longaddition);
-        lut.add(90, 1210 + addition + longaddition);
+        lut.add(90, 1220 + addition + longaddition);
         lut.add(100, 1210 + addition + longaddition);
         lut.add(110, 1425 + addition + longaddition);
         lut.add(120, 1475 + addition + longaddition);
@@ -283,31 +283,31 @@ public class FTCEricDriveCode_v5 extends LinearOpMode {
 
             if (gamepad1.dpad_left) {
 
-                FL.setPower(-.15);
-                FR.setPower(.15);
-                BL.setPower(-.15);
-                BR.setPower(.15);
+                FL.setPower(-.25);
+                FR.setPower(.25);
+                BL.setPower(-.25);
+                BR.setPower(.25);
             }
             if (gamepad1.dpad_right) {
 
-                FL.setPower(.15);
-                FR.setPower(-.15);
-                BL.setPower(.15);
-                BR.setPower(-.15);
+                FL.setPower(.25);
+                FR.setPower(-.25);
+                BL.setPower(.25);
+                BR.setPower(-.25);
             }
             if (gamepad1.dpad_up) {
 
-                FL.setPower(.15);
-                FR.setPower(.15);
-                BL.setPower(.15);
-                BR.setPower(.15);
+                FL.setPower(.25);
+                FR.setPower(.25);
+                BL.setPower(.25);
+                BR.setPower(.25);
             }
             if (gamepad1.dpad_down) {
 
-                FL.setPower(-.15);
-                FR.setPower(-.15);
-                BL.setPower(-.15);
-                BR.setPower(-.15);
+                FL.setPower(-.25);
+                FR.setPower(-.25);
+                BL.setPower(-.25);
+                BR.setPower(-.25);
             }
 
 

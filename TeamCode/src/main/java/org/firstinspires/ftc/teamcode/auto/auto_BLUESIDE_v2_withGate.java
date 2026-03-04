@@ -31,7 +31,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
     public static double intake_full = 1;
     public static double servo_closed = 0.27;
     public static double servo_open = 0;
-    public static double robotFast = 0.6;
+    public static double robotFast = 0.8;
     public static double robotSlow = 0.5;
     public static double robotSlower = 0.3;
     public double intake_state = 0;
@@ -86,20 +86,20 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
     private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(55, lineupY1, Math.toRadians(175));
-    private final Pose gatePose = new Pose(23.5, 70, Math.toRadians(175));
-    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(175));
-    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(175));// Highest (First Set)
-    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(175));
-    private final Pose gobble1Pose = new Pose(23.5, lineupY1, Math.toRadians(175)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(175)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(175)); // Middle (Second Set)
+    private final Pose lineup1Pose = new Pose(55, lineupY1, Math.toRadians(180));
+    private final Pose gatePose = new Pose(25, 76, Math.toRadians(180));
+    private final Pose backedOffPose = new Pose(28, 79, Math.toRadians(180));
+    private final Pose lineup1_5Pose = new Pose(40, 86.5, Math.toRadians(180));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 86.5, Math.toRadians(180));
+    private final Pose gobble1Pose = new Pose(23.5, lineupY1, Math.toRadians(180)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(180)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
-    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(175));
-    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(175));
+    private final Pose lineup2_5Pose = new Pose (40,62, Math.toRadians(180));
+    private final Pose lineup2_6Pose = new Pose (45,62, Math.toRadians(180));
     private final Pose scorePose3 = new Pose(60, 95, Math.toRadians(scorePos3));
-    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(175)); // Middle (Second Set)
-    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(175));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180));
 
     private PathChain scorePreload, openGate, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
 
@@ -291,7 +291,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
                 if (!follower.isBusy()) {
                     launchArtifacts2();
                     LegServo.setPosition(servo_closed);
-                    setPathState(13);
+                    setPathState(7);
                 }
                 break;
             case 7:
@@ -313,7 +313,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
                     transfer_state = 0.75;
                     //follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2, true);
-                    setPathState(-1);
+                    setPathState(9);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
@@ -326,7 +326,7 @@ public class auto_BLUESIDE_v2_withGate extends OpMode {
 
                     follower.setMaxPower(robotSlow);
                     follower.followPath(backOff2, true);
-                    setPathState(10);
+                    setPathState(11);
                 }
                 break;
 

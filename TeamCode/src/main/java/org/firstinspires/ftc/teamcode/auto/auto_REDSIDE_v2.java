@@ -41,7 +41,7 @@ public class auto_REDSIDE_v2 extends OpMode {
     public static double scorePos2 = 42;
     public static double scorePos3 = 42;
     public static double lineupY1 =85;
-    public static double lineupY2 = 61;
+    public static double lineupY2 = 59;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
