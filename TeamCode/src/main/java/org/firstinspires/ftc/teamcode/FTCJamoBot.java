@@ -363,13 +363,14 @@ public class FTCJamoBot extends LinearOpMode {
                 transfer.setPower(0);
                blocker.setPosition(servo_closed);
 //                helper.setPosition(helper_open);
-            } else {
+            }
+            else {
                 killLaunch = false;
             }
 
 
 
-///////////////////TRANSFER CONTROLS///////////////////////////////////
+////////////////////////////TRANSFER and INTAKE CONTROLS///////////////////////////////////
 
         if (!isLaunching()) {
             if (gamepad2.right_trigger > 0.1) {
@@ -378,55 +379,44 @@ public class FTCJamoBot extends LinearOpMode {
             else {
                 blocker.setPosition(servo_closed);
             }
-//            if (gamepad2.y) {
-//                resetRuntime();
-//                if (getRuntime() < kickTime) {
-//                    kicker.setPosition(kicker_kick);
-//                }
-//            }
-//            else {
-//                kicker.setPosition(kicker_closed);
-//            }
+
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 transfer.setPower(1);
-            } else if (gamepad2.right_bumper || gamepad1.right_bumper) {
+            }
+            if (gamepad2.right_bumper || gamepad1.right_bumper) {
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 transfer.setPower(-1);
-            } else {
-                transfer.setPower(0);
             }
+
 
              if (gamepad2.dpad_right || gamepad1.y) {
                 transfer.setPower(1);
                 intake.setPower(1);
                 resetRuntime();
 
-//                if (getRuntime() < kickTime) {
-//                    helper.setPosition(helper_closed);
-//                }
+             }
+
+            if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
+
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                intake.setPower(1);
+            }
+            if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+
+
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                intake.setPower(-1);
 
             }
+            else {
+                intake.setPower(0);
+                transfer.setPower(0);
+            }
+
         }
 
 
-///////////////////INTAKE CONTROLS///////////////////////////////////
-            if (!isLaunching()) {
-                if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
-
-                    intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    intake.setPower(1);
-
-                } else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
-
-
-                    intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    intake.setPower(-1);
-
-                } else {
-                    intake.setPower(0);
-                }
-            }
 
             telemetry.addData("Distance from Goal", distance);
             telemetry.addData("Launch State", launchState);
