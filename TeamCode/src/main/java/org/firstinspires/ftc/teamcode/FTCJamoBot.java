@@ -46,7 +46,7 @@ public class FTCJamoBot extends LinearOpMode {
     private double lastValidFlywheelTarget = 1500;
     private double visionTimeout = 0.5;
     private ElapsedTime visionTimer = new ElapsedTime();
-    private boolean ValidTarget = false;
+    private boolean ValidTarget =   false;
     boolean settleInitialized = false;
     boolean pushInitialized = false;
     boolean kickInitialized = false;
@@ -132,7 +132,7 @@ public class FTCJamoBot extends LinearOpMode {
         lut.add(30, 950);
         lut.add(35, 950 + addition);
         lut.add(45, 1000 + addition);
-        lut.add(50, 1550);
+        lut.add(50, 150);
         lut.add(55, 1110 + addition);
         lut.add(60, 1125 + addition);
         lut.add(70, 1215 + addition);
@@ -363,7 +363,7 @@ public class FTCJamoBot extends LinearOpMode {
                 transfer.setPower(0);
                blocker.setPosition(servo_closed);
 //                helper.setPosition(helper_open);
-            }
+                    }
             else {
                 killLaunch = false;
             }
