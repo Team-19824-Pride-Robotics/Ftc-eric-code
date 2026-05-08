@@ -334,10 +334,10 @@ public class FTCJamoBot extends LinearOpMode {
 //                fly1.setVelocity(driveSpeed);
 //                fly2.setVelocity(driveSpeed);
 //            }
-            if (!isLaunching()) {
+//Maybe removing this will stop the reverse transfer to stop the flywheel if (!isLaunching()) {
                 fly1.setVelocity(flywheelTarget);
                 fly2.setVelocity(flywheelTarget);
-            }
+ //           }
             /// launch system - 1 at a time
 
 // Single shot
@@ -389,6 +389,10 @@ public class FTCJamoBot extends LinearOpMode {
                 transfer.setPower(1);
             }
             if (gamepad2.right_bumper || gamepad1.right_bumper) {
+///                          //Just another precaution//                                ///
+                launchState = LaunchState.IDLE;
+                multiSequenceActive = false;
+ ///////////////////////////////////the original code/////////////////////////////////////
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 transfer.setPower(-1);
             }
