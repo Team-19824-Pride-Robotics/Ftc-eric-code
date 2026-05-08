@@ -27,8 +27,7 @@ public class FTCJamoBot extends LinearOpMode {
     public static double target = 1600;
     double flywheelTarget = 1600;
     private Servo blocker;
-//    private Servo kicker;
-//    private Servo helper;
+    private Servo blocker2;
     private DcMotor FL;
     private DcMotor FR;
     private DcMotor BL;
@@ -166,6 +165,7 @@ public class FTCJamoBot extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "transfer");
         blocker = hardwareMap.get(Servo.class, "blocker");
+        blocker2 = hardwareMap.get(Servo.class, "blocker2");
 //        kicker = hardwareMap.get(Servo.class, "kicker");
 //        helper = hardwareMap.get(Servo.class, "helper");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
@@ -193,6 +193,7 @@ public class FTCJamoBot extends LinearOpMode {
 //        kicker.setPosition(kicker_closed);
 //        helper.setPosition(helper_open);
         blocker.setPosition(servo_closed);
+        blocker2.setPosition(servo_closed);
 
         launchState = LaunchState.IDLE;
         // Wait for the game to start (driver presses START)
@@ -362,6 +363,7 @@ public class FTCJamoBot extends LinearOpMode {
                 launcher = 0;
                 transfer.setPower(0);
                blocker.setPosition(servo_closed);
+               blocker2.setPosition(servo_closed);
 //                helper.setPosition(helper_open);
                     }
             else {
@@ -375,9 +377,11 @@ public class FTCJamoBot extends LinearOpMode {
         if (!isLaunching()) {
             if (gamepad2.right_trigger > 0.1) {
                 blocker.setPosition(servo_opened);
+                blocker2.setPosition(servo_opened);
             }
             else {
                 blocker.setPosition(servo_closed);
+                blocker2.setPosition(servo_closed);
             }
 
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
@@ -466,6 +470,7 @@ public class FTCJamoBot extends LinearOpMode {
                 fly1.setVelocity(flywheelTarget);
                 fly2.setVelocity(flywheelTarget);
              blocker.setPosition(servo_opened);
+             blocker2.setPosition(servo_opened);
 
                 if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance &&
                         Math.abs(fly2.getVelocity() - flywheelTarget) < flyTolerance  &&
@@ -548,6 +553,7 @@ public class FTCJamoBot extends LinearOpMode {
             case RESET_SERVO:
 
                 blocker.setPosition(servo_closed);
+                blocker2.setPosition(servo_closed);
 
                 if (getRuntime() - stateStartTime > resetTime) {
                     if (launcher >= 1) {
@@ -591,6 +597,7 @@ public class FTCJamoBot extends LinearOpMode {
             case DONE:
 
                 blocker.setPosition(servo_closed);
+                blocker2.setPosition(servo_closed);
                 transfer.setPower(0);
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intake.setPower(0);
