@@ -45,7 +45,7 @@ public class FTCJamoBot extends LinearOpMode {
     private double lastValidFlywheelTarget = 1500;
     private double visionTimeout = 0.5;
     private ElapsedTime visionTimer = new ElapsedTime();
-    private boolean ValidTarget =   false;
+    private boolean ValidTarget = false;
     boolean settleInitialized = false;
     boolean pushInitialized = false;
     boolean kickInitialized = false;
@@ -82,11 +82,19 @@ public class FTCJamoBot extends LinearOpMode {
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1850;
     public static double close_launch_speed = 1800;
+<<<<<<< HEAD
 
     //for 3 at once combo deal
     public static double servo_closed = 0.8;
     public static double servo_opened = 0.3;
 
+=======
+    //for 3 at once combo deal
+    public static double servo_closed = 0.2;
+    public static double servo_closed2 = 0.2;
+    public static double servo_opened = 0;
+    public static double servo_opened2 = 0;
+>>>>>>> d0ae7721a32faae5f0c7be612cb824c35b68ef6a
     public static int transferBump1 = 1000;
     public static int intakeBump1 = 1000;
     public static int transferBump2 = 650;
@@ -128,7 +136,7 @@ public class FTCJamoBot extends LinearOpMode {
         lut.add(30, 950);
         lut.add(35, 950 + addition);
         lut.add(45, 1000 + addition);
-        lut.add(50, 150);
+        lut.add(50, 1550);
         lut.add(55, 1110 + addition);
         lut.add(60, 1125 + addition);
         lut.add(70, 1215 + addition);
@@ -163,8 +171,6 @@ public class FTCJamoBot extends LinearOpMode {
         transfer = hardwareMap.get(DcMotor.class, "transfer");
         blocker = hardwareMap.get(Servo.class, "blocker");
         blocker2 = hardwareMap.get(Servo.class, "blocker2");
-//        kicker = hardwareMap.get(Servo.class, "kicker");
-//        helper = hardwareMap.get(Servo.class, "helper");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
 
@@ -187,10 +193,8 @@ public class FTCJamoBot extends LinearOpMode {
 
 
         //set the initial position for the kicker and helper servos
-//        kicker.setPosition(kicker_closed);
-//        helper.setPosition(helper_open);
         blocker.setPosition(servo_closed);
-        blocker2.setPosition(servo_closed);
+        blocker2.setPosition(servo_closed2);
 
         launchState = LaunchState.IDLE;
         // Wait for the game to start (driver presses START)
@@ -331,10 +335,10 @@ public class FTCJamoBot extends LinearOpMode {
 //                fly1.setVelocity(driveSpeed);
 //                fly2.setVelocity(driveSpeed);
 //            }
-//Maybe removing this will stop the reverse transfer to stop the flywheel if (!isLaunching()) {
+            if (!isLaunching()) {
                 fly1.setVelocity(flywheelTarget);
                 fly2.setVelocity(flywheelTarget);
- //           }
+            }
             /// launch system - 1 at a time
 
 // Single shot
@@ -359,28 +363,55 @@ public class FTCJamoBot extends LinearOpMode {
                 multiSequenceActive = false;
                 launcher = 0;
                 transfer.setPower(0);
-               blocker.setPosition(servo_closed);
-               blocker2.setPosition(servo_closed);
+                blocker.setPosition(servo_closed);
+                blocker2.setPosition(servo_closed2);
 //                helper.setPosition(helper_open);
-                    }
+            }
             else {
                 killLaunch = false;
             }
+/////////////////////////////////INTAKE AND TRANSFER//////////////////////////////
+            if (!isLaunching()) {
+                /// BLOCKER CONTROLS
+                if (gamepad2.right_trigger > 0.1) {
+                    blocker.setPosition(servo_opened);
+                    blocker2.setPosition(servo_opened2);
+                }
+                else {
+                    blocker.setPosition(servo_closed);
+                    blocker2.setPosition(servo_closed2);
+                }
+/// TRANSFER
+                if (gamepad2.left_bumper || gamepad1.left_bumper) {
+                    transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    transfer.setPower(1);
+                }
+                else if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                    transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    transfer.setPower(-1);
+                }
 
 
+                else if (gamepad2.dpad_right || gamepad1.y) {
+                    transfer.setPower(1);
+                    intake.setPower(1);
+                    resetRuntime();
+                }
+                else {
+                    transfer.setPower(0);
+                }
+                ///INTAKE
+                if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
 
-////////////////////////////TRANSFER and INTAKE CONTROLS///////////////////////////////////
+                    intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    intake.setPower(1);
+                }
+                else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
 
-        if (!isLaunching()) {
-            if (gamepad2.right_trigger > 0.1) {
-                blocker.setPosition(servo_opened);
-                blocker2.setPosition(servo_opened);
-            }
-            else {
-                blocker.setPosition(servo_closed);
-                blocker2.setPosition(servo_closed);
-            }
+                    intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    intake.setPower(-1);
 
+<<<<<<< HEAD
             if (gamepad2.left_bumper || gamepad1.left_bumper) {
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 transfer.setPower(1);
@@ -416,13 +447,14 @@ public class FTCJamoBot extends LinearOpMode {
             else if(gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
                 intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 intake.setPower(-1);
-            }
-            else {
-                intake.setPower(0);
-                transfer.setPower(0);
-            }
+=======
+                }
+                else {
+                    intake.setPower(0);
+                }
 
-        }
+>>>>>>> d0ae7721a32faae5f0c7be612cb824c35b68ef6a
+            }
 
 
 
@@ -473,8 +505,8 @@ public class FTCJamoBot extends LinearOpMode {
 
                 fly1.setVelocity(flywheelTarget);
                 fly2.setVelocity(flywheelTarget);
-             blocker.setPosition(servo_opened);
-             blocker2.setPosition(servo_opened);
+                blocker.setPosition(servo_opened);
+                blocker2.setPosition(servo_opened2);
 
                 if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance &&
                         Math.abs(fly2.getVelocity() - flywheelTarget) < flyTolerance  &&
@@ -557,7 +589,7 @@ public class FTCJamoBot extends LinearOpMode {
             case RESET_SERVO:
 
                 blocker.setPosition(servo_closed);
-                blocker2.setPosition(servo_closed);
+                blocker2.setPosition(servo_closed2);
 
                 if (getRuntime() - stateStartTime > resetTime) {
                     if (launcher >= 1) {
@@ -575,9 +607,9 @@ public class FTCJamoBot extends LinearOpMode {
                 break;
 
             case WAIT:
-             if (getRuntime() - stateStartTime > waitTime) {
-                 launchState = LaunchState.DONE;
-             }
+                if (getRuntime() - stateStartTime > waitTime) {
+                    launchState = LaunchState.DONE;
+                }
                 break;
             case SETTLE:
 
@@ -601,7 +633,7 @@ public class FTCJamoBot extends LinearOpMode {
             case DONE:
 
                 blocker.setPosition(servo_closed);
-                blocker2.setPosition(servo_closed);
+                blocker2.setPosition(servo_closed2);
                 transfer.setPower(0);
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intake.setPower(0);
@@ -626,10 +658,9 @@ public class FTCJamoBot extends LinearOpMode {
                     }
                 }
                 if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
+                    //launchState = LaunchState.IDLE//
                 }
                 break;
         }
     }
 }
-
