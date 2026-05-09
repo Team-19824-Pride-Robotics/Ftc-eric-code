@@ -82,14 +82,11 @@ public class FTCJamoBot extends LinearOpMode {
     public static double backOffSpeed = -600;
     public static double long_launch_speed = 1850;
     public static double close_launch_speed = 1800;
-    public static double kicker_kick = 0;
-    public static double kicker_closed = 0.185;
-    public static double kickTime = 0.25;
+
     //for 3 at once combo deal
-    public static double servo_closed = 0.2;
-    public static double servo_opened = 0;
-    public static double helper_open = 0.75;
-    public static double helper_closed = 0.4;
+    public static double servo_closed = 0.8;
+    public static double servo_opened = 0.3;
+
     public static int transferBump1 = 1000;
     public static int intakeBump1 = 1000;
     public static int transferBump2 = 650;
@@ -181,7 +178,7 @@ public class FTCJamoBot extends LinearOpMode {
         transfer.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        controller = new PIDController(p, i, d);
 
@@ -400,7 +397,7 @@ public class FTCJamoBot extends LinearOpMode {
 
              if (gamepad2.dpad_right || gamepad1.y) {
                 transfer.setPower(1);
-                intake.setPower(1);
+                intake.setPower(-1);
                 resetRuntime();
 
              }
@@ -408,14 +405,17 @@ public class FTCJamoBot extends LinearOpMode {
             if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
 
                 intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                intake.setPower(1);
+                intake.setPower(-1);
             }
             if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
 
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                intake.setPower(1);
 
+            }
+            else if(gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
                 intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 intake.setPower(-1);
-
             }
             else {
                 intake.setPower(0);
@@ -490,7 +490,7 @@ public class FTCJamoBot extends LinearOpMode {
                     stateStartTime = getRuntime();
                 }
                 if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
+                    //launchState = LaunchState.IDLE;
                 }
                 break;
 
