@@ -354,7 +354,7 @@ public class FTCJamoBot extends LinearOpMode {
                     blocker.setPosition(servo_closed);
                     blocker2.setPosition(servo_closed2);
                 }
-/// TRANSFER
+///TRANSFER
                 if (gamepad2.left_bumper || gamepad1.left_bumper) {
                     transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     transfer.setPower(1);
@@ -387,38 +387,9 @@ public class FTCJamoBot extends LinearOpMode {
 ///                          //Just another precaution//                                ///
                         launchState = LaunchState.IDLE;
                         multiSequenceActive = false;
-                        ///////////////////////////////////the original code/////////////////////////////////////
                         transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         transfer.setPower(-1);
                     }
-
-
-                    if (gamepad2.dpad_right || gamepad1.y) {
-                        transfer.setPower(1);
-                        intake.setPower(-1);
-                        resetRuntime();
-
-                    }
-
-                    if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
-
-                        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        intake.setPower(-1);
-                    }
-                    if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
-
-                        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        intake.setPower(1);
-
-                    } else if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
-                        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        intake.setPower(-1);
-
-                    } else {
-                        intake.setPower(0);
-                    }
-
-
                 }
             }
                 telemetry.addData("Distance from Goal", distance);
