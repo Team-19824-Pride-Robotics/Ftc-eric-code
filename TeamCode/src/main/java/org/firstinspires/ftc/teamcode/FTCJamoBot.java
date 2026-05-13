@@ -373,23 +373,28 @@ public class FTCJamoBot extends LinearOpMode {
 
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(1);
-                } else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+                }
+                else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
 
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(-1);
 
 
-                    if (gamepad2.left_bumper || gamepad1.left_bumper) {
+
+                if (gamepad2.left_bumper || gamepad1.left_bumper) {
                         transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         transfer.setPower(1);
                     }
-                    if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                if (gamepad2.right_bumper || gamepad1.right_bumper) {
 ///                          //Just another precaution//                                ///
                         launchState = LaunchState.IDLE;
                         multiSequenceActive = false;
                         transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         transfer.setPower(-1);
                     }
+                }
+                else {
+                    intake.setPower(0);
                 }
             }
                 telemetry.addData("Distance from Goal", distance);
