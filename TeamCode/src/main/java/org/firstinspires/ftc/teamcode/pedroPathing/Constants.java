@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -21,46 +22,47 @@ public class Constants {
 
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(12)
-            .forwardZeroPowerAcceleration(-37)
-            .lateralZeroPowerAcceleration(-76)
+            .forwardZeroPowerAcceleration(-38.2979)
+            .lateralZeroPowerAcceleration(-52)
             .translationalPIDFCoefficients(new PIDFCoefficients(
-                    0.1,
+                    0.12,
                     0,
                     0.01,
                     0.025))
             .headingPIDFCoefficients(new PIDFCoefficients(
                     1,
                     0,
-                    0.01,
-                    0))
+                    0.02,
+                    0.03))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(
-                    1,
+                    .01,
                     0,
-                    0,
+                    0.0001,
                     0,
                     0.0))
-
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.0796847188, 0.001939905339))
             .centripetalScaling(0);
+
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("FR")
-            .rightRearMotorName("BR")
-            .leftRearMotorName("BL")
-            .leftFrontMotorName("FL")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(47.5891)
+            .rightFrontMotorName("BL")
+            .rightRearMotorName("FL")
+            .leftRearMotorName("FR")
+            .leftFrontMotorName("BR")
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)//This reverses the robots front right motor
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)//This reverses the robots back RIGHT motor
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)// reverses the front right motor
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)// reverses the front left motor
+            .xVelocity(65.76577)
             .yVelocity(0);
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
             100,
             1.4,
-            1.4);
+            1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)

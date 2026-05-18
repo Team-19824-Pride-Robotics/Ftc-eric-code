@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,10 +29,10 @@ public class FTCJamoBot extends LinearOpMode {
     double flywheelTarget = 1600;
     private Servo blocker;
     private Servo blocker2;
-    private DcMotor FL;
-    private DcMotor FR;
-    private DcMotor BL;
-    private DcMotor BR;
+    private DcMotorEx FL;
+    private DcMotorEx FR;
+    private DcMotorEx BL;
+    private DcMotorEx BR;
     private DcMotor transfer;
     private DcMotor intake;
     private DcMotorEx fly1;
@@ -150,12 +151,12 @@ public class FTCJamoBot extends LinearOpMode {
 
         // Initialize the hardware variables.
 
-        BL = hardwareMap.get(DcMotor.class, "BL");
-        BR = hardwareMap.get(DcMotor.class, "BR");
-        FL = hardwareMap.get(DcMotor.class, "FL");
-        FR = hardwareMap.get(DcMotor.class, "FR");
+        BL = hardwareMap.get(DcMotorEx.class, "BL");
+        BR = hardwareMap.get(DcMotorEx.class, "BR");
+        FL = hardwareMap.get(DcMotorEx.class, "FL");
+        FR = hardwareMap.get(DcMotorEx.class, "FR");
 
-        BL.setDirection(DcMotor.Direction.REVERSE);
+
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -192,6 +193,10 @@ public class FTCJamoBot extends LinearOpMode {
         blocker2.setPosition(servo_closed2);
 
         launchState = LaunchState.IDLE;
+
+BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // Wait for the game to start (driver presses START)
         waitForStart();
 
@@ -250,8 +255,8 @@ public class FTCJamoBot extends LinearOpMode {
 /////////////////////////DRIVE CONTROLS///////////////////////////////////
 
 
-            double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed! forwards n back
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing believe this is
             double rx = gamepad1.right_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -265,14 +270,14 @@ public class FTCJamoBot extends LinearOpMode {
                 rx += turnCorrection; // add correction to rotation
             }
 
-            leftFrontPower = ((y + x + rx) / denominator);
-            leftBackPower = ((y - x + rx) / denominator);
-            rightFrontPower = ((y - x - rx) / denominator);
-            rightBackPower = ((y + x - rx) / denominator);
+            leftFrontPower = ((y + x - rx) / denominator);
+            leftBackPower = ((y - x - rx) / denominator);
+            rightFrontPower = ((y - x + rx) / denominator);
+            rightBackPower = ((y + x + rx) / denominator);
 
-            FL.setPower(-leftFrontPower * speedReducer);
-            BL.setPower(-leftBackPower * speedReducer);
-            FR.setPower(-rightFrontPower * speedReducer);
+            FL.setPower(leftFrontPower * speedReducer);
+            BL.setPower(leftBackPower * speedReducer);
+            FR.setPower(rightFrontPower * speedReducer);
             BR.setPower(rightBackPower * speedReducer);
 
             //dPad can be used to make small corrections
@@ -305,7 +310,6 @@ public class FTCJamoBot extends LinearOpMode {
                 BL.setPower(-.25);
                 BR.setPower(-.25);
             }
-
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
@@ -404,7 +408,15 @@ public class FTCJamoBot extends LinearOpMode {
                 telemetry.addData("Current Velocity", fly2.getVelocity());
                 telemetry.addData("Target Velocity", flywheelTarget);
                 telemetry.addData("Launch Count", launcher);
-                telemetry.update();
+                telemetry.addData("FR Velocity", FR.getVelocity());
+                telemetry.addData("FL Velocity", FL.getVelocity());
+                telemetry.addData("BR Velocity", BR.getVelocity());
+                telemetry.addData("BL Velocity", BL.getVelocity());
+
+
+
+
+            telemetry.update();
 
 
         }
