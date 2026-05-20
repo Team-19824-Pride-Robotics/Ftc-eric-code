@@ -25,11 +25,11 @@ public class Constants {
             .forwardZeroPowerAcceleration(-45.8691)
             .lateralZeroPowerAcceleration(-41.3835)
             .headingPIDFCoefficients(new PIDFCoefficients(
-                    0.4,
+                    2,
                     0,
                     0.01,
-                    0.0001))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, .0565146, .0023575))
+                    0.03))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.075, .07483889, .001702737))
             .centripetalScaling(0);
 
 
@@ -44,8 +44,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)//This reverses the robots back RIGHT motor
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)// reverses the front right motor
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)// reverses the front left motor
-            .xVelocity(65.76577)
-            .yVelocity(27.68420);
+            .xVelocity(67.55524)
+            .yVelocity(49.928276);
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
@@ -63,12 +63,12 @@ public class Constants {
     }
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(0.0574)
-            .strafePodX(-1.834)
+            .forwardPodY(5.71954)
+            .strafePodX(-0.555202)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
 }
