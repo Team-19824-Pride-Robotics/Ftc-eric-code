@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.auto_BLUESIDE_v5;
+
 /// adds interpolation table; needs tuning
 /// we're just so gracious and professional
 @TeleOp(name="FTCJamoBot")
@@ -28,7 +30,6 @@ public class FTCJamoBot extends LinearOpMode {
     public static double target = 1600;
     double flywheelTarget = 1600;
     private Servo blocker;
-    private Servo blocker2;
     private DcMotorEx FL;
     private DcMotorEx FR;
     private DcMotorEx BL;
@@ -119,7 +120,7 @@ public class FTCJamoBot extends LinearOpMode {
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
-    public static int addition = 450;
+    public static int addition = 575;
     public static int longaddition = 50;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -166,7 +167,6 @@ public class FTCJamoBot extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "transfer");
         blocker = hardwareMap.get(Servo.class, "blocker");
-        blocker2 = hardwareMap.get(Servo.class, "blocker2");
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
         fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
 
@@ -190,7 +190,6 @@ public class FTCJamoBot extends LinearOpMode {
 
         //set the initial position for the kicker and helper servos
         blocker.setPosition(servo_closed);
-        blocker2.setPosition(servo_closed2);
 
         launchState = LaunchState.IDLE;
 
@@ -343,8 +342,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 launcher = 0;
                 transfer.setPower(0);
                 blocker.setPosition(servo_closed);
-                blocker2.setPosition(servo_closed2);
-//                helper.setPosition(helper_open);
+
             } else {
                 killLaunch = false;
             }
@@ -353,10 +351,10 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 /// BLOCKER CONTROLS
                 if (gamepad2.right_trigger > 0.1) {
                     blocker.setPosition(servo_opened);
-                    blocker2.setPosition(servo_opened2);
+
                 } else {
                     blocker.setPosition(servo_closed);
-                    blocker2.setPosition(servo_closed2);
+
                 }
 ///TRANSFER
                 if (gamepad2.left_bumper || gamepad1.left_bumper) {
@@ -442,156 +440,43 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 fly1.setVelocity(flywheelTarget);
                 fly2.setVelocity(flywheelTarget);
                 blocker.setPosition(servo_opened);
-                blocker2.setPosition(servo_opened2);
+
 
                 if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance &&
                         Math.abs(fly2.getVelocity() - flywheelTarget) < flyTolerance &&
                         getRuntime() - stateStartTime > 0.1) {
 
-                    // If this is the 3rd shot, do PUSH
-                    if (launcher == 2) {
-                        launchState = LaunchState.PUSH_IF_FINAL;
-                    } else {
                         launchState = LaunchState.FEED;
-                    }
-
                     stateStartTime = getRuntime();
                 }
-                if (getRuntime() - stateStartTime > 2.0) {
-                    //launchState = LaunchState.IDLE;
-                }
+
                 break;
 
-            case PUSH_IF_FINAL:
-
-                if (!pushInitialized) {
-                    transferStartPosition = transfer.getCurrentPosition();
-                    intakeStartPosition = intake.getCurrentPosition();
-                    intake.setTargetPosition(intakeStartPosition + intakeBump1);
-                    intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    intake.setPower(1);
-                    transfer.setTargetPosition(transferStartPosition + transferBump1);
-                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    transfer.setPower(1);
-                    pushInitialized = true;
-                }
-
-                if (!intake.isBusy() && !transfer.isBusy()) {
-                    pushInitialized = false;
-                    intake.setPower(0);
-                    transfer.setPower(0);
-                    launchState = LaunchState.FEED;
-                    stateStartTime = getRuntime();
-                }
-                if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
-                }
-                break;
-
-            case FEED:
-
+            case FEED: {
+                intake.setPower(1);
                 transfer.setPower(1);
 
                 if (getRuntime() - stateStartTime > feedTime) {
                     transfer.setPower(0);
-                    launchState = LaunchState.KICK;
+                    intake.setPower(0);
+                    launchState = LaunchState.DONE;
                     stateStartTime = getRuntime();
                 }
-                if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
-                }
                 break;
+            }
 
-            case KICK:
-
-                if (!kickInitialized) {
-                    transferStartPosition = transfer.getCurrentPosition();
-                    transfer.setTargetPosition(transferStartPosition + transferBump3);
-                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    transfer.setPower(1);
-                    kickInitialized = true;
-                }
-
-                if (getRuntime() - stateStartTime > kickUpTime || !transfer.isBusy()) {
-                    kickInitialized = false;
-                    launchState = LaunchState.RESET_SERVO;
-                    stateStartTime = getRuntime();
-                }
-                if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
-                }
-                break;
-
-            case RESET_SERVO:
+            case DONE: {
 
                 blocker.setPosition(servo_closed);
-                blocker2.setPosition(servo_closed2);
 
-                if (getRuntime() - stateStartTime > resetTime) {
-                    if (launcher >= 1) {
-                        launchState = LaunchState.WAIT;
-                        stateStartTime = getRuntime();
-                    } else {
-                        launchState = LaunchState.SETTLE;
-                        stateStartTime = getRuntime();
-                    }
-                }
-                if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
-                }
-                break;
-
-            case WAIT:
-                if (getRuntime() - stateStartTime > waitTime) {
-                    launchState = LaunchState.DONE;
-                }
-                break;
-            case SETTLE:
-
-                if (!settleInitialized) {
-                    transferStartPosition = transfer.getCurrentPosition();
-                    transfer.setTargetPosition(transferStartPosition + transferBump2);
-                    transfer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    transfer.setPower(1);
-                    settleInitialized = true;
-                }
-
-                if (!transfer.isBusy()) {
-                    settleInitialized = false;
-                    launchState = LaunchState.DONE;
-                }
-                if (getRuntime() - stateStartTime > 2.0) {
-                    launchState = LaunchState.IDLE;
-                }
-                break;
-
-            case DONE:
-
-                blocker.setPosition(servo_closed);
-                blocker2.setPosition(servo_closed2);
                 transfer.setPower(0);
                 transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intake.setPower(0);
                 intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                launcher++;
-
-                // If multi-shot AND not yet at 3, continue
-                if (multiSequenceActive && launcher < 3) {
-
-                    launchState = LaunchState.SPINNING_UP;
-
-                } else {
-
-                    launchState = LaunchState.IDLE;
-                    multiSequenceActive = false;
-
-                    // Reset counter AFTER sequence ends
-                    if (launcher >= 3) {
-                        launcher = 0;
-                    }
-                }
-                break;
+                launchState = LaunchState.IDLE;
+                multiSequenceActive = false;
+            }
         }
     }
 }

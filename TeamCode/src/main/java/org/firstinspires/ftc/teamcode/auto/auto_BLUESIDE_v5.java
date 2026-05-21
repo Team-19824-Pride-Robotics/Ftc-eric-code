@@ -33,35 +33,34 @@ public class auto_BLUESIDE_v5 extends OpMode {
     private Servo blocker;
 
     public static double intake_full = 1;
-    public static double servo_closed = 0.8;
-    public static double servo_open = 0.3;
+    public static double servo_closed = 0.85;
     public static double robotFast = 1;
-    public static double robotSlow = 0.75;
-    public static double robotSlower = 0.5;
+    public static double robotSlow = 1;
+    public static double robotSlower = 0.8;
     public double intake_state = 0;
     public double transfer_state = 0;
     public static double scorePos = 138;
     public static double scorePos2 = 138;
     public static double scorePos3 = 138;
-    public static double lineupY1 = 88;
-    public static double lineupY2 = 64;
+    public static double lineupY1 = 95;
+    public static double lineupY2 = 70;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = 1500;
-    public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1500;
-    public static double flyspeed5 = 1550;
+    public static double flySpeed = -1500;
+    public static double flyspeed2 = -1580;
+    public static double flyspeed3 = -1600;
+    public static double flyspeed4 = -1675;
+    public static double flyspeed5 = -1550;
     public static double servo_opened = 0;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
     public static double kicker_kick = 0;
     public static double kicker_closed = 0.185;
 
-    public static double flyTolerance = 70;
-    public static double intakeTime = 4;
-    public static double feedTime = 4;
+    public static double flyTolerance = 50;
+    public static double intakeTime = 2;
+    public static double feedTime = 2;
     public static double kickUpTime = 0.125;
     public static double resetTime = 0.25;
     public static double waitTime = 0.25;
@@ -74,6 +73,15 @@ public class auto_BLUESIDE_v5 extends OpMode {
     // Needed tracking variables
     private int transferStartPosition;
     private int intakeStartPosition;
+
+    private LaunchState launchState = LaunchState.IDLE;
+    private  IntakeState intakeState = IntakeState.IDLE;
+
+    private boolean multiSequenceActive = false;
+    private boolean killLaunch = false;
+
+    private boolean killIntake = false;
+    private double stateStartTime = 0;
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -88,33 +96,6 @@ public class auto_BLUESIDE_v5 extends OpMode {
         INTAKING,
         DONE,
     }
-
-    //interval for initial kick into flywheel
-    public static double i0 = 0;
-    public static double t0 = i0;
-    public static double i1 = 1;
-    public static double t1 = t0 + i1;
-    //interval for transfer to run and throw the second ball into the flywheel
-    public static double i2 = 1.4;
-    public static double t2 = t1 + i2;
-    //interval to move the third ball into position
-    public static double i3 = 1.25;
-    public static double t3 = t2 + i3;
-    //interval for transfer to run and throw the third ball into the flywheel
-    public static double i4 = 1;
-    public static double t4 = t3 + i4;
-    //interval to do nothing but before it all shuts down
-    public static double i5 = 0.5;
-    public static double t5 = t4 + i5;
-
-    public static double launchTime = i0 + i1 + i2 + i3 + i4 + i5;
-
-
-    public static double t6 = t5 + 0.1;
-    public static double t7 = t6 + 0.3;
-    public static double t8 = t7 + 0.2;
-    public static double t9 = t8 + 0.2;
-    public static double t10 = t9 + 0.7;
 
 
     private Follower follower;
@@ -136,14 +117,7 @@ public class auto_BLUESIDE_v5 extends OpMode {
     private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
     private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180));
 
-    private LaunchState launchState = LaunchState.IDLE;
-    private  IntakeState intakeState = IntakeState.IDLE;
 
-    private boolean multiSequenceActive = false;
-    private boolean killLaunch = false;
-
-    private boolean killIntake = false;
-    private double stateStartTime = 0;
     private void startLaunch() {
         launchState = auto_BLUESIDE_v5.LaunchState.SPINNING_UP;
         stateStartTime = getRuntime();
@@ -152,8 +126,6 @@ public class auto_BLUESIDE_v5 extends OpMode {
         intakeState = IntakeState.INTAKING;
         stateStartTime = getRuntime();
     }
-
-
 
 
     private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
@@ -432,31 +404,14 @@ public class auto_BLUESIDE_v5 extends OpMode {
         follower.update();
         LaunchArtifacts();
         IntakeArtifacts();
-        fly1.setVelocity(flyspeed3);
-        fly2.setVelocity(flyspeed3);
 
         if (launchState == LaunchState.IDLE) {
             blocker.setPosition(servo_closed);
-        }
-        if (launchState == LaunchState.IDLE && intakeState == IntakeState.IDLE) {
-            intake.setPower(0);
-            transfer.setPower(0);
+//            fly1.setVelocity(flyspeed3);
+            fly2.setVelocity(flyspeed3);
         }
 
-//        double p = 0.005, i = 0, d = 0;
-//        PIDController controller = new PIDController(p, i, d);
-//
-//        controller.setPID(p, i, d);
-//        double fly1Current = fly1.getVelocity();
-//        double fly2Current = fly2.getVelocity();
-//        double pid = controller.calculate(fly1Current, flySpeed);
-//        double pid2 = controller.calculate(fly2Current, flySpeed);
-//
-//        fly1.setPower(pid);
-//        fly2.setPower(pid2);
-//
-//        telemetry.addData("flywheel", fly1Current);
-//        telemetry.update();
+
 
         autonomousPathUpdate();
 
@@ -465,6 +420,12 @@ public class auto_BLUESIDE_v5 extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("required speed", fly2.getVelocity() - flyspeed4);
+        telemetry.addData("flyspeed", fly2.getVelocity());
+        telemetry.addData("LaunchState", launchState);
+        telemetry.addData("IntakeState", intakeState);
+
+
         telemetry.update();
     }
 
@@ -523,11 +484,6 @@ public class auto_BLUESIDE_v5 extends OpMode {
     }
 
 
-    public Runnable intake_change(double power) {
-        intake.setPower(power);
-        return null;
-    }
-
     /// INTAKE ARTIFACTS ///
     public void IntakeArtifacts () {
         switch (intakeState) {
@@ -569,13 +525,12 @@ public class auto_BLUESIDE_v5 extends OpMode {
 
             case SPINNING_UP: {
 
-                fly1.setVelocity(flyspeed4);
+//                fly1.setVelocity(flyspeed4); 
                 fly2.setVelocity(flyspeed4);
                 blocker.setPosition(servo_opened);
 
-                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
+                if (Math.abs(fly2.getVelocity() - flyspeed4) < flyTolerance) {
 
-                    // If this is the 3rd shot, do PUSH
                     launchState = LaunchState.FEED;
                 }
 
