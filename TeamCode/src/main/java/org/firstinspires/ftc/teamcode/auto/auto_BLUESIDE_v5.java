@@ -35,7 +35,7 @@ public class auto_BLUESIDE_v5 extends OpMode {
     public static double intake_full = 1;
     public static double servo_closed = 0.85;
     public static double robotFast = 1;
-    public static double robotSlow = 1;
+    public static double robotSlow = 0.9;
     public static double robotSlower = 0.8;
     public double intake_state = 0;
     public double transfer_state = 0;
@@ -47,11 +47,11 @@ public class auto_BLUESIDE_v5 extends OpMode {
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
-    public static double flySpeed = -1500;
-    public static double flyspeed2 = -1580;
-    public static double flyspeed3 = -1600;
-    public static double flyspeed4 = -1675;
-    public static double flyspeed5 = -1550;
+    public static double flySpeed = 1500;
+    public static double flyspeed2 = 1580;
+    public static double flyspeed3 = 1600;
+    public static double flyspeed4 = 1675;
+    public static double flyspeed5 = 1550;
     public static double servo_opened = 0;
     public static double helper_open = 0.75;
     public static double helper_closed = 0.4;
@@ -296,7 +296,7 @@ public class auto_BLUESIDE_v5 extends OpMode {
 //gets into scoring position
             case 5:
 
-                if (!follower.isBusy() && intakeState == IntakeState.IDLE) {
+                if (!follower.isBusy() || intakeState == IntakeState.IDLE) {
 
                     follower.followPath(scorePickup1, true);
 
@@ -356,7 +356,7 @@ public class auto_BLUESIDE_v5 extends OpMode {
 //gets into scoring position
             case 11:
 
-                if (!follower.isBusy() && intakeState == IntakeState.IDLE) {
+                if (!follower.isBusy() || intakeState == IntakeState.IDLE) {
 
                     follower.followPath(scorePickup2, true);
 
@@ -420,7 +420,7 @@ public class auto_BLUESIDE_v5 extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("required speed", fly2.getVelocity() - flyspeed4);
+        telemetry.addData("required speed", ((-(fly2.getVelocity()) - flyspeed4)));
         telemetry.addData("flyspeed", fly2.getVelocity());
         telemetry.addData("LaunchState", launchState);
         telemetry.addData("IntakeState", intakeState);
@@ -525,11 +525,11 @@ public class auto_BLUESIDE_v5 extends OpMode {
 
             case SPINNING_UP: {
 
-//                fly1.setVelocity(flyspeed4); 
+//                fly1.setVelocity(flyspeed4);
                 fly2.setVelocity(flyspeed4);
                 blocker.setPosition(servo_opened);
 
-                if (Math.abs(fly2.getVelocity() - flyspeed4) < flyTolerance) {
+                if (Math.abs((-(fly2.getVelocity())) - flyspeed4) < flyTolerance) {
 
                     launchState = LaunchState.FEED;
                 }

@@ -347,15 +347,25 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 killLaunch = false;
             }
 /////////////////////////////////INTAKE AND TRANSFER//////////////////////////////
+
+
+            if (gamepad2.right_trigger > 0.1) {
+                blocker.setPosition(servo_opened);
+
+            } else {
+                blocker.setPosition(servo_closed);
+
+            }
+
             if (!isLaunching()) {
                 /// BLOCKER CONTROLS
-                if (gamepad2.right_trigger > 0.1) {
-                    blocker.setPosition(servo_opened);
-
-                } else {
-                    blocker.setPosition(servo_closed);
-
-                }
+//                if (gamepad2.right_trigger > 0.1) {
+//                    blocker.setPosition(servo_opened);
+//
+//                } else {
+//                    blocker.setPosition(servo_closed);
+//
+//                }
 ///TRANSFER
                 if (gamepad2.left_bumper || gamepad1.left_bumper) {
                     transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -437,15 +447,12 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
             case SPINNING_UP:
 
-                fly1.setVelocity(flywheelTarget);
-                fly2.setVelocity(flywheelTarget);
+                fly2.setVelocity(-flywheelTarget);
                 blocker.setPosition(servo_opened);
 
 
-                if (Math.abs(fly1.getVelocity() - flywheelTarget) < flyTolerance &&
-                        Math.abs(fly2.getVelocity() - flywheelTarget) < flyTolerance &&
+                if (Math.abs(fly2.getVelocity() - flywheelTarget) < flyTolerance &&
                         getRuntime() - stateStartTime > 0.1) {
-
                         launchState = LaunchState.FEED;
                     stateStartTime = getRuntime();
                 }
