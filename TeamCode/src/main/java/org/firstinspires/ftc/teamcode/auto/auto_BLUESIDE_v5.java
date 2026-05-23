@@ -407,7 +407,7 @@ public class auto_BLUESIDE_v5 extends OpMode {
 
         if (launchState == LaunchState.IDLE) {
             blocker.setPosition(servo_closed);
-//            fly1.setVelocity(flyspeed3);
+            fly1.setVelocity(flyspeed3);
             fly2.setVelocity(flyspeed3);
         }
 
@@ -420,8 +420,8 @@ public class auto_BLUESIDE_v5 extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("required speed", ((-(fly2.getVelocity()) - flyspeed4)));
-        telemetry.addData("flyspeed", fly2.getVelocity());
+        telemetry.addData("required speed", (fly1.getVelocity() - flyspeed4));
+        telemetry.addData("flyspeed", fly1.getVelocity());
         telemetry.addData("LaunchState", launchState);
         telemetry.addData("IntakeState", intakeState);
 
@@ -525,11 +525,11 @@ public class auto_BLUESIDE_v5 extends OpMode {
 
             case SPINNING_UP: {
 
-//                fly1.setVelocity(flyspeed4);
+                fly1.setVelocity(flyspeed4);
                 fly2.setVelocity(flyspeed4);
                 blocker.setPosition(servo_opened);
 
-                if (Math.abs((-(fly2.getVelocity())) - flyspeed4) < flyTolerance) {
+                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
 
                     launchState = LaunchState.FEED;
                 }

@@ -88,7 +88,7 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     //for 3 at once combo deal
-    public static double servo_closed = 0.8;
+    public static double servo_closed = 0.85;
     public static double servo_opened = 0.3;
     public static double servo_closed2 = 0.2;
     public static double servo_opened2 = 0;
@@ -112,7 +112,7 @@ public class FTCJamoBot extends LinearOpMode {
     private int launcher = 0;
     public static double flyspeed2 = 1580;
     public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1500;
+    public static double flyspeed4 = 1750;
     public static double driveSpeed = 900;
     public static double flyspeed5 = 1550;
     int transferStartPosition;
@@ -313,8 +313,8 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
             if (!isLaunching()) {
-                fly1.setVelocity(flywheelTarget);
-                fly2.setVelocity(flywheelTarget);
+                fly1.setVelocity(flyspeed4);
+                fly2.setVelocity(flyspeed4);
             }
 
             /// launch system - 1 at a time
