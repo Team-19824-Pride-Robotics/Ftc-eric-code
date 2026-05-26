@@ -89,7 +89,7 @@ public class FTCJamoBot extends LinearOpMode {
 
     //for 3 at once combo deal
     public static double servo_closed = 1;
-    public static double servo_opened = 0.8;
+    public static double servo_opened = 0.5;
     public static double servo_closed2 = 0.2;
     public static double servo_opened2 = 0;
     public static int transferBump1 = 1000;
@@ -122,7 +122,7 @@ public class FTCJamoBot extends LinearOpMode {
     InterpLUT lut = new InterpLUT();
     public static int shortAddition = 450;
 
-    public static int addition = 575;
+    public static int addition = 510;
     public static int longAddition = 50;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -239,9 +239,9 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 lastValidFlywheelTarget = computedTarget;
 
-                if (llResult.getTx() < -6) {
+                if (llResult.getTx() < -3) {
                     turnCorrection = -0.25;
-                } else if (llResult.getTx() > 0) {
+                } else if (llResult.getTx() > 3) {
                     turnCorrection = 0.25;
                 }
                 //stop turning if you're facing the target (whether or not you can see AprilTag)
@@ -344,52 +344,41 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
             } else {
                 killLaunch = false;
             }
-/////////////////////////////////INTAKE AND TRANSFER//////////////////////////////
+/////////////////////////////////MAIN LAUNCH//////////////////////////////
 
             if (!isLaunching()) {
 
                 fly1.setVelocity(flywheelTarget);
                 fly2.setVelocity(flywheelTarget);
 
-                if (gamepad2.left_bumper || gamepad2.right_bumper || gamepad1.left_bumper || gamepad1.right_bumper) {
+                if (gamepad2.left_bumper || gamepad2.right_bumper) {
                     blocker.setPosition(servo_opened);
                 }
                 else {
                     blocker.setPosition(servo_closed);
                 }
 
-                if (gamepad2.left_bumper || gamepad1.left_bumper) {
-                    transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (gamepad2.left_bumper || gamepad2.a) {
                     transfer.setPower(1);
-                } else if (gamepad2.right_bumper || gamepad1.right_bumper) {
-                    transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                } else if (gamepad2.right_bumper || gamepad2.b) {
                     transfer.setPower(-1);
-                } else if (gamepad2.dpad_right || gamepad1.y) {
-                    transfer.setPower(1);
-                    intake.setPower(1);
-                    resetRuntime();
                 } else {
                     transfer.setPower(0);
                 }
 
                 ///INTAKE
-                if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
+                if (gamepad2.a || gamepad2.left_bumper) {
 
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(1);
                 }
-                else if (gamepad1.b || gamepad2.b || gamepad1.right_bumper) {
+                else if (gamepad2.b || gamepad2.right_bumper) {
 
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(-1);
 
 
-
-                if (gamepad2.left_bumper || gamepad1.left_bumper) {
-                        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        transfer.setPower(1);
-                    }
-                if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                    if (gamepad2.right_bumper || gamepad1.right_bumper || gamepad2.a || gamepad2.b) {
 ///                          //Just another precaution//                                ///
                         launchState = LaunchState.IDLE;
                         multiSequenceActive = false;
@@ -400,7 +389,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 else {
                     intake.setPower(0);
                 }
-            }
+            }   telemetry.addData("Limelight active: ", limelight.isRunning());
                 telemetry.addData("Distance from Goal", distance);
                 telemetry.addData("Launch State", launchState);
                 telemetry.addData("Button Pressed", isACurrentlyPressed);
@@ -422,6 +411,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
 
+    /// /////////////////////////////////ALTERNATE LAUNCH///////////////////////////////////////////
     private void LaunchArtifacts() {
         if (killLaunch) {
             launchState = LaunchState.IDLE;
@@ -438,8 +428,8 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 break;
 
             case SPINNING_UP:
-
-                fly2.setVelocity(-flywheelTarget);
+                fly1.setVelocity(flywheelTarget);
+                fly2.setVelocity(flywheelTarget);
                 blocker.setPosition(servo_opened);
 
 

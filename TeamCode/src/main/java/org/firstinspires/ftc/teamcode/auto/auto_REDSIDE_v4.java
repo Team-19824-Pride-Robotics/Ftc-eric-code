@@ -1,0 +1,570 @@
+package org.firstinspires.ftc.teamcode.auto;
+
+import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
+import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.FTCJamoBot;
+import org.firstinspires.ftc.teamcode.Intake;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+/// uses new launcher
+
+
+@Autonomous(name = "auto_REDSIDESIDE_v4")
+@Configurable
+
+public class auto_REDSIDE_v4 extends OpMode {
+// this is graciously professional code.
+
+    private DcMotorEx transfer;
+    private DcMotor intake;
+    private DcMotorEx fly1;
+    private DcMotorEx fly2;
+    private Servo blocker;
+
+    public static double intake_full = 1;
+    public static double servo_closed = 0.85;
+    public static double robotFast = 1;
+    public static double robotSlow = 0.9;
+    public static double robotSlower = 0.8;
+    public double intake_state = 0;
+    public double transfer_state = 0;
+    public static double scorePos = 41;
+    public static double scorePos2 = 41;
+    public static double scorePos3 = 41;
+    public static double lineupY1 = 95;
+    public static double lineupY2 = 70;
+    public static int tChange1 = 100;
+    public static int tChange2 = 160;
+    public static int tChange3 = 300;
+    public static double flySpeed = 1500;
+    public static double flyspeed2 = 1580;
+    public static double flyspeed3 = 1600;
+    public static double flyspeed4 = 1675;
+    public static double flyspeed5 = 1550;
+    public static double servo_opened = 0;
+    public static double helper_open = 0.75;
+    public static double helper_closed = 0.4;
+    public static double kicker_kick = 0;
+    public static double kicker_closed = 0.185;
+
+    public static double flyTolerance = 50;
+    public static double intakeTime = 2;
+    public static double feedTime = 2;
+    public static double kickUpTime = 0.125;
+    public static double resetTime = 0.25;
+    public static double waitTime = 0.25;
+
+    public static int intakeBump1 = 1000;
+    public static int transferBump1 = 1000;
+    public static int transferBump2 = 1000;
+    public static int transferBump3 = 300;
+
+    // Needed tracking variables
+    private int transferStartPosition;
+    private int intakeStartPosition;
+
+    private LaunchState launchState = LaunchState.IDLE;
+    private  IntakeState intakeState = IntakeState.IDLE;
+
+    private boolean multiSequenceActive = false;
+    private boolean killLaunch = false;
+
+    private boolean killIntake = false;
+    private double stateStartTime = 0;
+
+    /// /////timings for launchArtifacts function/////////////
+
+    public enum LaunchState {
+        IDLE,
+        SPINNING_UP,
+        FEED,
+        DONE
+    }
+    public enum IntakeState {
+        IDLE,
+        INTAKING,
+        DONE,
+    }
+
+
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
+    private int pathState;
+
+    private final Pose startPose = new Pose(79, 9, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose scorePose = new Pose(90, 90, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
+    private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(355));
+    private final Pose lineup1_5Pose = new Pose(40, 85.5, Math.toRadians(355));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 85.5, Math.toRadians(355));
+    private final Pose gobble1Pose = new Pose(119, lineupY1, Math.toRadians(355)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(90, lineupY2, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(123, lineupY2, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
+    private final Pose lineup2_5Pose = new Pose(40, 62, Math.toRadians(355));
+    private final Pose lineup2_6Pose = new Pose(45, 62, Math.toRadians(355));
+    private final Pose scorePose3 = new Pose(90, 90, Math.toRadians(scorePos3));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(355)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(355));
+
+
+    private void startLaunch() {
+        launchState = LaunchState.SPINNING_UP;
+        stateStartTime = getRuntime();
+    }
+    private void startIntake() {
+        intakeState = IntakeState.INTAKING;
+        stateStartTime = getRuntime();
+    }
+
+
+    private PathChain scorePreload, lineup1, getFirstBall1, backOff1, getTwo1, getLast1, grabPickup1, scorePickup1, lineup2, getFirstBall2, backOff2, getTwo2, getLast2, grabPickup2, scorePickup2, grabPickup3, scorePickup3, justPark;
+
+
+    public void buildPaths() {
+
+        scorePreload = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, scorePose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
+                .build();
+
+
+        lineup1 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, lineup1Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup1Pose.getHeading())
+                .build();
+
+        grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup1Pose, gobble1Pose))
+                .setConstantHeadingInterpolation(lineup1Pose.getHeading())
+                .build();
+
+        getFirstBall1 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup1Pose, lineup1_5Pose))
+                .setConstantHeadingInterpolation(lineup1Pose.getHeading())
+                .build();
+
+        backOff1 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup1_5Pose, lineup1_6Pose))
+                .setConstantHeadingInterpolation(lineup1_5Pose.getHeading())
+                .build();
+
+
+        getLast1 = follower.pathBuilder()
+
+                .addPath(new BezierLine(lineup1_6Pose, gobble1Pose))
+                .setConstantHeadingInterpolation(lineup1_6Pose.getHeading())
+                .build();
+
+        scorePickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(gobble1Pose, scorePose2))
+                .setLinearHeadingInterpolation(gobble1Pose.getHeading(), scorePose2.getHeading())
+                .build();
+
+        lineup2 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2, lineup2Pose))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), lineup2Pose.getHeading())
+                .build();
+
+        grabPickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup2Pose, gobble2Pose))
+                .setConstantHeadingInterpolation(lineup2Pose.getHeading())
+                .build();
+
+
+        getFirstBall2 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup2Pose, lineup2_5Pose))
+                .setConstantHeadingInterpolation(lineup2Pose.getHeading())
+                .build();
+
+        backOff2 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup2_5Pose, lineup2_6Pose))
+                .setConstantHeadingInterpolation(lineup2_5Pose.getHeading())
+                .build();
+
+
+        getLast2 = follower.pathBuilder()
+
+                .addPath(new BezierLine(lineup2_6Pose, gobble2Pose))
+                .setConstantHeadingInterpolation(gobble2Pose.getHeading())
+                .build();
+
+
+        scorePickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup2Pose, scorePose))
+                .setLinearHeadingInterpolation(lineup2Pose.getHeading(), scorePose3.getHeading())
+                .build();
+
+
+        grabPickup3 = follower.pathBuilder()
+
+                .addPath(new BezierLine(scorePose, lineup3Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), lineup3Pose.getHeading())
+                .addPath(new BezierLine(lineup3Pose, gobble3Pose)).setConstantHeadingInterpolation(lineup3Pose.getHeading())
+                .build();
+
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(lineup3Pose, scorePose))
+                .setLinearHeadingInterpolation(lineup3Pose.getHeading(), scorePose3.getHeading())
+                .build();
+
+        justPark = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2, gobble1Pose))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), gobble1Pose.getHeading())
+                .build();
+
+    }
+
+
+    public void autonomousPathUpdate() {
+        switch (pathState) {
+
+            /* You could check for
+            - Follower State: "if(!follower.isBusy()) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Robot Position: "if(follower.getPose().getX() > 36) {}"
+            */
+
+
+            case 0:
+                follower.setMaxPower(robotFast);
+                follower.followPath(scorePreload);
+                setPathState(1);
+                break;
+
+            case 1:
+
+                if (!follower.isBusy()) {
+
+                    startLaunch();
+
+                    setPathState(100);  // temporary waiting state
+                }
+                break;
+
+            case 100:
+
+                if (launchState == LaunchState.IDLE) {
+
+
+                    follower.followPath(lineup1, true);
+
+                    setPathState(2);
+                }
+                break;
+
+            case 2:
+
+                if (!follower.isBusy()) {
+                    startIntake();
+                    follower.setMaxPower(robotSlower);
+                    follower.followPath(grabPickup1, true);
+                    setPathState(5);
+                }
+                break;
+
+            case 3:
+
+                if (!follower.isBusy()) {
+
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(backOff1, true);
+                    setPathState(4);
+                }
+                break;
+
+            case 4:
+
+                if (!follower.isBusy()) {
+
+
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(getLast1, true);
+                    setPathState(5);
+                }
+                break;
+//gets into scoring position
+            case 5:
+
+                if (!follower.isBusy() || intakeState == IntakeState.IDLE) {
+
+                    follower.followPath(scorePickup1, true);
+
+                    setPathState(6);
+                }
+                break;
+//scores the balls after opening the servo and gets back in position to pick up the balls
+            case 6:
+
+//                blocker.setPosition(0);
+                if (!follower.isBusy()) {
+                    startLaunch();
+                    setPathState(7);
+                }
+                break;
+            case 7:
+
+                if (launchState == LaunchState.IDLE) {
+
+                    follower.followPath(lineup2, true);
+
+                    setPathState(8);
+                }
+                break;
+
+            case 8:
+
+                if (!follower.isBusy()) {
+                    startIntake();
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(grabPickup2, true);
+                    setPathState(11);
+                }
+                break;
+//launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
+            case 9:
+
+                if (!follower.isBusy()) {
+
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(backOff2, true);
+                    setPathState(10);
+                }
+                break;
+
+            case 10:
+
+                if (!follower.isBusy()) {
+
+                    follower.setMaxPower(robotSlow);
+                    follower.followPath(getLast2, true);
+                    setPathState(11);
+                }
+                break;
+
+
+//gets into scoring position
+            case 11:
+
+                if (!follower.isBusy() || intakeState == IntakeState.IDLE) {
+
+                    follower.followPath(scorePickup2, true);
+
+                    setPathState(12);
+                }
+                break;
+//scores the balls after opening the servo and gets back in position to pick up the balls
+            case 12:
+
+//                blocker.setPosition(0);
+                if (!follower.isBusy()) {
+                    startLaunch();
+                    setPathState(13);
+                }
+                break;
+            case 13:
+                if (launchState == LaunchState.IDLE) {
+                    follower.followPath(justPark, true);
+//                    intake_state = 0;
+//                    transfer_state = 0;
+                    setPathState(-1);
+                }
+                break;
+
+        }
+    }
+
+    /**
+     * These change the states of the paths and actions. It will also reset the timers of the individual switches
+     **/
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+
+    /**
+     * This is the main loop of the OpMode, it will run repeatedly after clicking "Play".
+     **/
+    @Override
+    public void loop() {
+
+        // These loop the movements of the robot, these must be called continuously in order to work
+
+        follower.update();
+        LaunchArtifacts();
+        IntakeArtifacts();
+
+        if (launchState == LaunchState.IDLE) {
+            blocker.setPosition(servo_closed);
+            fly1.setVelocity(flyspeed3);
+            fly2.setVelocity(flyspeed3);
+        }
+
+
+
+        autonomousPathUpdate();
+
+        // Feedback to Driver Hub for debugging
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("required speed", (fly1.getVelocity() - flyspeed4));
+        telemetry.addData("flyspeed", fly1.getVelocity());
+        telemetry.addData("LaunchState", launchState);
+        telemetry.addData("IntakeState", intakeState);
+
+
+        telemetry.update();
+    }
+
+    /**
+     * This method is called once at the init of the OpMode.
+     **/
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        actionTimer = new Timer();
+        opmodeTimer = new Timer();
+        opmodeTimer.resetTimer();
+
+
+        transfer = hardwareMap.get(DcMotorEx.class, "transfer");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
+        fly2 = hardwareMap.get(DcMotorEx.class, "fly2");
+        fly1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fly1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        fly2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        fly2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        blocker = hardwareMap.get(Servo.class, "blocker");
+
+
+        follower = Constants.createFollower(hardwareMap);
+        buildPaths();
+        follower.setStartingPose(startPose);
+
+    }
+
+    /**
+     * This method is called continuously after Init while waiting for "play".
+     **/
+    @Override
+    public void init_loop() {
+    }
+
+    /**
+     * This method is called once at the start of the OpMode.
+     * It runs all the setup actions, including building paths and starting the path system
+     **/
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+        blocker.setPosition(servo_closed);
+    }
+
+    /**
+     * We do not use this because everything should automatically disable
+     **/
+    @Override
+    public void stop() {
+    }
+
+
+    /// INTAKE ARTIFACTS ///
+    public void IntakeArtifacts () {
+        switch (intakeState) {
+            case IDLE:
+                break;
+
+            case INTAKING: {
+                intake.setPower(1);
+                transfer.setPower(1);
+
+                if (getRuntime() - stateStartTime > intakeTime) {
+                    transfer.setPower(0);
+                    intake.setPower(0);
+                    intakeState = intakeState.IDLE;
+                    stateStartTime = getRuntime();
+                }
+            }
+        }
+    }
+
+
+    /// LAUNCH ARTIFACTS///
+    public void LaunchArtifacts() {
+
+        if (killLaunch) {
+            launchState = LaunchState.IDLE;
+            multiSequenceActive = false;
+            transfer.setPower(0);
+            intake.setPower(0);
+            blocker.setPosition(servo_closed);
+
+            return;
+        }
+
+        switch (launchState) {
+
+            case IDLE:
+                break;
+
+            case SPINNING_UP: {
+
+                fly1.setVelocity(flyspeed4);
+                fly2.setVelocity(flyspeed4);
+                blocker.setPosition(servo_opened);
+
+                if (Math.abs(fly1.getVelocity() - flyspeed4) < flyTolerance) {
+
+                    launchState = LaunchState.FEED;
+                }
+
+                stateStartTime = getRuntime();
+            }
+            break;
+            case FEED: {
+                intake.setPower(1);
+                transfer.setPower(1);
+
+                if (getRuntime() - stateStartTime > feedTime) {
+                    transfer.setPower(0);
+                    intake.setPower(0);
+                    launchState = LaunchState.DONE;
+                    stateStartTime = getRuntime();
+                }
+                break;
+            }
+            case DONE: {
+
+                blocker.setPosition(servo_closed);
+
+                transfer.setPower(0);
+                transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                intake.setPower(0);
+                intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                launchState = LaunchState.IDLE;
+                multiSequenceActive = false;
+            }
+        }
+    }
+}
+
+
+
+
