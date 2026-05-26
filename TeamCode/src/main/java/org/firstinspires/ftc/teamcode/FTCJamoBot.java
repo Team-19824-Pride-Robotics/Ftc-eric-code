@@ -88,8 +88,8 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     //for 3 at once combo deal
-    public static double servo_closed = 0.85;
-    public static double servo_opened = 0.3;
+    public static double servo_closed = 1;
+    public static double servo_opened = 0.8;
     public static double servo_closed2 = 0.2;
     public static double servo_opened2 = 0;
     public static int transferBump1 = 1000;
@@ -120,8 +120,10 @@ public class FTCJamoBot extends LinearOpMode {
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
+    public static int shortAddition = 450;
+
     public static int addition = 575;
-    public static int longaddition = 50;
+    public static int longAddition = 50;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -131,22 +133,23 @@ public class FTCJamoBot extends LinearOpMode {
 ///////////////LOOKUP TABLE SETUP/////////////////////////
         lut.add(-2000, 950);
         lut.add(30, 950);
-        lut.add(35, 950 + addition);
-        lut.add(45, 1000 + addition);
+        lut.add(35, 950 + shortAddition);
+        lut.add (40, 975 + shortAddition);
+        lut.add(45, 1000 + shortAddition);
         lut.add(50, 1550);
         lut.add(55, 1110 + addition);
         lut.add(60, 1125 + addition);
         lut.add(70, 1215 + addition);
-        lut.add(80, 1200 + addition + longaddition);
-        lut.add(90, 1220 + addition + longaddition);
-        lut.add(100, 1210 + addition + longaddition);
-        lut.add(110, 1425 + addition + longaddition);
-        lut.add(120, 1475 + addition + longaddition);
-        lut.add(125, 1480 + addition + longaddition);
-        lut.add(130, 1500 + addition + longaddition);
-        lut.add(140, 1550 + addition + longaddition);
-        lut.add(150, 1650 + addition + longaddition);
-        lut.add(10000000, 1700 + addition + longaddition);
+        lut.add(80, 1200 + addition + longAddition);
+        lut.add(90, 1220 + addition + longAddition);
+        lut.add(100, 1210 + addition + longAddition);
+        lut.add(110, 1425 + addition + longAddition);
+        lut.add(120, 1475 + addition + longAddition);
+        lut.add(125, 1480 + addition + longAddition);
+        lut.add(130, 1500 + addition + longAddition);
+        lut.add(140, 1550 + addition + longAddition);
+        lut.add(150, 1650 + addition + longAddition);
+        lut.add(10000000, 1700 + addition + longAddition);
 
         lut.createLUT();
 
@@ -236,9 +239,9 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 lastValidFlywheelTarget = computedTarget;
 
-                if (llResult.getTx() < -5) {
+                if (llResult.getTx() < -6) {
                     turnCorrection = -0.25;
-                } else if (llResult.getTx() > 1) {
+                } else if (llResult.getTx() > 0) {
                     turnCorrection = 0.25;
                 }
                 //stop turning if you're facing the target (whether or not you can see AprilTag)
@@ -312,11 +315,6 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
 ///////////////////FLYWHEEL CONTROLS///////////////////////////////////
 
-            if (!isLaunching()) {
-                fly1.setVelocity(flyspeed4);
-                fly2.setVelocity(flyspeed4);
-            }
-
             /// launch system - 1 at a time
 
 // Single shot
@@ -348,25 +346,18 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
             }
 /////////////////////////////////INTAKE AND TRANSFER//////////////////////////////
 
-
-            if (gamepad2.right_trigger > 0.1) {
-                blocker.setPosition(servo_opened);
-
-            } else {
-                blocker.setPosition(servo_closed);
-
-            }
-
             if (!isLaunching()) {
-                /// BLOCKER CONTROLS
-//                if (gamepad2.right_trigger > 0.1) {
-//                    blocker.setPosition(servo_opened);
-//
-//                } else {
-//                    blocker.setPosition(servo_closed);
-//
-//                }
-///TRANSFER
+
+                fly1.setVelocity(flywheelTarget);
+                fly2.setVelocity(flywheelTarget);
+
+                if (gamepad2.left_bumper || gamepad2.right_bumper || gamepad1.left_bumper || gamepad1.right_bumper) {
+                    blocker.setPosition(servo_opened);
+                }
+                else {
+                    blocker.setPosition(servo_closed);
+                }
+
                 if (gamepad2.left_bumper || gamepad1.left_bumper) {
                     transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     transfer.setPower(1);
@@ -380,6 +371,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 } else {
                     transfer.setPower(0);
                 }
+
                 ///INTAKE
                 if (gamepad1.a || gamepad2.a || gamepad1.left_bumper || gamepad2.dpad_right) {
 
