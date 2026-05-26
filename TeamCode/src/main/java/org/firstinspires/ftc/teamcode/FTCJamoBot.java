@@ -284,14 +284,14 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
             //dPad can be used to make small corrections
 
-            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+            if (gamepad1.dpad_right || gamepad2.dpad_right) {
 
                 FL.setPower(-.25);
                 FR.setPower(.25);
                 BL.setPower(-.25);
                 BR.setPower(.25);
             }
-            if (gamepad1.dpad_right || gamepad2.dpad_right) {
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
 
                 FL.setPower(.25);
                 FR.setPower(-.25);
