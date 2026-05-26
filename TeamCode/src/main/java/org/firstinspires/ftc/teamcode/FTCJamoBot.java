@@ -88,7 +88,7 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     //for 3 at once combo deal
-    public static double servo_closed = 1;
+    public static double servo_closed = 0.78;
     public static double servo_opened = 0.5;
     public static double servo_closed2 = 0.2;
     public static double servo_opened2 = 0;
@@ -210,8 +210,8 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
         while (opModeIsActive()) {
 
 
-            boolean currentDpadLeft = gamepad2.dpad_left;
-            boolean currentDpadDown = gamepad2.dpad_down;
+            boolean currentDpadLeft = gamepad1.left_bumper;
+            boolean currentDpadDown = gamepad1.right_bumper;
 
             LaunchArtifacts();
 
@@ -284,28 +284,28 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
             //dPad can be used to make small corrections
 
-            if (gamepad1.dpad_left) {
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
 
                 FL.setPower(-.25);
                 FR.setPower(.25);
                 BL.setPower(-.25);
                 BR.setPower(.25);
             }
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_right || gamepad2.dpad_right) {
 
                 FL.setPower(.25);
                 FR.setPower(-.25);
                 BL.setPower(.25);
                 BR.setPower(-.25);
             }
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_up || gamepad2.dpad_up) {
 
                 FL.setPower(.25);
                 FR.setPower(.25);
                 BL.setPower(.25);
                 BR.setPower(.25);
             }
-            if (gamepad1.dpad_down) {
+            if (gamepad1.dpad_down || gamepad2.dpad_down) {
 
                 FL.setPower(-.25);
                 FR.setPower(-.25);
@@ -333,7 +333,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
             lastDpadDown = currentDpadDown;
             lastDpadLeft = currentDpadLeft;
 
-            if (gamepad2.dpad_up) {
+            if (gamepad2.x) {
                 killLaunch = true;
                 launchState = LaunchState.IDLE;
                 multiSequenceActive = false;
