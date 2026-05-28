@@ -42,8 +42,8 @@ public class auto_BLUESIDE_v5 extends OpMode {
     public static double scorePos = 138;
     public static double scorePos2 = 138;
     public static double scorePos3 = 138;
-    public static double lineupY1 = 95;
-    public static double lineupY2 = 70;
+    public static double lineupY1 = 82;
+    public static double lineupY2 = 60;
     public static int tChange1 = 100;
     public static int tChange2 = 160;
     public static int tChange3 = 300;
