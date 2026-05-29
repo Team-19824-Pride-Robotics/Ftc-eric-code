@@ -44,6 +44,8 @@ public class FTCJamoBot extends LinearOpMode {
     //Declare variables
     boolean wasAButtonPressedLastLoop = false;
     boolean wasBButtonPressedLastLoop = false;
+    private boolean shooterToggle = false;
+    private boolean lastRightTrigger = false;
     private double lastValidFlywheelTarget = 1500;
     private double visionTimeout = 0.5;
     private ElapsedTime visionTimer = new ElapsedTime();
@@ -56,7 +58,7 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     private Timer actionTimer;
-    public static double speedReducer = 1;
+    public static double speedReducer = 0.8;
     ElapsedTime timer = new ElapsedTime();
 
     enum LaunchState {
@@ -88,7 +90,7 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     //for 3 at once combo deal
-    public static double servo_closed = 0.78;
+    public static double servo_closed = 0.76;
     public static double servo_opened = 0.5;
     public static double servo_closed2 = 0.2;
     public static double servo_opened2 = 0;
@@ -122,8 +124,8 @@ public class FTCJamoBot extends LinearOpMode {
     InterpLUT lut = new InterpLUT();
     public static int shortAddition = 450;
 
-    public static int addition = 510;
-    public static int longAddition = 50;
+    public static int addition = 490;
+    public static int longAddition = 150;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -131,14 +133,14 @@ public class FTCJamoBot extends LinearOpMode {
     public void runOpMode() {
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
-        lut.add(-2000, 950);
-        lut.add(30, 950);
-        lut.add(35, 950 + shortAddition);
-        lut.add (40, 975 + shortAddition);
-        lut.add(45, 1000 + shortAddition);
-        lut.add(50, 1550);
-        lut.add(55, 1110 + addition);
-        lut.add(60, 1125 + addition);
+        lut.add(-2000, 1050);
+        lut.add(30, 1050);
+        lut.add(35, 1075 + shortAddition);
+        lut.add (40, 1100 + shortAddition);
+        lut.add(45, 1125 + shortAddition);
+        lut.add(50, 1125 + addition);
+        lut.add(55, 1150 + addition);
+        lut.add(60, 1175 + addition);
         lut.add(70, 1215 + addition);
         lut.add(80, 1200 + addition + longAddition);
         lut.add(90, 1220 + addition + longAddition);
@@ -346,21 +348,34 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
             }
 /////////////////////////////////MAIN LAUNCH//////////////////////////////
 
+            boolean currentRightTrigger = gamepad2.right_trigger > 0.1;
+
+// Detect new press
+            if (currentRightTrigger && !lastRightTrigger) {
+                shooterToggle = !shooterToggle;
+            }
+
+// Save state for next loop
+            lastRightTrigger = currentRightTrigger;
+
             if (!isLaunching()) {
 
-                fly1.setVelocity(flywheelTarget);
-                fly2.setVelocity(flywheelTarget);
-
-                if (gamepad2.left_bumper || gamepad2.right_bumper) {
+                if (shooterToggle) {
+                    fly1.setVelocity(flywheelTarget);
+                    fly2.setVelocity(flywheelTarget);
+                }
+                if (fly1.getVelocity() == flywheelTarget && (gamepad2.left_bumper || gamepad2.right_bumper || gamepad2.b)) {
                     blocker.setPosition(servo_opened);
                 }
                 else {
                     blocker.setPosition(servo_closed);
+                    fly1.setVelocity(0);
+                    fly2.setVelocity(0);
                 }
 
-                if (gamepad2.left_bumper || gamepad2.a) {
+                if (gamepad2.left_bumper || gamepad2.a || gamepad2.y) {
                     transfer.setPower(1);
-                } else if (gamepad2.right_bumper || gamepad2.b) {
+                } else if (gamepad2.right_bumper || gamepad2.x) {
                     transfer.setPower(-1);
                 } else {
                     transfer.setPower(0);
@@ -372,13 +387,13 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(1);
                 }
-                else if (gamepad2.b || gamepad2.right_bumper) {
+                else if (gamepad2.right_bumper) {
 
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(-1);
 
 
-                    if (gamepad2.right_bumper || gamepad1.right_bumper || gamepad2.a || gamepad2.b) {
+                    if (gamepad2.right_bumper || gamepad1.right_bumper || gamepad2.a || gamepad2.x || gamepad2.b) {
 ///                          //Just another precaution//                                ///
                         launchState = LaunchState.IDLE;
                         multiSequenceActive = false;
