@@ -7,23 +7,20 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.FTCJamoBot;
-import org.firstinspires.ftc.teamcode.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /// uses new launcher
 
 
-@Autonomous(name = "auto_REDSIDESIDE_v4")
+@Autonomous(name = "auto_CLOSEBLUESIDE_v5")
 @Configurable
 
-public class auto_REDSIDE_v4 extends OpMode {
+public class auto_CLOSEBLUESIDE_v5 extends OpMode {
 // this is graciously professional code.
 
     private DcMotorEx transfer;
@@ -39,9 +36,9 @@ public class auto_REDSIDE_v4 extends OpMode {
     public static double robotSlower = 0.8;
     public double intake_state = 0;
     public double transfer_state = 0;
-    public static double scorePos = 42;
-    public static double scorePos2 = 42;
-    public static double scorePos3 = 42;
+    public static double scorePos = 140;
+    public static double scorePos2 = 140;
+    public static double scorePos3 = 140;
     public static double lineupY1 = 82;
     public static double lineupY2 = 60;
     public static int tChange1 = 100;
@@ -59,7 +56,7 @@ public class auto_REDSIDE_v4 extends OpMode {
     public static double kicker_closed = 0.185;
 
     public static double flyTolerance = 50;
-    public static double intakeTime = 2;
+    public static double intakeTime = 4;
     public static double feedTime = 2;
     public static double kickUpTime = 0.125;
     public static double resetTime = 0.25;
@@ -78,12 +75,11 @@ public class auto_REDSIDE_v4 extends OpMode {
     private  IntakeState intakeState = IntakeState.IDLE;
 
     private boolean multiSequenceActive = false;
-    private boolean killLaunch = false;
+    private final boolean killLaunch = false;
 
-    private boolean killIntake = false;
+    private final boolean killIntake = false;
     private double intakeStartTime = 0;
     private double launchStartTime = 0;
-
 
     /// /////timings for launchArtifacts function/////////////
 
@@ -104,20 +100,20 @@ public class auto_REDSIDE_v4 extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private final Pose startPose = new Pose(79, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(90, 90, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
-    private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(355));
-    private final Pose lineup1_5Pose = new Pose(40, 85.5, Math.toRadians(355));// Highest (First Set)
-    private final Pose lineup1_6Pose = new Pose(45, 85.5, Math.toRadians(355));
-    private final Pose gobble1Pose = new Pose(119, lineupY1, Math.toRadians(355)); // Highest (First Set)
-    private final Pose lineup2Pose = new Pose(90, lineupY2, Math.toRadians(355)); // Middle (Second Set)
-    private final Pose gobble2Pose = new Pose(123, lineupY2, Math.toRadians(355)); // Middle (Second Set)
-    private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
-    private final Pose lineup2_5Pose = new Pose(40, 62, Math.toRadians(355));
-    private final Pose lineup2_6Pose = new Pose(45, 62, Math.toRadians(355));
-    private final Pose scorePose3 = new Pose(90, 90, Math.toRadians(scorePos3));
-    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(355)); // Middle (Second Set)
-    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(355));
+    private final Pose startPose = new Pose(28, 130, Math.toRadians(140)); // Start Pose of our robot.
+    private final Pose scorePose = new Pose(60, 95, Math.toRadians(scorePos)); // Scoring Pose of our robot. It is facing the goal at a 136 degree angle.
+    private final Pose lineup1Pose = new Pose(52, lineupY1, Math.toRadians(185));
+    private final Pose lineup1_5Pose = new Pose(40, 85.5, Math.toRadians(185));// Highest (First Set)
+    private final Pose lineup1_6Pose = new Pose(45, 85.5, Math.toRadians(185));
+    private final Pose gobble1Pose = new Pose(22, lineupY1, Math.toRadians(185)); // Highest (First Set)
+    private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(185)); // Middle (Second Set)
+    private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(185)); // Middle (Second Set)
+    private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));
+    private final Pose lineup2_5Pose = new Pose(40, 62, Math.toRadians(180));
+    private final Pose lineup2_6Pose = new Pose(45, 62, Math.toRadians(180));
+    private final Pose scorePose3 = new Pose(60, 95, Math.toRadians(scorePos3));
+    private final Pose lineup3Pose = new Pose(55, 43, Math.toRadians(180)); // Middle (Second Set)
+    private final Pose gobble3Pose = new Pose(12, 43, Math.toRadians(180));
 
 
     private void startLaunch() {
@@ -125,7 +121,8 @@ public class auto_REDSIDE_v4 extends OpMode {
 
         intake.setPower(0);
         transfer.setPower(0);
-        launchState = LaunchState.SPINNING_UP;
+
+        launchState = auto_CLOSEBLUESIDE_v5.LaunchState.SPINNING_UP;
         launchStartTime = getRuntime();
     }
     private void startIntake() {
@@ -245,6 +242,9 @@ public class auto_REDSIDE_v4 extends OpMode {
             case 0:
                 follower.setMaxPower(robotFast);
                 follower.followPath(scorePreload);
+
+                startIntake();
+
                 setPathState(1);
                 break;
 
@@ -252,7 +252,7 @@ public class auto_REDSIDE_v4 extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    startLaunch();
+                startLaunch();
 
                     setPathState(100);  // temporary waiting state
                 }
@@ -275,7 +275,7 @@ public class auto_REDSIDE_v4 extends OpMode {
                     startIntake();
                     follower.setMaxPower(robotSlower);
                     follower.followPath(grabPickup1, true);
-                    setPathState(3);
+                    setPathState(5);
                 }
                 break;
 
@@ -283,7 +283,7 @@ public class auto_REDSIDE_v4 extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    follower.setMaxPower(robotSlow);
+                  follower.setMaxPower(robotSlow);
                     follower.followPath(backOff1, true);
                     setPathState(4);
                 }
@@ -302,7 +302,7 @@ public class auto_REDSIDE_v4 extends OpMode {
 //gets into scoring position
             case 5:
 
-                if (!follower.isBusy() && intakeState == IntakeState.IDLE) {
+                if (!follower.isBusy()) {
 
                     follower.followPath(scorePickup1, true);
 
@@ -334,7 +334,7 @@ public class auto_REDSIDE_v4 extends OpMode {
                     startIntake();
                     follower.setMaxPower(robotSlow);
                     follower.followPath(grabPickup2, true);
-                    setPathState(9);
+                    setPathState(11);
                 }
                 break;
 //launches the balls, then sets the intake and transfer on, closes the servo and slows it down then it will pick up the balls
@@ -342,7 +342,7 @@ public class auto_REDSIDE_v4 extends OpMode {
 
                 if (!follower.isBusy()) {
 
-                    follower.setMaxPower(robotSlow);
+                  follower.setMaxPower(robotSlow);
                     follower.followPath(backOff2, true);
                     setPathState(10);
                 }
@@ -362,7 +362,7 @@ public class auto_REDSIDE_v4 extends OpMode {
 //gets into scoring position
             case 11:
 
-                if (!follower.isBusy() && intakeState == IntakeState.IDLE) {
+                if (!follower.isBusy()) {
 
                     follower.followPath(scorePickup2, true);
 
@@ -425,7 +425,7 @@ public class auto_REDSIDE_v4 extends OpMode {
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading",  Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("required speed", (fly1.getVelocity() - flyspeed4));
         telemetry.addData("flyspeed", fly1.getVelocity());
         telemetry.addData("LaunchState", launchState);
@@ -503,10 +503,10 @@ public class auto_REDSIDE_v4 extends OpMode {
                 if (getRuntime() - intakeStartTime > intakeTime) {
                     transfer.setPower(0);
                     intake.setPower(0);
-                    intakeState = intakeState.IDLE;
+                    intakeState = IntakeState.IDLE;
                     intakeStartTime = getRuntime();
                 }
-               break;
+                break;
             }
         }
     }
@@ -540,6 +540,7 @@ public class auto_REDSIDE_v4 extends OpMode {
 
                     launchState = LaunchState.FEED;
                     launchStartTime = getRuntime();
+
                 }
 
             }

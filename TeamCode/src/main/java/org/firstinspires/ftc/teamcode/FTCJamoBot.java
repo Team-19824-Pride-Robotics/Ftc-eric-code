@@ -15,8 +15,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.auto_BLUESIDE_v5;
-
 /// adds interpolation table; needs tuning
 /// we're just so gracious and professional
 @TeleOp(name="FTCJamoBot")
