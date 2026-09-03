@@ -56,7 +56,7 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     private Timer actionTimer;
-    public static double speedReducer = 0.8;
+    public static double speedReducer = 1;
     ElapsedTime timer = new ElapsedTime();
 
     enum LaunchState {
@@ -73,7 +73,7 @@ public class FTCJamoBot extends LinearOpMode {
 
     private LaunchState launchState = LaunchState.IDLE;
     private double stateStartTime = 0;
-    public static double flyTolerance = 50;     // allowed velocity error
+    public static double flyTolerance = 100;     // allowed velocity error
     public static double resetTime = 0.2;
     public static double waitTime = 0.27;      // time to close gate
     // time to close gate
@@ -88,7 +88,7 @@ public class FTCJamoBot extends LinearOpMode {
 
 
     //for 3 at once combo deal
-    public static double servo_closed = 0.76;
+    public static double servo_closed = 0.79;
     public static double servo_opened = 0.5;
     public static double servo_closed2 = 0.2;
     public static double servo_opened2 = 0;
@@ -110,20 +110,20 @@ public class FTCJamoBot extends LinearOpMode {
     }
 
     private int launcher = 0;
-    public static double flyspeed2 = 1580;
-    public static double flyspeed3 = 1500;
-    public static double flyspeed4 = 1750;
+    public static double flyspeed2 = 2750;
+    public static double flyspeed3 = 1790;
+    public static double flyspeed4 = 1813;
     public static double driveSpeed = 900;
-    public static double flyspeed5 = 1550;
+    public static double flyspeed5 = 2730;
     int transferStartPosition;
     int intakeStartPosition;
     double distance;
     double turnCorrection;
     InterpLUT lut = new InterpLUT();
-    public static int shortAddition = 450;
+    public static int shortAddition = 650;
 
-    public static int addition = 490;
-    public static int longAddition = 150;
+    public static int addition = 600;
+    public static int longAddition = 750;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -131,14 +131,14 @@ public class FTCJamoBot extends LinearOpMode {
     public void runOpMode() {
 
 ///////////////LOOKUP TABLE SETUP/////////////////////////
-        lut.add(-2000, 1050);
-        lut.add(30, 1050);
-        lut.add(35, 1075 + shortAddition);
-        lut.add (40, 1100 + shortAddition);
+        lut.add(-2000, 950);
+        lut.add(30, 950);
+        lut.add(35, 975 + shortAddition);
+        lut.add (40, 1000 + shortAddition);
         lut.add(45, 1125 + shortAddition);
         lut.add(50, 1125 + addition);
-        lut.add(55, 1150 + addition);
-        lut.add(60, 1175 + addition);
+        lut.add(55, 1130 + addition);
+        lut.add(60, 1150 + addition);
         lut.add(70, 1215 + addition);
         lut.add(80, 1200 + addition + longAddition);
         lut.add(90, 1220 + addition + longAddition);
@@ -226,9 +226,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 distance = 67.82807 * Math.pow(llResult.getTa(), -0.5);
 
-                if (distance > 150) {
-                    distance = Math.min(Math.max(distance, 30), 150);
-                }
+                distance = Math.min(Math.max(distance, 30), 150);
 
 
                 flywheelTarget = lut.get(distance);              // LUT-based velocity
@@ -246,7 +244,6 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                 }
                 //stop turning if you're facing the target (whether or not you can see AprilTag)
                 else {
-                    ValidTarget = false;
                     turnCorrection = 0;
                 }
             } else {
@@ -333,7 +330,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
             lastDpadDown = currentDpadDown;
             lastDpadLeft = currentDpadLeft;
 
-            if (gamepad2.x) {
+            if (gamepad1.x) {
                 killLaunch = true;
                 launchState = LaunchState.IDLE;
                 multiSequenceActive = false;
@@ -357,24 +354,46 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
             lastRightTrigger = currentRightTrigger;
 
             if (!isLaunching()) {
-
-                if (shooterToggle) {
-                    fly1.setVelocity(flywheelTarget);
-                    fly2.setVelocity(flywheelTarget);
-                }
-                if (fly1.getVelocity() == flywheelTarget && (gamepad2.left_bumper || gamepad2.right_bumper || gamepad2.b)) {
+                if (gamepad2.b) {
                     blocker.setPosition(servo_opened);
                 }
-                else {
+                else if (shooterToggle) {
+
+                    fly1.setVelocity(flyspeed2);
+                    fly2.setVelocity(flyspeed2);
+
+                    if (Math.abs(fly1.getVelocity() - flyspeed2) < flyTolerance
+                            && (gamepad2.left_bumper || gamepad2.right_bumper)) {
+
+                        blocker.setPosition(servo_opened);
+
+                    }
+                    else {
+
+                        blocker.setPosition(servo_closed);
+                    }
+
+                } else {
+
                     blocker.setPosition(servo_closed);
-                    fly1.setVelocity(0);
-                    fly2.setVelocity(0);
+
+                    fly1.setVelocity(flyspeed4);
+                    fly2.setVelocity(flyspeed4);
                 }
 
-                if (gamepad2.left_bumper || gamepad2.a || gamepad2.y) {
-                    transfer.setPower(1);
-                } else if (gamepad2.right_bumper || gamepad2.x) {
-                    transfer.setPower(-1);
+                if (gamepad2.a && (fly1.getVelocity() - flyspeed4) < flyTolerance) {
+                    fly1.setVelocity(flyspeed3);
+                    fly2.setVelocity(flyspeed3);
+                }
+                if (gamepad2.a && (fly1.getVelocity() - flyspeed2) < flyTolerance) {
+                    fly1.setVelocity(flyspeed5);
+                    fly2.setVelocity(flyspeed5);
+                }
+
+                if (gamepad2.left_bumper || gamepad2.a || gamepad2.right_bumper) {
+                    transfer.setPower(0.75);
+                } else if (gamepad2.y || gamepad2.x) {
+                    transfer.setPower(-0.75);
                 } else {
                     transfer.setPower(0);
                 }
@@ -385,7 +404,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(1);
                 }
-                else if (gamepad2.right_bumper) {
+                else if (gamepad2.y) {
 
                     intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     intake.setPower(-1);
@@ -396,7 +415,7 @@ BR.setDirection(DcMotorSimple.Direction.REVERSE);
                         launchState = LaunchState.IDLE;
                         multiSequenceActive = false;
                         transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        transfer.setPower(-1);
+                        transfer.setPower(0);
                     }
                 }
                 else {

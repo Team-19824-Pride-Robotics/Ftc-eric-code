@@ -55,9 +55,9 @@ public class auto_CLOSEBLUESIDE_v5 extends OpMode {
     public static double kicker_kick = 0;
     public static double kicker_closed = 0.185;
 
-    public static double flyTolerance = 50;
+    public static double flyTolerance = 100;
     public static double intakeTime = 4;
-    public static double feedTime = 2;
+    public static double feedTime = 0.75;
     public static double kickUpTime = 0.125;
     public static double resetTime = 0.25;
     public static double waitTime = 0.25;
@@ -105,7 +105,7 @@ public class auto_CLOSEBLUESIDE_v5 extends OpMode {
     private final Pose lineup1Pose = new Pose(52, lineupY1, Math.toRadians(185));
     private final Pose lineup1_5Pose = new Pose(40, 85.5, Math.toRadians(185));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 85.5, Math.toRadians(185));
-    private final Pose gobble1Pose = new Pose(22, lineupY1, Math.toRadians(185)); // Highest (First Set)
+    private final Pose gobble1Pose = new Pose(18, lineupY1, Math.toRadians(185)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(52, lineupY2, Math.toRadians(185)); // Middle (Second Set)
     private final Pose gobble2Pose = new Pose(20, lineupY2, Math.toRadians(185)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(60, 95, Math.toRadians(scorePos2));

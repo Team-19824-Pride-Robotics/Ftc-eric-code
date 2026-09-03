@@ -55,9 +55,9 @@ public class auto_CLOSEREDSIDE_v4 extends OpMode {
     public static double kicker_kick = 0;
     public static double kicker_closed = 0.185;
 
-    public static double flyTolerance = 50;
+    public static double flyTolerance = 100;
     public static double intakeTime = 4;
-    public static double feedTime = 2;
+    public static double feedTime = 0.75;
     public static double kickUpTime = 0.125;
     public static double resetTime = 0.25;
     public static double waitTime = 0.25;
@@ -106,7 +106,7 @@ public class auto_CLOSEREDSIDE_v4 extends OpMode {
     private final Pose lineup1Pose = new Pose(90, lineupY1, Math.toRadians(355));
     private final Pose lineup1_5Pose = new Pose(40, 85.5, Math.toRadians(355));// Highest (First Set)
     private final Pose lineup1_6Pose = new Pose(45, 85.5, Math.toRadians(355));
-    private final Pose gobble1Pose = new Pose(119, lineupY1, Math.toRadians(355)); // Highest (First Set)
+    private final Pose gobble1Pose = new Pose(120, lineupY1, Math.toRadians(355)); // Highest (First Set)
     private final Pose lineup2Pose = new Pose(90, lineupY2, Math.toRadians(355)); // Middle (Second Set)
     private final Pose gobble2Pose = new Pose(123, lineupY2, Math.toRadians(355)); // Middle (Second Set)
     private final Pose scorePose2 = new Pose(90, 90, Math.toRadians(scorePos2));
