@@ -26,6 +26,8 @@ public class BioBuzz_i1 extends LinearOpMode {
     private DcMotorEx FR;
     private DcMotorEx BL;
     private DcMotorEx BR;
+    private DcMotorEx intake;
+
 
 
     double leftFrontPower;
@@ -33,6 +35,7 @@ public class BioBuzz_i1 extends LinearOpMode {
     double rightFrontPower;
     double rightBackPower;
     double speedReducer = 1;
+    double intakepower =1;
 
     @Override
     public void runOpMode() {
@@ -42,6 +45,7 @@ public class BioBuzz_i1 extends LinearOpMode {
         BR = hardwareMap.get(DcMotorEx.class, "BR");
         FL = hardwareMap.get(DcMotorEx.class, "FL");
         FR = hardwareMap.get(DcMotorEx.class, "FR");
+        intake = hardwareMap.get(DcMotorEx.class, "Intake");
 
 
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -109,6 +113,17 @@ public class BioBuzz_i1 extends LinearOpMode {
             telemetry.addData("FL Velocity", FL.getVelocity());
             telemetry.addData("BR Velocity", BR.getVelocity());
             telemetry.addData("BL Velocity", BL.getVelocity());
+
+            if (gamepad1.a) {
+                intake.setPower(intakepower);
+            }
+            else if (gamepad1.b) {
+                intake.setPower(-intakepower);
+            }
+            else {
+                intake.setPower(0);
+            }
+                
         }
     }
 }
