@@ -35,7 +35,7 @@ public class BioBuzz_i1 extends LinearOpMode {
     double rightFrontPower;
     double rightBackPower;
     double speedReducer = 1;
-    double intakepower =1;
+    public double intakepower =1;
 
     @Override
     public void runOpMode() {
@@ -53,8 +53,8 @@ public class BioBuzz_i1 extends LinearOpMode {
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -63,7 +63,7 @@ public class BioBuzz_i1 extends LinearOpMode {
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed! forwards n back
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing believe this is
-            double rx = gamepad1.right_stick_x;
+            double rx = -gamepad1.right_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
 
