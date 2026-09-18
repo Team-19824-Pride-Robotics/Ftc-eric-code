@@ -32,8 +32,8 @@ public class BioBuzz_i1 extends LinearOpMode {
     private DcMotorEx launchMotor2;
 
 
-public static int Aposition = 0;
-public static int Bposition = -90;
+public static int Aposition = 50;
+public static int Bposition = -110;
     double leftFrontPower;
     double leftBackPower;
     double rightFrontPower;
@@ -147,8 +147,8 @@ int launchPos = 0;
 
             launchMotor1.setTargetPosition(launchPos);
             launchMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            launchMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             launchMotor2.setTargetPosition(launchPos);
+            launchMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             launchMotor1.setPower(1);
             launchMotor2.setPower(1);
 
