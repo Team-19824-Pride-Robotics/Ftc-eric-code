@@ -28,8 +28,12 @@ public class BioBuzz_i1 extends LinearOpMode {
     private DcMotorEx BR;
     private DcMotorEx intake;
 
+    private DcMotorEx launchMotor1;
+    private DcMotorEx launchMotor2;
 
 
+public static int Aposition = 0;
+public static int Bposition = -90;
     double leftFrontPower;
     double leftBackPower;
     double rightFrontPower;
@@ -39,7 +43,14 @@ public class BioBuzz_i1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+int launchPos = 0;
 
+        launchMotor1 = hardwareMap.get(DcMotorEx.class, "launchMotor1");
+        launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        launchMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launchMotor2 = hardwareMap.get(DcMotorEx.class, "launchMotor2");
+        launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        launchMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         BL = hardwareMap.get(DcMotorEx.class, "BL");
         BR = hardwareMap.get(DcMotorEx.class, "BR");
@@ -55,6 +66,7 @@ public class BioBuzz_i1 extends LinearOpMode {
 
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        launchMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -109,10 +121,6 @@ public class BioBuzz_i1 extends LinearOpMode {
                 BR.setPower(-.25);
             }
 
-            telemetry.addData("FR Velocity", FR.getVelocity());
-            telemetry.addData("FL Velocity", FL.getVelocity());
-            telemetry.addData("BR Velocity", BR.getVelocity());
-            telemetry.addData("BL Velocity", BL.getVelocity());
 
             if (gamepad1.a) {
                 intake.setPower(intakepower);
@@ -123,6 +131,37 @@ public class BioBuzz_i1 extends LinearOpMode {
             else {
                 intake.setPower(0);
             }
+
+            if(gamepad2.a){
+                launchPos = Aposition;
+            }
+
+            if(gamepad2.b){
+                launchPos = Bposition;
+            }
+
+            if(gamepad2.y){
+                launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+
+            launchMotor1.setTargetPosition(launchPos);
+            launchMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            launchMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            launchMotor2.setTargetPosition(launchPos);
+            launchMotor1.setPower(1);
+            launchMotor2.setPower(1);
+
+
+
+
+            telemetry.addData("FR Velocity", FR.getVelocity());
+            telemetry.addData("FL Velocity", FL.getVelocity());
+            telemetry.addData("BR Velocity", BR.getVelocity());
+            telemetry.addData("BL Velocity", BL.getVelocity());
+            telemetry.addData("Launch Motor 1 Position", launchMotor1.getCurrentPosition());
+            telemetry.addData("Launch Motor 2 Position", launchMotor2.getCurrentPosition());
+            telemetry.update();
                 
         }
     }
