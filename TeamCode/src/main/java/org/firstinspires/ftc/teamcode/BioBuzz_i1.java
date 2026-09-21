@@ -44,6 +44,7 @@ public static int Bposition = -110;
     @Override
     public void runOpMode() {
 int launchPos = 0;
+boolean launchState = true;
 
         launchMotor1 = hardwareMap.get(DcMotorEx.class, "launchMotor1");
         launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,6 +64,8 @@ int launchPos = 0;
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        launchMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        launchMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -152,6 +155,14 @@ int launchPos = 0;
             launchMotor1.setPower(1);
             launchMotor2.setPower(1);
 
+//           int upDown = launchMotor1.getCurrentPosition();
+//
+//
+//            if(upDown > -30){
+//                launchState = true;
+//            }else if(upDown <= -30){
+//                launchState = false;
+//            }
 
 
 
