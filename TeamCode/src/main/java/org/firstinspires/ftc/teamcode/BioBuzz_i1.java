@@ -32,8 +32,8 @@ public class BioBuzz_i1 extends LinearOpMode {
     private DcMotorEx launchMotor2;
 
 
-public static int Aposition = 50;
-public static int Bposition = -110;
+//public static int Aposition = 0;
+//public static int Bposition = -90;
     double leftFrontPower;
     double leftBackPower;
     double rightFrontPower;
@@ -47,11 +47,11 @@ int launchPos = 0;
 boolean launchState = true;
 
         launchMotor1 = hardwareMap.get(DcMotorEx.class, "launchMotor1");
-        launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        launchMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        launchMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launchMotor2 = hardwareMap.get(DcMotorEx.class, "launchMotor2");
-        launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        launchMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        launchMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         BL = hardwareMap.get(DcMotorEx.class, "BL");
         BR = hardwareMap.get(DcMotorEx.class, "BR");
@@ -135,25 +135,32 @@ boolean launchState = true;
                 intake.setPower(0);
             }
 
-            if(gamepad2.a){
-                launchPos = Aposition;
+            if(gamepad2.right_trigger > 0.3){
+//                launchPos = Aposition;
+                launchMotor1.setPower(1);
+                launchMotor2.setPower(1);
+
             }
 
-            if(gamepad2.b){
-                launchPos = Bposition;
+            if(gamepad2.left_trigger > 0.3){
+//                launchPos = Bposition;
+                launchMotor1.setPower(-1);
+                launchMotor2.setPower(-1);
             }
 
-            if(gamepad2.y){
-                launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if(gamepad2.left_bumper || gamepad2.right_bumper){
+//                launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                launchMotor1.setPower(0);
+                launchMotor2.setPower(0);
             }
-
-            launchMotor1.setTargetPosition(launchPos);
-            launchMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            launchMotor2.setTargetPosition(launchPos);
-            launchMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            launchMotor1.setPower(1);
-            launchMotor2.setPower(1);
+//
+//            launchMotor1.setTargetPosition(launchPos);
+//            launchMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            launchMotor2.setTargetPosition(launchPos);
+//            launchMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            launchMotor1.setPower(1);
+//            launchMotor2.setPower(1);
 
 //           int upDown = launchMotor1.getCurrentPosition();
 //
@@ -170,8 +177,8 @@ boolean launchState = true;
             telemetry.addData("FL Velocity", FL.getVelocity());
             telemetry.addData("BR Velocity", BR.getVelocity());
             telemetry.addData("BL Velocity", BL.getVelocity());
-            telemetry.addData("Launch Motor 1 Position", launchMotor1.getCurrentPosition());
-            telemetry.addData("Launch Motor 2 Position", launchMotor2.getCurrentPosition());
+//            telemetry.addData("Launch Motor 1 Position", launchMotor1.getCurrentPosition());
+//            telemetry.addData("Launch Motor 2 Position", launchMotor2.getCurrentPosition());
             telemetry.update();
                 
         }
