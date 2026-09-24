@@ -64,12 +64,13 @@ boolean launchState = true;
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        launchMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        launchMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        launchMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        launchMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         launchMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        launchMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -140,12 +141,19 @@ boolean launchState = true;
                 launchMotor1.setPower(1);
                 launchMotor2.setPower(1);
 
+            } else if(gamepad2.right_trigger <= 0.3){
+                launchMotor1.setPower(0);
+                launchMotor2.setPower(0);
             }
 
             if(gamepad2.left_trigger > 0.3){
 //                launchPos = Bposition;
                 launchMotor1.setPower(-1);
+
                 launchMotor2.setPower(-1);
+            }else if(gamepad2.left_trigger <= 0.3){
+                launchMotor1.setPower(0);
+                launchMotor2.setPower(0);
             }
 
             if(gamepad2.left_bumper || gamepad2.right_bumper){
